@@ -81,7 +81,7 @@ export default function Header() {
             <DropdownMenuTrigger asChild>
               <Avatar className="cursor-pointer">
                 <AvatarImage src={user.user_metadata.avatar_url} />
-                <AvatarFallback>{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
+                <AvatarFallback className="bg-[#CB945E] text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
@@ -97,7 +97,7 @@ export default function Header() {
         ) : (
           // If no user is logged in, show the Login button
           <Link href="/login">
-            <Button variant="outline" size="sm" className="border-[#CB945E] text-[#CB945E] hover:bg-[#CB945E] hover:text-white">
+            <Button size="sm" className="bg-[#CB945E] text-white hover:bg-white hover:text-[#CB945E]">
               Login
             </Button>
           </Link>
