@@ -161,12 +161,11 @@ export default function Component() {
           >
             FAQ
           </Link>
-          <Button variant="outline" size="sm" className="border-gray-400 text-gray-200 hover:bg-gray-600">
+          <Link href="/login">
+          <Button size="sm" className="bg-[#64918E] hover:bg-[#64918E]/90">
             Login
           </Button>
-          <Button size="sm" className="bg-[#64918E] hover:bg-[#64918E]/90">
-            Sign Up
-          </Button>
+          </Link>
         </nav>
       </header>
 
@@ -187,14 +186,13 @@ export default function Component() {
                     onClick={() => scrollToSection('featured-projects')}
                     className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
                   >
-                    🔘 Explore Projects
+                    Explore Projects
                   </Button>
                   <Button
                     onClick={() => scrollToSection('how-it-works')}
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-[#64918E]"
+                    className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
                   >
-                    🔘 How It Works
+                    How It Works
                   </Button>
                 </div>
               </div>
@@ -240,7 +238,7 @@ export default function Component() {
                       <div className="text-xs text-white/70 mb-3">⭐ {project.perks_description}</div>
                       <Link href={`/projects/${project.id}`}>
                         <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                          🔘 View Project <ArrowRight className="ml-2 h-4 w-4" />
+                          View Project <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </Link>
                     </CardContent>
