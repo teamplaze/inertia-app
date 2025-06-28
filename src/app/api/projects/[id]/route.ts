@@ -1,14 +1,15 @@
-// File: src/app/api/projects/[id]/route.ts
+// In src/app/api/projects/[id]/route.ts
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+// This is the corrected function signature
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const projectId = params.id;
+  const projectId = context.params.id; // Get the id from the context object
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -29,8 +30,6 @@ export async function GET(
     }
   );
 
-  // This is the powerful part: we select the project and all related
-  // data from the 'tiers' and 'testimonials' tables in a single query.
   const { data: project, error } = await supabase
     .from('projects')
     .select(`
@@ -39,7 +38,7 @@ export async function GET(
       testimonials (*)
     `)
     .eq('id', projectId)
-    .single(); // .single() ensures we get one project object, not an array.
+    .single();
 
   if (error) {
     console.error('Error fetching project:', error);
