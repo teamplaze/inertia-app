@@ -128,19 +128,19 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
               </span>
             </div>
             <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
-              <Button onClick={() => scrollToSection("from-artist")} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <User className="w-4 h-4 mr-2" /> From Artist
               </Button>
-              <Button onClick={() => scrollToSection("previews")} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <Eye className="w-4 h-4 mr-2" /> Previews
               </Button>
-              <Button onClick={() => scrollToSection("fan-stories")} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
               </Button>
-              <Button onClick={() => scrollToSection("budget-breakdown")} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button onClick={() => scrollToSection("budget-breakdown")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <DollarSign className="w-4 h-4 mr-2" /> Budget
               </Button>
-              <Button onClick={() => scrollToSection("support-levels")} variant="outline" size="sm" className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+              <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <Star className="w-4 h-4 mr-2" /> Support
               </Button>
             </div>
@@ -148,12 +148,14 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </div>
 
+      {/* === FROM THE ARTIST SECTION UPDATED === */}
       <section id="from-artist" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>From the Artist</h2>
         <Card className="rounded-xl" style={gradientCardStyle}>
           <CardContent className="p-6">
             <div className="prose prose-lg max-w-none prose-invert">
-                {projectData.project_description && projectData.project_description.split("\n").map((paragraph, index) => (
+                {/* Now using the new dedicated field from the database */}
+                {projectData.from_the_artist_message && projectData.from_the_artist_message.split("\n").map((paragraph, index) => (
                     <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
                 ))}
             </div>
@@ -161,21 +163,40 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </Card>
       </section>
 
+      {/* === PREVIEWS SECTION UPDATED === */}
       <section id="previews" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>Previews</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
-              <h3 className="font-semibold text-white">A Message from {projectData.artist_name}</h3>
-              <div className="aspect-video bg-black rounded-lg flex items-center justify-center"><p className="text-gray-400">Video player placeholder</p></div>
+              <h3 className="font-semibold text-white">{projectData.artist_name}</h3>
+              <div className="aspect-video bg-black rounded-lg">
+                {projectData.artist_message_video_url ? (
+                  <iframe
+                    src={projectData.artist_message_video_url}
+                    title="A Message from the Artist"
+                    className="w-full h-full rounded-lg"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><p className="text-gray-400">No video preview available.</p></div>
+                )}
+              </div>
             </CardContent>
           </Card>
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
               <h3 className="font-semibold text-white">Audio Preview</h3>
-              <div className="bg-black/40 rounded-lg p-4 flex items-center gap-3">
-                <Button size="sm" variant="outline" className="rounded-full border-gray-400 text-gray-200 hover:bg-gray-600"><Play className="w-4 h-4" /></Button>
-                <div className="flex-1"><div className="text-sm font-medium text-white">Track Preview</div></div>
+              <div className="bg-black/40 rounded-lg p-4">
+                {projectData.audio_preview_url ? (
+                  <audio controls className="w-full">
+                    <source src={projectData.audio_preview_url} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                ) : (
+                  <p className="text-center text-gray-400">No audio preview available.</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -270,7 +291,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
           <CardContent className="p-8 text-center">
             <h3 className="text-2xl font-bold text-white mb-4">Join the Community</h3>
             <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Connect with {projectData.artist_name} and other supporters in our exclusive community. Share your thoughts, get updates, and be part of the creative journey.</p>
-            <Button variant="outline" className="border-[#CB945E] text-[#CB945E] hover:bg-[#CB945E] hover:text-white">Join the Discussion</Button>
+            <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">Join the Discussion</Button>
           </CardContent>
         </Card>
       </section>

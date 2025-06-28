@@ -22,7 +22,7 @@ export type Testimonial = {
 };
 
 export type Project = {
-  id: number;
+   id: number;
   created_at: string;
   artist_name: string;
   project_title: string;
@@ -36,6 +36,8 @@ export type Project = {
   backer_count: number;
   artist_message_video_url: string;
   project_description: string;
+  from_the_artist_message: string; // <-- ADD THIS NEW FIELD
   tiers: Tier[];
   testimonials: Testimonial[];
 };
+
