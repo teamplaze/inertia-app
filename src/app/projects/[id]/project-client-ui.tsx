@@ -155,9 +155,9 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
           <CardContent className="p-6">
             <div className="prose prose-lg max-w-none prose-invert">
                 {/* Now using the new dedicated field from the database */}
-                {projectData.from_the_artist_message && projectData.from_the_artist_message.split("\n").map((paragraph, index) => (
-                    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
-                ))}
+                {projectData.from_the_artist_message && projectData.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
+    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
+))}
             </div>
           </CardContent>
         </Card>
