@@ -5,16 +5,23 @@ import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { BudgetCategory } from "@/types";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Badge } from "@/components/ui/badge";
 
-const COLORS = ['#64918E', '#CB945E', '#A9A9A9', '#8884d8', '#FF8042', '#00C49F'];
+const COLORS: { [key: string]: string } = {
+  'Recording': '#A67C5A',
+  'Photogs/Videographers': '#B8860B',
+  'Marketing Services': '#6B8E23',
+  'Merchandise': '#708090',
+  'Publicity': '#CD5C5C',
+  'Digital Asset Creation': '#4682B4',
+};
 
 export default function BudgetBreakdown({ categories }: { categories: BudgetCategory[] }) {
   const [view, setView] = useState<'summary' | 'detailed'>('summary');
 
-  // Calculate totals and chart data once, and only re-calculate if categories change.
   const { totalBudget, chartData } = useMemo(() => {
     if (!categories || categories.length === 0) {
       return { totalBudget: 0, chartData: [] };
@@ -34,90 +41,98 @@ export default function BudgetBreakdown({ categories }: { categories: BudgetCate
   }, [categories]);
   
   if (!categories || categories.length === 0) {
-    return null; // Don't render anything if there's no budget data
+    return null;
   }
 
   return (
+    <>
     <section id="budget-breakdown" className="mb-12">
-      <Card className="rounded-xl w-full" style={{ backgroundColor: "#2D3534", border: "2px solid #64918E" }}>
-        <CardContent className="p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Budget Breakdown</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">See how your support helps bring this album to life. Full transparency on where every dollar goes.</p>
-          </div>
-          
-          {/* View Toggle Buttons */}
-          <div className="flex justify-center bg-gray-800/50 rounded-lg p-1 mb-6">
-            <Button onClick={() => setView('summary')} variant="ghost" className={`flex-1 ${view === 'summary' ? 'bg-[#CB945E] text-white' : 'text-gray-300'} hover:bg-[#CB945E]/80 hover:text-white`}>
-              Summary View
-            </Button>
-            <Button onClick={() => setView('detailed')} variant="ghost" className={`flex-1 ${view === 'detailed' ? 'bg-[#CB945E] text-white' : 'text-gray-300'} hover:bg-[#CB945E]/80 hover:text-white`}>
-              Detailed View
-            </Button>
-          </div>
+      {/* This div is now outside and above the Card */}
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Budget Breakdown</h2>
+        <p className="text-gray-200 mb-6 max-w-2xl mx-auto">See how your support helps bring this album to life. Full transparency on where every dollar goes.</p>
+      </div>
 
+      <Card className="rounded-xl w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+        <CardContent className="p-6">
+          {/* View Toggle Buttons */}
+          <Tabs value={view} onValueChange={(value) => setView(value as 'summary' | 'detailed')} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 h-10 items-center justify-center rounded-lg bg-white/20 p-1 mb-6">
+              <TabsTrigger 
+                value="summary" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium text-white transition-all data-[state=active]:bg-[#CB945E] data-[state=active]:text-white data-[state=active]:shadow-sm"
+              >
+                Summary View
+              </TabsTrigger>
+              <TabsTrigger 
+                value="detailed" 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium text-white transition-all data-[state=active]:bg-[#CB945E] data-[state=active]:text-white data-[state=active]:shadow-sm"
+              >
+                Detailed View
+              </TabsTrigger>
+            </TabsList>
           {/* Conditional Rendering based on view */}
-          {view === 'summary' && (
+         <TabsContent value="summary">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="w-full h-[350px]">
+              <div className="w-full h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={5}>
+                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2}>
                       {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={COLORS[entry.name] || '#8884d8'} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} contentStyle={{ backgroundColor: 'rgba(45, 53, 52, 0.9)', borderColor: '#64918E' }} />
+                    <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} contentStyle={{ backgroundColor: 'rgba(45, 53, 52, 0.9)', borderColor: '#64918E', color: 'white' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
               <div className="space-y-2">
-                {chartData.map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                {chartData.map((entry) => (
+                  <div key={entry.name} className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors min-h-[52px]">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                      <span className="font-medium text-white">{entry.name}</span>
+                      <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[entry.name] || '#8884d8' }}></div>
+                      <span className="font-semibold text-sm text-[#2D3534]">{entry.name}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-white">${entry.value.toLocaleString()}</div>
-                      <div className="text-sm text-gray-400">{((entry.value / totalBudget) * 100).toFixed(0)}%</div>
+                      <div className="font-bold text-sm text-[#64918E]">${entry.value.toLocaleString()}</div>
+                      <div className="text-xs text-[#2D3534]/70">{((entry.value / totalBudget) * 100).toFixed(0)}%</div>
                     </div>
                   </div>
                 ))}
-                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border-t-2 border-green-500">
-                  <div className="font-bold text-white">Total Project Budget</div>
-                  <div className="font-bold text-green-400">${totalBudget.toLocaleString()}</div>
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border-2 border-[#CB945E] min-h-[52px]">
+                    <div className="font-semibold text-lg text-[#2D3534]">Total Project Budget</div>
+                    <div className="font-bold text-lg text-green-500">${totalBudget.toLocaleString()}</div>
                 </div>
               </div>
             </div>
-          )}
+          </TabsContent>
 
-          {view === 'detailed' && (
-            <div className="space-y-2">
+          <TabsContent value="detailed">
+            <div className="space-y-3">
               <Accordion type="single" collapsible className="w-full">
-                {categories.map((category, index) => {
+                {categories.map((category) => {
                   const categoryTotal = category.budget_line_items.reduce((acc, item) => acc + item.cost, 0);
                   return (
-                    <AccordionItem value={`item-${category.id}`} key={category.id} className="bg-gray-800/50 rounded-lg mb-2 border-b-0">
-                      <AccordionTrigger className="p-4 hover:no-underline">
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center gap-3">
-                             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                             <span className="font-medium text-white">{category.name}</span>
-                             <Badge variant="secondary">{category.budget_line_items.length} items</Badge>
-                          </div>
-                          <div className="font-semibold text-white pr-4">${categoryTotal.toLocaleString()}</div>
+                    <AccordionItem value={`item-${category.id}`} key={category.id} className="border-b-0">
+                      <AccordionTrigger className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors min-h-[52px] group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[category.name] || '#8884d8' }}></div>
+                          <span className="font-semibold text-sm text-[#2D3534] group-hover:text-[#64918E] transition-colors">{category.name}</span>
+                          <Badge className="bg-[#CB945E] text-white font-semibold text-xs ml-2">{category.budget_line_items.length} items</Badge>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold text-sm text-[#64918E]">${categoryTotal.toLocaleString()}</span>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="p-4 pt-0">
-                        <div className="space-y-2 pl-6 border-l-2 border-gray-700 ml-1.5">
+                      <AccordionContent className="pt-2 pb-1">
+                        <div className="ml-[28px] space-y-2 mt-2">
                           {category.budget_line_items.map(item => (
-                            <div key={item.id} className="flex justify-between items-center py-2">
+                            <div key={item.id} className="flex justify-between items-center p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                               <div>
-                                <div className="text-gray-200">{item.name}</div>
-                                {item.notes && <div className="text-xs text-gray-400">{item.notes}</div>}
+                                <div className="font-medium text-sm text-[#2D3534]">{item.name}</div>
+                                {item.notes && <div className="text-xs text-[#2D3534]/70 mt-1">{item.notes}</div>}
                               </div>
-                              <div className="text-gray-300">${item.cost.toLocaleString()}</div>
+                              <div className="font-semibold text-sm text-[#64918E]">${item.cost.toLocaleString()}</div>
                             </div>
                           ))}
                         </div>
@@ -126,14 +141,19 @@ export default function BudgetBreakdown({ categories }: { categories: BudgetCate
                   )
                 })}
               </Accordion>
-              <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg mt-4 border-t-2 border-green-500">
-                  <div className="font-bold text-white text-lg">Total Project Budget</div>
-                  <div className="font-bold text-green-400 text-lg">${totalBudget.toLocaleString()}</div>
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border-2 border-[#CB945E] mt-3 min-h-[52px]">
+                <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                    <span className="font-semibold text-lg text-[#2D3534]">Total Project Budget</span>
                 </div>
+                <div className="font-bold text-lg text-green-500">${totalBudget.toLocaleString()}</div>
+              </div>
             </div>
-          )}
+          </TabsContent>
+        </Tabs>
         </CardContent>
       </Card>
     </section>
+    </>
   );
 }

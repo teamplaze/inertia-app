@@ -9,22 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, Heart, Play } from "lucide-react";
 import Image from "next/image";
+import BudgetBreakdown from "@/components/BudgetBreakdown";
 
-// We'll create this component in a future step. For now, it's a placeholder.
-function BudgetBreakdown() {
-  return (
-    <section id="budget-breakdown" className="mb-12">
-      <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>
-        Budget Breakdown
-      </h2>
-      <Card className="rounded-xl" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
-        <CardContent className="p-6">
-          <p className="text-white text-center">Budget breakdown chart component will go here.</p>
-        </CardContent>
-      </Card>
-    </section>
-  );
-}
+
 
 // Define the data types to match your API response
 type Tier = {
@@ -34,6 +21,7 @@ type Testimonial = {
   id: number; name: string; location: string; profile_image_url: string; moment: string; date: string; story: string; verified: boolean;
 };
 type Project = {
+  from_the_artist_message: any;
   id: number; project_title: string; artist_name: string; artist_profile_image_url: string; artist_bio: string; project_image_url: string; current_funding: number; funding_goal: number; backer_count: number; status: string; project_description: string; audio_preview_url: string; artist_message_video_url: string; tiers: Tier[]; testimonials: Testimonial[];
 };
 
@@ -224,7 +212,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </section>
 
-      <BudgetBreakdown />
+      <BudgetBreakdown categories={projectData.budget_categories} />
 
       <section id="support-levels" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
