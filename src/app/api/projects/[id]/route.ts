@@ -1,15 +1,14 @@
-// In src/app/api/projects/[id]/route.ts
+// File: src/app/api/projects/[id]/route.ts
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server'; // Import NextRequest
 
-// This is the corrected function signature
 export async function GET(
-  request: Request,
-  context: { params: { id: string } }
+  request: NextRequest, // Use NextRequest for the first argument
+  { params }: { params: { id: string } }
 ) {
-  const projectId = context.params.id; // Get the id from the context object
+  const projectId = params.id;
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
