@@ -2,13 +2,13 @@
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { NextResponse, type NextRequest } from 'next/server'; // Import NextRequest
+import { NextResponse } from 'next/server';
 
 export async function GET(
-  request: NextRequest, // Use NextRequest for the first argument
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: { id: string } }
 ) {
-  const projectId = params.id;
+  const projectId = context.params.id;
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -29,12 +29,14 @@ export async function GET(
     }
   );
 
+  // This select statement is now updated to fetch the nested budget items
   const { data: project, error } = await supabase
     .from('projects')
     .select(`
       *,
       tiers (*),
-      testimonials (*)
+      testimonials (*),
+      budget_categories (*, budget_line_items(*))
     `)
     .eq('id', projectId)
     .single();

@@ -1,5 +1,21 @@
 // File: src/types.ts
 
+export type BudgetLineItem = {
+  id: number;
+  category_id: number;
+  name: string;
+  notes: string | null;
+  cost: number;
+};
+
+export type BudgetCategory = {
+  id: number;
+  project_id: number;
+  name: string;
+  // This will hold the nested line items for each category
+  budget_line_items: BudgetLineItem[];
+};
+
 export type Tier = {
   id: number;
   name: string;
@@ -22,7 +38,7 @@ export type Testimonial = {
 };
 
 export type Project = {
-   id: number;
+  id: number;
   created_at: string;
   artist_name: string;
   project_title: string;
@@ -36,8 +52,9 @@ export type Project = {
   backer_count: number;
   artist_message_video_url: string;
   project_description: string;
-  from_the_artist_message: string; // <-- ADD THIS NEW FIELD
+  from_the_artist_message: string;
   tiers: Tier[];
   testimonials: Testimonial[];
+  // This is the new field for our nested budget data
+  budget_categories: BudgetCategory[];
 };
-
