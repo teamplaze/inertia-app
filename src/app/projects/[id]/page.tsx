@@ -7,8 +7,7 @@ import type { Project } from "@/types"; // Assuming your types are in src/types.
 // This function runs on the server to fetch data
 async function getProjectData(id: string): Promise<Project | null> {
   // We use the full URL because server-side fetch needs it.
-  // In production, this should be your live Vercel URL.
-  const apiUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+  const apiUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const res = await fetch(`${apiUrl}/api/projects/${id}`, { cache: 'no-store' });
 
   if (!res.ok) {
@@ -19,8 +18,8 @@ async function getProjectData(id: string): Promise<Project | null> {
 
 // This is the main page component (a Server Component)
 export default async function ProjectPage({ params }: { params: { id: string } }) {
-  const resolvedParams = await params;
-  const projectData = await getProjectData(params.id);
+  const resolvedParams = await params; // This line is correct
+  const projectData = await getProjectData(resolvedParams.id); // <-- CORRECTED: Use resolvedParams here
 
   if (!projectData) {
     return (
