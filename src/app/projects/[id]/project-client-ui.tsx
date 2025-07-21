@@ -10,20 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, Heart, Play } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
-
-
-
-// Define the data types to match your API response
-type Tier = {
-  id: number; name: string; price: number; description: string; perks: string[]; total_slots: number; claimed_slots: number;
-};
-type Testimonial = {
-  id: number; name: string; location: string; profile_image_url: string; moment: string; date: string; story: string; verified: boolean;
-};
-type Project = {
-  from_the_artist_message: any;
-  id: number; project_title: string; artist_name: string; artist_profile_image_url: string; artist_bio: string; project_image_url: string; current_funding: number; funding_goal: number; backer_count: number; status: string; project_description: string; audio_preview_url: string; artist_message_video_url: string; tiers: Tier[]; testimonials: Testimonial[];
-};
+import type { Project, Tier, Testimonial } from "@/types";
 
 
 export default function ProjectUI({ projectData }: { projectData: Project }) {
