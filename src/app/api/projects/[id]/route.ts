@@ -6,9 +6,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } } // This signature creates a 'params' variable
+  { params }: { params: Promise<{ id: string }> } // Type params as a Promise
 ) {
-  const projectId = params.id; // <-- CORRECTED: Use the 'params' variable here
+  const { id: projectId } = await params; // Await params before accessing id
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -29,7 +29,6 @@ export async function GET(
     }
   );
 
-  // This select statement is now updated to fetch the nested budget items
   const { data: project, error } = await supabase
     .from('projects')
     .select(`
