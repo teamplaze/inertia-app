@@ -6,9 +6,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } } // This signature creates a 'params' variable
 ) {
-  const projectId = context.params.id;
+  const projectId = params.id; // <-- CORRECTED: Use the 'params' variable here
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
