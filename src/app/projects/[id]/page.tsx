@@ -17,7 +17,7 @@ async function getProjectData(id: string): Promise<Project | null> {
 }
 
 // This is the main page component (a Server Component)
-export default async function ProjectPage({ params }: { params: { id: string } }) {
+export default async function ProjectPage({ params }: { params: Promise<{ id: string }>} ) {
   const resolvedParams = await params; // This line is correct
   const projectData = await getProjectData(resolvedParams.id); // <-- CORRECTED: Use resolvedParams here
 
