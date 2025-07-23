@@ -6,9 +6,7 @@ import type { Project } from "@/types"; // Assuming your types are in src/types.
 
 async function getProjectData(id: string): Promise<Project | null> {
   // Determine the base URL based on the environment
-  const baseUrl = process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}` 
-    : 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   const res = await fetch(`${baseUrl}/api/projects/${id}`, { cache: 'no-store' });
 
