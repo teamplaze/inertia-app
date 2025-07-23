@@ -232,7 +232,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                 </ul>
                 <div className="pt-4 border-t border-white/20">
                   <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
-                  <Button onClick={() => handleTierSelect(tier.id)} className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-orange-500 hover:bg-orange-600" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} disabled={(tier.total_slots - tier.claimed_slots) === 0}>
+                  <Button onClick={() => handleTierSelect(tier.id)} className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} disabled={(tier.total_slots - tier.claimed_slots) === 0}>
                     {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
                   </Button>
                 </div>
@@ -252,7 +252,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                   <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: "#CB945E" }}>${selectedTierData.price}</strong></p>
                 </div>
                 <div className="flex gap-3">
-                  <Button variant="outline" className="border-gray-400 text-gray-200 hover:bg-black/30" onClick={() => { setSelectedTier(null); setShowCheckout(false); }}>Change Selection</Button>
+                  <Button variant="outline" className="border-gray-400 text-gray-200 bg-transparent hover:bg-black/30 hover:text-gray-200" onClick={() => { setSelectedTier(null); setShowCheckout(false); }}>Change Selection</Button>
                   <Button onClick={handleCheckout} className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">Continue to Checkout</Button>
                 </div>
               </div>

@@ -142,7 +142,7 @@ export default function Component() {
                       <div className="bg-[#CB945E] h-2 rounded-full" style={{ width: `${fundedPercent}%` }}></div>
                     </div>
                     <div className="text-xs text-white/70 mb-2">🕒 {project.status}</div>
-                    <div className="text-xs text-white/70 mb-3">⭐ {project.perks_description}</div>
+                    <div className="text-xs text-white/70 mb-3 truncate">⭐ {project.artist_bio}</div>
                     <Link href={`/projects/${project.id}`}>
                       <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                         View Project <ArrowRight className="ml-2 h-4 w-4" />
