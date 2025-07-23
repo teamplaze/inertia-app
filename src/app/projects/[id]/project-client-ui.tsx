@@ -186,13 +186,27 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
               <CardContent className="p-6">
                 <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
                 <div className="flex items-start gap-4 mb-4">
-                  <Image src={testimonial.profile_image_url || "/placeholder.svg"} alt={testimonial.name} width={48} height={48} className="w-12 h-12 rounded-full object-cover border-2 border-gray-400" />
+                  {testimonial.profile_image_url && (
+                    <Image
+                      src={testimonial.profile_image_url}
+                      alt={testimonial.name}
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
+                    />
+                  )}
+                  {/* This div was missing from your snippet but is needed for name/location */}
                   <div className="flex-1">
-                    <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-300">{testimonial.location}</p>
+                      <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-300">{testimonial.location}</p>
                   </div>
                 </div>
-                <p className="text-white leading-relaxed pl-4 border-l-2 border-orange-400/50">{testimonial.story}</p>
+                <p className="text-white leading-relaxed">{testimonial.story}</p>
+                
+                {/* Add this div for the attribution */}
+                <div className="text-right text-gray-300 italic mt-4">
+                  — {testimonial.name}
+                </div>
               </CardContent>
             </Card>
           ))}

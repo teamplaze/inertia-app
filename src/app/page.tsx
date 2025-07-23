@@ -103,13 +103,13 @@ export default function Component() {
                 </Button>
               </div>
             </div>
-            <Image
+            {/*<Image
               src="/hero-image.jpg"
               width="1536"
               height="1024"
               alt="Hero"
               className="mx-auto aspect-[3/1] rounded-2xl object-cover shadow-lg border border-gray-600"
-            />
+            />*/}
           </div>
         </div>
       </section>
