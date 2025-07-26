@@ -11,9 +11,12 @@ import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, 
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import type { Project, Tier, Testimonial } from "@/types";
+import { useAuth } from "@/lib/hooks/useAuth";
+import Link from "next/link";
 
 
 export default function ProjectUI({ projectData }: { projectData: Project }) {
+  const { user } = useAuth();
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
 
@@ -246,9 +249,27 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                 </ul>
                 <div className="pt-4 border-t border-white/20">
                   <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
-                  <Button onClick={() => handleTierSelect(tier.id)} className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} disabled={(tier.total_slots - tier.claimed_slots) === 0}>
-                    {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
-                  </Button>
+                  
+                  {/* === CONDITIONAL BUTTON LOGIC START === */}
+                  {user ? (
+                    // If user is logged in, show the normal button with your exact styling
+                    <Button 
+                      onClick={() => handleTierSelect(tier.id)} 
+                      className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
+                      disabled={(tier.total_slots - tier.claimed_slots) === 0}
+                    >
+                      {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
+                    </Button>
+                  ) : (
+                    // If user is logged out, show a "Sign in" button that links to the login page
+                    <Link href={`/login?redirect=/projects/${projectData.id}#support-levels`}>
+                      <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                        Sign in to contribute
+                      </Button>
+                    </Link>
+                  )}
+                  {/* === CONDITIONAL BUTTON LOGIC END === */}
+
                 </div>
               </CardContent>
             </Card>
