@@ -264,7 +264,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                     // If user is logged out, show a "Sign in" button that links to the login page
                     <Link href={`/login?redirect=/projects/${projectData.id}#support-levels`}>
                       <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                        Sign in to contribute
+                        Login/Sign up to contribute
                       </Button>
                     </Link>
                   )}
