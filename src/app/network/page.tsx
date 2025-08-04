@@ -102,7 +102,7 @@ export default function NetworkPage() {
             <div className="space-y-2">
               <Label htmlFor="specialty" className="font-medium text-gray-200">What type of work do you specialize in? (required)</Label>
               <Select required onValueChange={setSpecialty}>
-                <SelectTrigger className="justify-start text-white/70 data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E]">
+                <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E] [&>span]:text-white/70 data-[placeholder]:text-white/70">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#2D3534] text-white border-gray-700">
@@ -125,7 +125,7 @@ export default function NetworkPage() {
             <div className="space-y-2">
                 <Label htmlFor="contact-method" className="font-medium text-gray-200">Preferred Contact Method (required)</Label>
                 <Select required onValueChange={setContactMethod}>
-                    <SelectTrigger className="justify-start text-white/70 data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E]">
+                    <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E] [&>span]:text-white/70 data-[placeholder]:text-white/70">
                         <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
                     <SelectContent className="bg-[#2D3534] text-white border-gray-700">
