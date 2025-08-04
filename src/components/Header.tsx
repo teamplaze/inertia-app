@@ -67,8 +67,8 @@ export default function Header() {
         <Link href="/#featured-projects" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           Projects
         </Link>
-        <Link href="/#how-it-works" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
-          How It Works
+        <Link href="/network" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
+          Network
         </Link>
         <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           FAQ

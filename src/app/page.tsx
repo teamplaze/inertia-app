@@ -130,7 +130,7 @@ export default function Component() {
                     width={350}
                     height={200}
                     alt={project.project_title}
-                    className="aspect-video object-contain"
+                    className="aspect-video object-contain w-full h-48"
                   />
                   <CardContent className="p-4">
                     <CardTitle className="text-lg font-semibold tracking-tight text-white">
