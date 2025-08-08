@@ -104,11 +104,11 @@ export default function Component() {
               </div>
             </div>
             {/*<Image
-              src="/hero-image.jpg"
-              width="1536"
-              height="1024"
-              alt="Hero"
-              className="mx-auto aspect-[3/1] rounded-2xl object-cover shadow-lg border border-gray-600"
+              src="/hero_image.svg"  // or whatever you named the file
+              width="600"
+              height="300"
+              alt="Independent music investment platform"
+              className="mx-auto aspect-[2/1] rounded-2xl object-contain shadow-lg border border-gray-600/30"
             />*/}
           </div>
         </div>
@@ -216,14 +216,14 @@ export default function Component() {
               </div>
             </div>
           </div>
-          <div className="text-center mt-8">
+          {/*<div className="text-center mt-8">
             <Button
               variant="outline"
               className="border-[#64918E] text-[#64918E] hover:bg-[#64918E]/20 hover:text-[#64918E] hover:border-[#64918E]"
             >
               About Us
             </Button>
-          </div>
+          </div> */}
         </div>
       </section>
       {/* The form is now part of the shared footer, so we can remove it from here */}

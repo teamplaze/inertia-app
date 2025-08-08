@@ -70,9 +70,9 @@ export default function Header() {
         <Link href="/network" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           Network
         </Link>
-        <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
+        {/* <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           FAQ
-        </Link>
+        </Link> */}
 
         {/* This is the conditional rendering logic */}
         {user ? (
