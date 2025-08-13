@@ -251,6 +251,9 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                   <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
                   
                   {/* === CONDITIONAL BUTTON LOGIC START === */}
+                  {/* TEMPORARILY HIDDEN: Login/contribution buttons until site launch */}
+                  {/* TODO: Uncomment when ready to enable contributions */}
+                  {/*
                   {user ? (
                     // If user is logged in, show the normal button with your exact styling
                     <Button 
@@ -268,8 +271,14 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                       </Button>
                     </Link>
                   )}
+                   */}
+                  
+                  {/* Temporary placeholder while buttons are hidden */}
+                  <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm" onClick={() => {}}>
+                    Coming Soon
+                  </div>  
                   {/* === CONDITIONAL BUTTON LOGIC END === */}
-
+                  
                 </div>
               </CardContent>
             </Card>
