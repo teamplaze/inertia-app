@@ -64,6 +64,9 @@ export default function Header() {
         <Image src="/Inertia-Logo-w-tagline.svg" alt="Inertia Logo" width={120} height={60} />
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
+        <Link href="/#how-it-works" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
+          How It Works
+        </Link>
         <Link href="/#featured-projects" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           Projects
         </Link>
@@ -75,6 +78,7 @@ export default function Header() {
         </Link> */}
 
         {/* This is the conditional rendering logic */}
+        {/* 
         {user ? (
           // If a user is logged in, show the Avatar and Dropdown Menu
           <DropdownMenu>
@@ -100,8 +104,9 @@ export default function Header() {
             <Button size="sm" className="bg-[#CB945E] text-white hover:bg-white hover:text-[#CB945E]">
               Login
             </Button>
-          </Link>
+          </Link> 
         )}
+        */}
       </nav>
     </header>
   );
