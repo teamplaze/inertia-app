@@ -1,0 +1,125 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient backgrounds -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D5A5A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64918E;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="stageGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A1A1A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="spotlightGradient" cx="50%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:#CB945E;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#CB945E;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#CB945E;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Sound wave pattern -->
+    <pattern id="soundWaves" x="0" y="0" width="40" height="20" patternUnits="userSpaceOnUse">
+      <path d="M0,10 Q10,5 20,10 T40,10" stroke="#CB945E" stroke-width="1" fill="none" opacity="0.4"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Sound waves in background -->
+  <rect width="800" height="400" fill="url(#soundWaves)" opacity="0.3"/>
+  
+  <!-- Stage/platform -->
+  <ellipse cx="200" cy="350" rx="150" ry="30" fill="url(#stageGradient)"/>
+  
+  <!-- Spotlight effect -->
+  <ellipse cx="200" cy="200" rx="300" ry="200" fill="url(#spotlightGradient)"/>
+  
+  <!-- Main artist figure -->
+  <g transform="translate(200,200)">
+    <!-- Artist body -->
+    <ellipse cx="0" cy="80" rx="15" ry="40" fill="#2D2D2D"/>
+    <!-- Artist head -->
+    <circle cx="0" cy="30" r="18" fill="#4A4A4A"/>
+    <!-- Microphone -->
+    <rect x="25" y="25" width="3" height="15" fill="#CB945E"/>
+    <circle cx="26.5" cy="22" r="4" fill="#CB945E"/>
+    <line x1="26.5" y1="40" x2="26.5" y2="60" stroke="#CB945E" stroke-width="1"/>
+    <!-- Guitar -->
+    <ellipse cx="-20" cy="60" rx="12" ry="30" fill="#8B4513" transform="rotate(-20)"/>
+    <rect x="-22" y="45" width="4" height="25" fill="#654321" transform="rotate(-20)"/>
+  </g>
+  
+  <!-- Music notes floating around -->
+  <g fill="#CB945E" opacity="0.8">
+    <g transform="translate(120,120)">
+      <circle cx="0" cy="0" r="3"/>
+      <rect x="3" y="-15" width="1" height="15"/>
+    </g>
+    <g transform="translate(280,140)">
+      <circle cx="0" cy="0" r="3"/>
+      <rect x="3" y="-15" width="1" height="15"/>
+      <path d="M3,-15 Q8,-18 12,-15" stroke="#CB945E" stroke-width="1" fill="none"/>
+    </g>
+    <g transform="translate(160,80)">
+      <circle cx="0" cy="0" r="2"/>
+      <rect x="2" y="-12" width="1" height="12"/>
+    </g>
+  </g>
+  
+  <!-- Fan crowd silhouettes -->
+  <g fill="#1A1A1A" opacity="0.6">
+    <ellipse cx="500" cy="320" rx="8" ry="20"/>
+    <circle cx="500" cy="295" r="8"/>
+    <rect x="495" y="315" width="10" height="4" rx="2"/> <!-- Phone/device -->
+    
+    <ellipse cx="530" cy="325" rx="8" ry="18"/>
+    <circle cx="530" cy="302" r="8"/>
+    <rect x="525" y="320" width="10" height="4" rx="2"/>
+    
+    <ellipse cx="470" cy="330" rx="8" ry="15"/>
+    <circle cx="470" cy="310" r="8"/>
+    <rect x="465" y="325" width="10" height="4" rx="2"/>
+    
+    <ellipse cx="560" cy="335" rx="8" ry="12"/>
+    <circle cx="560" cy="318" r="8"/>
+    
+    <ellipse cx="440" cy="335" rx="8" ry="12"/>
+    <circle cx="440" cy="318" r="8"/>
+  </g>
+  
+  <!-- Connection lines from fans to artist (representing direct funding) -->
+  <g stroke="#CB945E" stroke-width="1" opacity="0.4" fill="none">
+    <path d="M500,305 Q350,250 220,240" stroke-dasharray="3,3"/>
+    <path d="M530,310 Q370,260 220,245" stroke-dasharray="3,3"/>
+    <path d="M470,315 Q330,270 215,250" stroke-dasharray="3,3"/>
+  </g>
+  
+  <!-- Dollar signs and music symbols showing the flow -->
+  <g fill="#CB945E" opacity="0.6" font-family="Arial, sans-serif" font-size="12">
+    <text x="350" y="235">♪</text>
+    <text x="380" y="250">$</text>
+    <text x="320" y="265">♪</text>
+    <text x="410" y="270">$</text>
+  </g>
+  
+  <!-- Vinyl records in background -->
+  <g opacity="0.2">
+    <circle cx="650" cy="100" r="40" fill="#1A1A1A" stroke="#CB945E" stroke-width="2"/>
+    <circle cx="650" cy="100" r="8" fill="#CB945E"/>
+    <circle cx="650" cy="100" r="25" fill="none" stroke="#CB945E" stroke-width="1"/>
+    
+    <circle cx="720" cy="180" r="30" fill="#1A1A1A" stroke="#CB945E" stroke-width="2"/>
+    <circle cx="720" cy="180" r="6" fill="#CB945E"/>
+    <circle cx="720" cy="180" r="18" fill="none" stroke="#CB945E" stroke-width="1"/>
+  </g>
+  
+  <!-- Abstract geometric elements suggesting innovation -->
+  <g stroke="#CB945E" stroke-width="2" fill="none" opacity="0.3">
+    <polygon points="600,50 620,30 640,50 620,70"/>
+    <polygon points="680,60 700,40 720,60 700,80"/>
+    <circle cx="580" cy="80" r="15"/>
+  </g>
+  
+
+</svg>
