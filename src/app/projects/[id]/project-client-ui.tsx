@@ -12,11 +12,17 @@ import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import type { Project, Tier, Testimonial } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { loadStripe } from '@stripe/stripe-js';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
+// Check if payments are enabled via environment variable (same as header)
+const paymentsEnabled = process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
 
 export default function ProjectUI({ projectData }: { projectData: Project }) {
   const { user } = useAuth();
+  const router = useRouter();
+  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
 
@@ -28,8 +34,41 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
     setShowCheckout(true);
   };
 
-  const handleCheckout = () => {
-    alert("Redirecting to checkout for " + selectedTierData?.name + " tier!");
+  const handleCheckout = async () => {
+    if (!selectedTierData) {
+      alert("Please select a tier first.");
+      return;
+    }
+
+    try {
+      // 1. Call your backend API to create the checkout session
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tierId: selectedTierData.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session.');
+      }
+
+      const { sessionId } = await response.json();
+
+      // 2. Redirect to Stripe's hosted checkout page
+      const stripe = await stripePromise;
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        if (error) {
+          console.error('Stripe redirect error:', error);
+          // Optionally show an error message to the user
+        }
+      }
+    } catch (error) {
+      console.error('Checkout failed:', error);
+      // Optionally show an error message to the user
+    }
   };
   
   const scrollToSection = (sectionId: string) => {
@@ -226,10 +265,10 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
   key={tier.id}
   className={`flex flex-col relative transition-all duration-200 rounded-xl ${
     selectedTier === tier.id 
-      ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg" // <-- Ring styles are now classes
+      ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
       : "hover:shadow-md hover:shadow-gray-700/50"
   }`}
-  style={regularCardStyle} // <-- The style is now always the same
+  style={regularCardStyle}
 >
               <CardHeader>
                 <div className="flex justify-between items-start">
@@ -250,34 +289,33 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                 <div className="pt-4 border-t border-white/20">
                   <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
                   
-                  {/* === CONDITIONAL BUTTON LOGIC START === */}
-                  {/* TEMPORARILY HIDDEN: Login/contribution buttons until site launch */}
-                  {/* TODO: Uncomment when ready to enable contributions */}
-                  {/*
-                  {user ? (
-                    // If user is logged in, show the normal button with your exact styling
-                    <Button 
-                      onClick={() => handleTierSelect(tier.id)} 
-                      className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
-                      disabled={(tier.total_slots - tier.claimed_slots) === 0}
-                    >
-                      {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
-                    </Button>
-                  ) : (
-                    // If user is logged out, show a "Sign in" button that links to the login page
-                    <Link href={`/login?redirect=/projects/${projectData.id}#support-levels`}>
-                      <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                        Login/Sign up to contribute
+                  {/* === UPDATED CONDITIONAL BUTTON LOGIC === */}
+                  {paymentsEnabled ? (
+                    // When payments are enabled (development/testing)
+                    user ? (
+                      // If user is logged in, show the normal button
+                      <Button 
+                        onClick={() => handleTierSelect(tier.id)} 
+                        className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
+                        disabled={(tier.total_slots - tier.claimed_slots) === 0}
+                      >
+                        {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
                       </Button>
-                    </Link>
+                    ) : (
+                      // If user is logged out, show a "Sign in" button that links to the login page
+                      <Link href={`/login?redirect=/projects/${projectData.id}#support-levels`}>
+                        <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                          Login/Sign up to contribute
+                        </Button>
+                      </Link>
+                    )
+                  ) : (
+                    // When payments are disabled (production), show "Coming Soon"
+                    <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
+                      Coming Soon
+                    </div>
                   )}
-                   */}
-                  
-                  {/* Temporary placeholder while buttons are hidden */}
-                  <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm" onClick={() => {}}>
-                    Coming Soon
-                  </div>  
-                  {/* === CONDITIONAL BUTTON LOGIC END === */}
+                  {/* === END UPDATED CONDITIONAL BUTTON LOGIC === */}
                   
                 </div>
               </CardContent>
@@ -286,7 +324,8 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </section>
 
-      {showCheckout && selectedTierData && (
+      {/* Only show checkout section when payments are enabled */}
+      {paymentsEnabled && showCheckout && selectedTierData && (
         <section className="mb-12">
           <Card className="rounded-xl" style={gradientCardStyle}>
             <CardContent className="p-6">
