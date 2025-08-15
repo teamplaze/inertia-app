@@ -19,7 +19,11 @@ import {
 import { useRouter } from 'next/navigation';
 
 // Check if payments are enabled via environment variable
-const paymentsEnabled = process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
+const paymentsEnabled = (() => {
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return false;
+  return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
+})();
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
