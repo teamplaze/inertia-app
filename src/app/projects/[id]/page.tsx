@@ -5,8 +5,12 @@ import ProjectUI from "./project-client-ui"; // Import our new client component
 import type { Project } from "@/types"; // Assuming your types are in src/types.ts
 
 async function getProjectData(id: string): Promise<Project | null> {
-  // Determine the base URL based on the environment
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  // This logic now handles all three environments
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL // 1. Use the production URL if it exists
+    ? process.env.NEXT_PUBLIC_BASE_URL
+    : process.env.VERCEL_URL // 2. Otherwise, use the Vercel preview URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000'; // 3. Fallback to localhost for local development
 
   const res = await fetch(`${baseUrl}/api/projects/${id}`, { cache: 'no-store' });
 
