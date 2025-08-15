@@ -1,5 +1,5 @@
 // File: src/app/projects/[id]/page.tsx
-// More robust version that handles type mismatches
+// Fixed version with complete type mapping
 
 import { createClient } from '@/lib/supabase/server';
 import Link from "next/link";
@@ -39,7 +39,7 @@ async function getProjectData(id: string): Promise<Project | null> {
 
     console.log('✅ Project data fetched successfully:', projectData.project_title);
     
-    // Transform the data to ensure it matches your Project type
+    // Transform the data to match your Project type
     const project: Project = {
       id: projectData.id,
       created_at: projectData.created_at,
