@@ -51,7 +51,6 @@ export type Project = {
   audio_preview_url: string;
   backer_count: number;
   artist_message_video_url: string;
-  project_description: string;
   from_the_artist_message: string;
   tiers: Tier[];
   testimonials: Testimonial[];

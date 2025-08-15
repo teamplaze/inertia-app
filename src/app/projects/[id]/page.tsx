@@ -39,6 +39,7 @@ async function getProjectData(id: string): Promise<Project | null> {
 
     console.log('✅ Project data fetched successfully:', projectData.project_title);
     
+    //Force fresh build to ensure types are correct
     // Transform the data to match your Project type
     const project: Project = {
       id: projectData.id,
