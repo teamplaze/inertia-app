@@ -18,12 +18,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from 'next/navigation';
 
+// Check if payments are enabled via environment variable
+const paymentsEnabled = (() => {
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return false;
+  return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
+})();
+
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
   const router = useRouter();
 
   useEffect(() => {
+    // Only set up auth if payments are enabled
+    if (!paymentsEnabled) return;
+
     // This function runs when the component first loads.
     // It gets the current logged-in user.
     const getInitialUser = async () => {
@@ -73,40 +83,47 @@ export default function Header() {
         <Link href="/network" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           Network
         </Link>
+        <Link href="/FAQ" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
+          FAQ
+        </Link>
         {/* <Link href="#" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
           FAQ
         </Link> */}
 
-        {/* This is the conditional rendering logic */}
-        {/* 
-        {user ? (
-          // If a user is logged in, show the Avatar and Dropdown Menu
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage src={user.user_metadata.avatar_url} />
-                <AvatarFallback className="bg-[#CB945E] text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">Billing</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#CB945E] hover:!text-[#CB945E]">
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Conditional rendering based on environment variable */}
+        {paymentsEnabled ? (
+          // Show login/user functionality when payments are enabled (development/testing)
+          user ? (
+            // If a user is logged in, show the Avatar and Dropdown Menu
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer">
+                  <AvatarImage src={user.user_metadata.avatar_url} />
+                  <AvatarFallback className="bg-[#CB945E] text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Billing</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#CB945E] hover:!text-[#CB945E]">
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            // If no user is logged in, show the Login button
+            <Link href="/login">
+              <Button size="sm" className="bg-[#CB945E] text-white hover:bg-white hover:text-[#CB945E]">
+                Login
+              </Button>
+            </Link>
+          )
         ) : (
-          // If no user is logged in, show the Login button
-          <Link href="/login">
-            <Button size="sm" className="bg-[#CB945E] text-white hover:bg-white hover:text-[#CB945E]">
-              Login
-            </Button>
-          </Link> 
+          // When payments are disabled (production), show nothing
+          null
         )}
-        */}
       </nav>
     </header>
   );
