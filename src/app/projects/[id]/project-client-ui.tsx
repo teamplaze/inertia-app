@@ -1,8 +1,6 @@
-// File: src/app/projects/[id]/project-client-ui.tsx
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +13,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 // Check if payments are enabled via environment variable (same as header)
 const paymentsEnabled = (() => {
@@ -27,11 +26,40 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
   const { user } = useAuth();
   const router = useRouter();
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  
+  // Use state for tiers to allow for real-time updates
+  const [tiers, setTiers] = useState<Tier[]>(projectData.tiers);
+  const [project, setProject] = useState<Project>(projectData);
+  
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
+  const supabase = createClient();
 
-  const fundingPercentage = Math.round((projectData.current_funding / projectData.funding_goal) * 100);
-  const selectedTierData = projectData.tiers.find((tier) => tier.id === selectedTier);
+  useEffect(() => {
+    // Listen for changes to the 'tiers' table for this project
+    const tiersChannel = supabase
+      .channel(`realtime-tiers:${project.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'tiers', filter: `project_id=eq.${project.id}` },
+        (payload) => {
+          const updatedTier = payload.new as Tier;
+          setTiers(currentTiers =>
+            currentTiers.map(tier => (tier.id === updatedTier.id ? updatedTier : tier))
+          );
+        }
+      )
+      .subscribe();
+
+    // Clean up the subscription when the component unmounts
+    return () => {
+      supabase.removeChannel(tiersChannel);
+    };
+  }, [supabase, project.id]);
+
+
+  const fundingPercentage = Math.round((project.current_funding / project.funding_goal) * 100);
+  const selectedTierData = tiers.find((tier) => tier.id === selectedTier);
 
   const handleTierSelect = (tierId: number) => {
     setSelectedTier(tierId);
@@ -101,8 +129,8 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-start">
         <div className="space-y-6">
           <Image
-            src={projectData.project_image_url || "/placeholder.svg"}
-            alt={projectData.project_title}
+            src={project.project_image_url || "/placeholder.svg"}
+            alt={project.project_title}
             width={600}
             height={600}
             className="w-full max-w-md mx-auto aspect-square object-cover rounded-xl shadow-2xl border border-gray-700"
@@ -111,41 +139,41 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         <div className="space-y-6">
           <div>
             <Badge
-              variant={projectData.status === "Completed" ? "secondary" : "default"}
+              variant={project.status === "Completed" ? "secondary" : "default"}
               className="mb-4 bg-gray-600 text-white"
             >
-              {projectData.status}
+              {project.status}
             </Badge>
             <h1 className="text-4xl font-bold mb-2" style={{ color: "#64918E" }}>
-              {projectData.project_title}
+              {project.project_title}
             </h1>
             <div className="flex items-center gap-3 mb-6">
               <Image
-                src={projectData.artist_profile_image_url || "/placeholder.svg"}
-                alt={projectData.artist_name}
+                src={project.artist_profile_image_url || "/placeholder.svg"}
+                alt={project.artist_name}
                 width={48}
                 height={48}
                 className="w-12 h-12 rounded-full object-cover border-2 border-gray-600"
               />
               <div>
-                <p className="font-semibold text-white">{projectData.artist_name}</p>
-                <p className="text-sm text-gray-400">{projectData.artist_bio}</p>
+                <p className="font-semibold text-white">{project.artist_name}</p>
+                <p className="text-sm text-gray-400">{project.artist_bio}</p>
               </div>
             </div>
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-2xl font-bold" style={{ color: "#22C55E" }}>
-                ${projectData.current_funding.toLocaleString()}
+                ${project.current_funding.toLocaleString()}
               </span>
-              <span className="text-gray-400">of ${projectData.funding_goal.toLocaleString()} goal</span>
+              <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
             </div>
             <Progress value={fundingPercentage} className="h-3 bg-gray-700" />
             <div className="flex justify-between text-sm text-gray-400">
               <span>{fundingPercentage}% funded</span>
               <span className="flex items-center gap-1">
                 <Users className="w-4 h-4" />
-                {projectData.backer_count} backers
+                {project.backer_count} backers
               </span>
             </div>
             <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
@@ -176,7 +204,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
           <CardContent className="p-6">
             <div className="prose prose-lg max-w-none prose-invert">
                 {/* Now using the new dedicated field from the database */}
-                {projectData.from_the_artist_message && projectData.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
+                {project.from_the_artist_message && project.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
     <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
 ))}
             </div>
@@ -190,11 +218,11 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
-              <h3 className="font-semibold text-white">{projectData.artist_name}</h3>
+              <h3 className="font-semibold text-white">{project.artist_name}</h3>
               <div className="aspect-video bg-black rounded-lg">
-                {projectData.artist_message_video_url ? (
+                {project.artist_message_video_url ? (
                   <iframe
-                    src={projectData.artist_message_video_url}
+                    src={project.artist_message_video_url}
                     title="A Message from the Artist"
                     className="w-full h-full rounded-lg"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -210,9 +238,9 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
             <CardContent className="p-4 space-y-2">
               <h3 className="font-semibold text-white">Audio Preview</h3>
               <div className="bg-black/40 rounded-lg p-4">
-                {projectData.audio_preview_url ? (
+                {project.audio_preview_url ? (
                   <audio controls className="w-full">
-                    <source src={projectData.audio_preview_url} type="audio/mpeg" />
+                    <source src={project.audio_preview_url} type="audio/mpeg" />
                     Your browser does not support the audio element.
                   </audio>
                 ) : (
@@ -227,7 +255,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
       <section id="fan-stories" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Fan Stories</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projectData.testimonials.map((testimonial) => (
+          {project.testimonials.map((testimonial) => (
             <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
               <CardContent className="p-6">
                 <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
@@ -241,15 +269,12 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                       className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
                     />
                   )}
-                  {/* This div was missing from your snippet but is needed for name/location */}
                   <div className="flex-1">
                       <h4 className="font-semibold text-white">{testimonial.name}</h4>
                       <p className="text-sm text-gray-300">{testimonial.location}</p>
                   </div>
                 </div>
                 <p className="text-white leading-relaxed">{testimonial.story}</p>
-                
-                {/* Add this div for the attribution */}
                 <div className="text-right text-gray-300 italic mt-4">
                   — {testimonial.name}
                 </div>
@@ -259,21 +284,22 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </section>
 
-      <BudgetBreakdown categories={projectData.budget_categories} />
+      <BudgetBreakdown categories={project.budget_categories} />
 
       <section id="support-levels" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {projectData.tiers.map((tier) => (
-<Card
-  key={tier.id}
-  className={`flex flex-col relative transition-all duration-200 rounded-xl ${
-    selectedTier === tier.id 
-      ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
-      : "hover:shadow-md hover:shadow-gray-700/50"
-  }`}
-  style={regularCardStyle}
->
+          {/* THIS IS THE CORRECTED LINE */}
+          {tiers.sort((a, b) => a.price - b.price).map((tier) => (
+            <Card
+              key={tier.id}
+              className={`flex flex-col relative transition-all duration-200 rounded-xl ${
+                selectedTier === tier.id 
+                  ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
+                  : "hover:shadow-md hover:shadow-gray-700/50"
+              }`}
+              style={regularCardStyle}
+            >
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
@@ -293,11 +319,8 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                 <div className="pt-4 border-t border-white/20">
                   <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
                   
-                  {/* === UPDATED CONDITIONAL BUTTON LOGIC === */}
                   {paymentsEnabled ? (
-                    // When payments are enabled (development/testing)
                     user ? (
-                      // If user is logged in, show the normal button
                       <Button 
                         onClick={() => handleTierSelect(tier.id)} 
                         className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
@@ -306,20 +329,17 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
                         {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
                       </Button>
                     ) : (
-                      // If user is logged out, show a "Sign in" button that links to the login page
-                      <Link href={`/login?redirect=/projects/${projectData.id}#support-levels`}>
+                      <Link href={`/login?redirect=/projects/${project.id}#support-levels`}>
                         <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                           Login/Sign up to contribute
                         </Button>
                       </Link>
                     )
                   ) : (
-                    // When payments are disabled (production), show "Coming Soon"
                     <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
                       Coming Soon
                     </div>
                   )}
-                  {/* === END UPDATED CONDITIONAL BUTTON LOGIC === */}
                   
                 </div>
               </CardContent>
@@ -328,14 +348,13 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </section>
 
-      {/* Only show checkout section when payments are enabled */}
       {paymentsEnabled && showCheckout && selectedTierData && (
         <section className="mb-12">
           <Card className="rounded-xl" style={gradientCardStyle}>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Ready to support {projectData.artist_name}?</h3>
+                  <h3 className="text-xl font-bold text-white mb-2">Ready to support {project.artist_name}?</h3>
                   <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: "#CB945E" }}>${selectedTierData.price}</strong></p>
                 </div>
                 <div className="flex gap-3">
@@ -352,7 +371,7 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         <Card className="rounded-xl" style={gradientCardStyle}>
           <CardContent className="p-8 text-center">
             <h3 className="text-2xl font-bold text-white mb-4">Join the Community</h3>
-            <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Connect with {projectData.artist_name} and other supporters in our exclusive community. Share your thoughts, get updates, and be part of the creative journey.</p>
+            <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Connect with {project.artist_name} and other supporters in our exclusive community. Share your thoughts, get updates, and be part of the creative journey.</p>
             <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">Join the Discussion</Button>
           </CardContent>
         </Card>

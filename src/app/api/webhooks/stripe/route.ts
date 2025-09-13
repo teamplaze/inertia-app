@@ -35,23 +35,27 @@ export async function POST(request: Request) {
     }
 
     try {
-      // --- 1. Fetch all necessary data for the email ---
-      const { data: contributionData, error: dataError } = await supabaseAdmin
+      // --- 1. Fetch Project and Tier Data ---
+      const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
-        .select(`
-          project_title,
-          artist_name,
-          tiers (name),
-          profiles (full_name)
-        `)
+        .select('project_title, artist_name, tiers(name)')
         .eq('id', projectId)
         .eq('tiers.id', tierId)
-        .eq('profiles.id', userId)
+        .single();
+      
+      // --- 2. Fetch User Profile Data ---
+      const { data: profileData, error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .select('full_name')
+        .eq('id', userId)
         .single();
 
-      if (dataError) throw dataError;
+      if (projectError || profileError) {
+        console.error("Database fetch error:", projectError || profileError);
+        throw projectError || profileError;
+      }
 
-      // --- 2. Record the successful contribution ---
+      // --- 3. Record the successful contribution ---
       const { error: contributionError } = await supabaseAdmin
         .from('contributions')
         .insert({
@@ -64,10 +68,8 @@ export async function POST(request: Request) {
 
       if (contributionError) throw contributionError;
       
-      // --- 3. Update the tier's claimed_slots count ---
+      // --- 4. Update counts using RPC functions ---
       await supabaseAdmin.rpc('increment_claimed_slots', { tier_id_to_update: tierId });
-
-      // --- 4. Update the project's funding and backer count ---
       await supabaseAdmin.rpc('update_project_funding', { 
         project_id_to_update: projectId, 
         amount_to_add: (session.amount_total || 0) / 100 
@@ -76,7 +78,8 @@ export async function POST(request: Request) {
       // --- 5. Send the confirmation email via Loops.so ---
       const customerEmail = session.customer_details?.email;
       if (customerEmail) {
-        await fetch('https://app.loops.so/api/v1/transactional', {
+        console.log('📬 Attempting to send confirmation email...');
+        const loopsResponse = await fetch('https://app.loops.so/api/v1/transactional', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -86,10 +89,10 @@ export async function POST(request: Request) {
             transactionalId: process.env.LOOPS_TRANSACTIONAL_ID_CONFIRMATION,
             email: customerEmail,
             dataVariables: {
-              customerName: contributionData.profiles[0]?.full_name || 'Valued Supporter',
-              projectName: contributionData.project_title,
-              artistName: contributionData.artist_name,
-              tierName: contributionData.tiers[0]?.name || 'Selected Tier',
+              customerName: profileData.full_name || 'Valued Supporter',
+              projectName: projectData.project_title,
+              artistName: projectData.artist_name,
+              tierName: projectData.tiers[0]?.name || 'Selected Tier',
               amount: ((session.amount_total || 0) / 100).toFixed(2),
               transactionId: session.payment_intent as string,
               paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
@@ -97,6 +100,17 @@ export async function POST(request: Request) {
             },
           }),
         });
+
+        // Log the detailed response from the Loops.so API
+        console.log(`- Loops.so API response status: ${loopsResponse.status}`);
+        const loopsData = await loopsResponse.json();
+        console.log('- Loops.so API response body:', loopsData);
+
+        if (!loopsResponse.ok) {
+          console.error('❌ Failed to send email via Loops.so.');
+        } else {
+          console.log(`✅ Confirmation email sent successfully to ${customerEmail}`);
+        }
       }
       
     } catch (dbError) {
@@ -107,3 +121,4 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ received: true });
 }
+
