@@ -100,7 +100,7 @@ export default function Header() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem asChild><Link href="/account" className="cursor-pointer">My Account</Link></DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer">Billing</DropdownMenuItem>
