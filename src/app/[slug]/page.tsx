@@ -1,11 +1,17 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import ProjectUI from '@/app/projects/[id]/project-client-ui'; // Re-using your existing UI component!
+import ProjectUI from '@/app/projects/[id]/project-client-ui';
 import type { Project } from '@/types';
 
+// Define a more specific type for the page props
+type PageProps = {
+  params: {
+    slug: string;
+  };
+};
+
 // This function tells Next.js how to handle the slug from the URL
-export default async function ProjectPage({ params }: { params: { slug: string } }) {
-  // The createClient function now handles cookies internally and must be awaited
+export default async function ProjectPage({ params }: PageProps) {
   const supabase = await createClient();
 
   // Fetch the project from the database where the 'slug' column matches the URL
@@ -31,3 +37,4 @@ export default async function ProjectPage({ params }: { params: { slug: string }
   // If the project is found, render your existing ProjectUI component with the data
   return <ProjectUI projectData={project as Project} />;
 }
+
