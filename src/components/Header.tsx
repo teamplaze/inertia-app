@@ -99,15 +99,21 @@ export default function Header() {
                   <AvatarFallback className="bg-[#CB945E] text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
+              {/* --- THIS IS THE UPDATED DROPDOWN CONTENT --- */}
               <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">Billing</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/account/profile" className="cursor-pointer">User Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/account" className="cursor-pointer">My Projects</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#CB945E] hover:!text-[#CB945E]">
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
+              {/* --- END OF UPDATED CONTENT --- */}
             </DropdownMenu>
           ) : (
             // If no user is logged in, show the Login button
