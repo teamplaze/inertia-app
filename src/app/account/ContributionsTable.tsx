@@ -90,132 +90,78 @@ export default function ContributionsTable({ contributions }: { contributions: C
 
   return (
     <div>
-        {/* Added custom scrollbar styles */}
-      <style jsx>{`
-        /* For Webkit-based browsers (Chrome, Safari, Edge) */
-        .custom-scrollbar::-webkit-scrollbar {
-          height: 12px; /* A bit more space for the border effect */
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent; /* Makes the track invisible */
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: #64918E; /* A subtle, on-brand color */
-          border-radius: 10px;
-          border: 4px solid transparent; /* Creates padding around the thumb */
-          background-clip: content-box; /* Ensures the border is transparent, showing the table background */
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background-color: #CB945E; /* The vibrant brand color on hover */
-        }
-        /* For Firefox */
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: #64918E transparent; /* thumb color and a transparent track color */
-        }
-      `}</style>
-      {/* --- Desktop Table (Container is now horizontally scrollable) --- */}
-      <div className="hidden md:block rounded-lg overflow-x-auto custom-scrollbar" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
-        <table className="min-w-full divide-y divide-white/20">
-          <thead >
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                <button onClick={() => requestSort('project')} className="flex items-center gap-2">
-                  PROJECT {sortConfig.key === 'project' && <ArrowUpDown className="w-4 h-4" />}
-                </button>
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Artist</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tier</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                <button onClick={() => requestSort('amount')} className="flex items-center gap-2">
-                  AMOUNT {sortConfig.key === 'amount' && <ArrowUpDown className="w-4 h-4" />}
-                </button>
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                <button onClick={() => requestSort('date')} className="flex items-center gap-2">
-                  DATE {sortConfig.key === 'date' && <ArrowUpDown className="w-4 h-4" />}
-                </button>
-              </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/20">
-            {sortedContributions.map((contribution) => (
-              <tr key={contribution.id} className="hover:bg-black/10">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
-                  <Link href={`/projects/${contribution.projects.id}`} className="inline-flex items-center gap-2 hover:text-[#CB945E]">
-                    {contribution.projects.project_title}
-                    <ExternalLink className="w-4 h-4" />
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{contribution.projects.artist_name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">{contribution.tiers.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-400">
-                  ${contribution.amount_paid.toFixed(2)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                  {new Date(contribution.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <Badge 
-                    variant={contribution.projects.status === "Completed" ? "secondary" : "default"}
-                    className="bg-gray-600 text-white"
-                  >
-                    {contribution.projects.status}
-                  </Badge>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <Link href={`/projects/${contribution.projects.id}`}>
-                    <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                      View
-                    </Button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Sort Controls */}
+      <div className="mb-4 flex flex-wrap gap-3 items-center">
+        <span className="text-white text-sm font-medium">Sort by:</span>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            onClick={() => requestSort('date')}
+            className={`${
+              sortConfig.key === 'date'
+                ? 'bg-[#CB945E] text-white'
+                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+            } transition-colors`}
+          >
+            Date {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 ml-1" />}
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => requestSort('amount')}
+            className={`${
+              sortConfig.key === 'amount'
+                ? 'bg-[#CB945E] text-white'
+                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+            } transition-colors`}
+          >
+            Amount {sortConfig.key === 'amount' && <ArrowUpDown className="w-3 h-3 ml-1" />}
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => requestSort('project')}
+            className={`${
+              sortConfig.key === 'project'
+                ? 'bg-[#CB945E] text-white'
+                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+            } transition-colors`}
+          >
+            Project {sortConfig.key === 'project' && <ArrowUpDown className="w-3 h-3 ml-1" />}
+          </Button>
+        </div>
       </div>
 
-      {/* --- Mobile Card Layout (Visible only on small screens) --- */}
-      <div className="md:hidden space-y-4">
+      {/* Card Layout for All Screen Sizes */}
+      <div className="space-y-4">
         {sortedContributions.map((contribution) => (
-          <div key={contribution.id} className="p-4 rounded-lg" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+          <div key={contribution.id} className="p-4 md:p-6 rounded-lg hover:shadow-lg transition-shadow" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
             <div className="flex justify-between items-start mb-4">
-              <div>
-                <Link href={`/projects/${contribution.projects.id}`} className="text-lg font-bold text-white hover:text-[#CB945E] inline-flex items-center gap-2">
-                  {contribution.projects.project_title} <ExternalLink className="w-4 h-4" />
+              <div className="flex-1 min-w-0 pr-3">
+                <Link href={`/projects/${contribution.projects.id}`} className="text-lg md:text-xl font-bold text-white hover:text-[#CB945E] inline-flex items-center gap-2 transition-colors">
+                  <span className="break-words">{contribution.projects.project_title}</span>
+                  <ExternalLink className="w-4 h-4 flex-shrink-0" />
                 </Link>
-                <p className="text-sm text-white">{contribution.projects.artist_name}</p>
+                <p className="text-sm md:text-base text-white mt-1">{contribution.projects.artist_name}</p>
               </div>
               <Badge 
                 variant={contribution.projects.status === "Completed" ? "secondary" : "default"}
-                className="bg-gray-600 text-white"
+                className="bg-gray-600 text-white flex-shrink-0"
               >
                 {contribution.projects.status}
               </Badge>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-white">Amount:</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm md:text-base">
+              <div className="flex justify-between md:flex-col md:justify-start">
+                <span className="text-white font-medium">Amount:</span>
                 <span className="font-semibold text-green-400">${contribution.amount_paid.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-white">Date:</span>
+              <div className="flex justify-between md:flex-col md:justify-start">
+                <span className="text-white font-medium">Date:</span>
                 <span className="text-white">{new Date(contribution.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-white">Tier:</span>
+              <div className="flex justify-between md:flex-col md:justify-start">
+                <span className="text-white font-medium">Tier:</span>
                 <span className="text-white">{contribution.tiers.name}</span>
               </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-white/20">
-              <Link href={`/projects/${contribution.projects.id}`} className="w-full">
-                <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                  View Project
-                </Button>
-              </Link>
             </div>
           </div>
         ))}
@@ -223,4 +169,3 @@ export default function ContributionsTable({ contributions }: { contributions: C
     </div>
   );
 }
-
