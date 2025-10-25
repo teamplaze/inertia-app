@@ -30,32 +30,57 @@ export async function POST(request: Request) {
     
     const { userId, tierId, projectId } = session.metadata || {};
 
+    // Log metadata values for debugging
+    console.log('📋 Webhook metadata:', { userId, tierId, projectId });
+
     if (!userId || !tierId || !projectId) {
       return NextResponse.json({ error: 'Webhook Error: Missing required metadata' }, { status: 400 });
     }
 
     try {
-      // --- 1. Fetch Project and Tier Data ---
+      // --- 1. Fetch Project Data ---
+      console.log('🔍 Fetching project with ID:', projectId);
       const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
-        .select('project_title, artist_name, tiers(name)')
+        .select('project_title, artist_name')
         .eq('id', projectId)
-        .eq('tiers.id', tierId)
         .single();
       
-      // --- 2. Fetch User Profile Data ---
+      if (projectError) {
+        console.error('❌ Project fetch error:', projectError);
+        throw projectError;
+      }
+      console.log('✅ Project data:', projectData);
+      
+      // --- 2. Fetch Tier Data ---
+      console.log('🔍 Fetching tier with ID:', tierId);
+      const { data: tierData, error: tierError } = await supabaseAdmin
+        .from('tiers')
+        .select('name')
+        .eq('id', tierId)
+        .single();
+      
+      if (tierError) {
+        console.error('❌ Tier fetch error:', tierError);
+        throw tierError;
+      }
+      console.log('✅ Tier data:', tierData);
+      
+      // --- 3. Fetch User Profile Data ---
+      console.log('🔍 Fetching profile with ID:', userId);
       const { data: profileData, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('full_name')
         .eq('id', userId)
         .single();
 
-      if (projectError || profileError) {
-        console.error("Database fetch error:", projectError || profileError);
-        throw projectError || profileError;
+      if (profileError) {
+        console.error('❌ Profile fetch error:', profileError);
+        throw profileError;
       }
+      console.log('✅ Profile data:', profileData);
 
-      // --- 3. Record the successful contribution ---
+      // --- 4. Record the successful contribution ---
       const { error: contributionError } = await supabaseAdmin
         .from('contributions')
         .insert({
@@ -68,14 +93,14 @@ export async function POST(request: Request) {
 
       if (contributionError) throw contributionError;
       
-      // --- 4. Update counts using RPC functions ---
+      // --- 5. Update counts using RPC functions ---
       await supabaseAdmin.rpc('increment_claimed_slots', { tier_id_to_update: tierId });
       await supabaseAdmin.rpc('update_project_funding', { 
         project_id_to_update: projectId, 
         amount_to_add: (session.amount_total || 0) / 100 
       });
 
-      // --- 5. Send the confirmation email via Loops.so ---
+      // --- 6. Send the confirmation email via Loops.so ---
       const customerEmail = session.customer_details?.email;
       if (customerEmail) {
         console.log('📬 Attempting to send confirmation email...');
@@ -92,7 +117,7 @@ export async function POST(request: Request) {
               customerName: profileData.full_name || 'Valued Supporter',
               projectName: projectData.project_title,
               artistName: projectData.artist_name,
-              tierName: projectData.tiers[0]?.name || 'Selected Tier',
+              tierName: tierData.name || 'Selected Tier',
               amount: ((session.amount_total || 0) / 100).toFixed(2),
               transactionId: session.payment_intent as string,
               paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
@@ -121,4 +146,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ received: true });
 }
-
