@@ -30,16 +30,12 @@ export async function POST(request: Request) {
     
     const { userId, tierId, projectId } = session.metadata || {};
 
-    // Log metadata values for debugging
-    console.log('📋 Webhook metadata:', { userId, tierId, projectId });
-
     if (!userId || !tierId || !projectId) {
       return NextResponse.json({ error: 'Webhook Error: Missing required metadata' }, { status: 400 });
     }
 
     try {
       // --- 1. Fetch Project Data ---
-      console.log('🔍 Fetching project with ID:', projectId);
       const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
         .select('project_title, artist_name')
@@ -47,13 +43,11 @@ export async function POST(request: Request) {
         .single();
       
       if (projectError) {
-        console.error('❌ Project fetch error:', projectError);
+        console.error('Project fetch error:', projectError);
         throw projectError;
       }
-      console.log('✅ Project data:', projectData);
       
       // --- 2. Fetch Tier Data ---
-      console.log('🔍 Fetching tier with ID:', tierId);
       const { data: tierData, error: tierError } = await supabaseAdmin
         .from('tiers')
         .select('name')
@@ -61,24 +55,21 @@ export async function POST(request: Request) {
         .single();
       
       if (tierError) {
-        console.error('❌ Tier fetch error:', tierError);
+        console.error('Tier fetch error:', tierError);
         throw tierError;
       }
-      console.log('✅ Tier data:', tierData);
       
       // --- 3. Fetch User Profile Data ---
-      console.log('🔍 Fetching profile with ID:', userId);
       const { data: profileData, error: profileError } = await supabaseAdmin
         .from('profiles')
         .select('full_name')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
-        console.error('❌ Profile fetch error:', profileError);
+        console.error('Profile fetch error:', profileError);
         throw profileError;
       }
-      console.log('✅ Profile data:', profileData);
 
       // --- 4. Record the successful contribution ---
       const { error: contributionError } = await supabaseAdmin
@@ -114,7 +105,7 @@ export async function POST(request: Request) {
             transactionalId: process.env.LOOPS_TRANSACTIONAL_ID_CONFIRMATION,
             email: customerEmail,
             dataVariables: {
-              customerName: profileData.full_name || 'Valued Supporter',
+              customerName: profileData?.full_name || 'Valued Supporter',
               projectName: projectData.project_title,
               artistName: projectData.artist_name,
               tierName: tierData.name || 'Selected Tier',
