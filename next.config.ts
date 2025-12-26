@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
 
     ],
   },
+  experimental: {
+    // This flag is required to use forbidden() and unauthorized() in Server Components
+    authInterrupts: true,
+  },
 };
 
 export default nextConfig;
