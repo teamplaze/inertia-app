@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -20,6 +17,10 @@ const nextConfig: NextConfig = {
       },
 
     ],
+  },
+  experimental: {
+    // This flag is required to use forbidden() and unauthorized() in Server Components
+    authInterrupts: true,
   },
 };
 

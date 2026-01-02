@@ -1,5 +1,25 @@
 // File: src/types.ts
 
+// --- NEW: Auth & Role Types ---
+export type UserType = 'fan' | 'artist' | 'admin';
+
+export type Profile = {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  user_type: UserType;
+  stripe_customer_id: string | null;
+};
+
+export type ArtistInvitation = {
+  id: string;
+  email: string;
+  token: string;
+  used_at: string | null;
+  created_at: string;
+  expires_at: string;
+};
+
 export type BudgetLineItem = {
   id: number;
   category_id: number;

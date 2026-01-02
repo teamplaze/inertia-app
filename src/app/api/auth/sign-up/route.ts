@@ -1,14 +1,14 @@
 // File: src/app/api/auth/sign-up/route.ts
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js'; // Import the standard client for admin use
+import { createClient } from '@supabase/supabase-js'; 
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Create a separate Supabase client with the service role key for admin operations
+// Admin client for checking invites and updating profiles (bypasses RLS)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -16,98 +16,139 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   const formData = await request.json();
-  const email = formData.email;
-  const password = formData.password;
-  const name = formData.name;
   
+  // Debugging: Log full raw body to inspect structure
+  console.log('📦 Raw Signup Body:', JSON.stringify(formData, null, 2));
+
+  const { email, password, name, inviteToken } = formData;
+  
+  // Debugging Logs: Check your terminal to see these values when you test
+  console.log('📝 Signup Attempt:', { email, name, hasInviteToken: !!inviteToken });
+
+  // Normalize email for comparison
+  const normalizedEmail = email.toLowerCase().trim();
+
   const cookieStore = await cookies();
 
-  // This client is for user-specific auth operations like sign-up and sign-in
+  // 1. Verify Invitation if provided
+  let userType = 'fan';
+  let invitationId = null;
+
+  if (inviteToken) {
+    console.log('🔍 Validating Invite Token:', inviteToken);
+    
+    const { data: invite, error: inviteError } = await supabaseAdmin
+      .from('artist_invitations')
+      .select('*')
+      .eq('token', inviteToken)
+      .is('used_at', null)
+      .gt('expires_at', new Date().toISOString())
+      .single();
+
+    if (inviteError || !invite) {
+      console.error('❌ Invite Invalid/Expired:', inviteError);
+      return NextResponse.json({ error: 'Invalid or expired invitation token.' }, { status: 400 });
+    }
+
+    console.log('✅ Invite Found for:', invite.email);
+
+    // SECURITY CHECK: Email Mismatch
+    // Ensure the signup email matches the invited email
+    const inviteEmail = invite.email.toLowerCase().trim();
+     if (inviteEmail !== normalizedEmail) {
+      // Keep detailed logs for server admin
+      console.error(`❌ Email Mismatch: Invitation is for ${inviteEmail}, but signup is for ${normalizedEmail}`);
+      
+      // Return generic message to client to prevent email enumeration
+      return NextResponse.json({ 
+        error: 'Email mismatch', 
+        details: 'Email provided does not match invite' 
+      }, { status: 400 });
+    }
+    
+    userType = 'artist';
+    invitationId = invite.id;
+  } else {
+    console.log('ℹ️ No invite token provided. Creating standard Fan account.');
+  }
+
+  // 2. Standard Auth Client for user creation
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: '', ...options });
-        },
+        get(name: string) { return cookieStore.get(name)?.value; },
+        set(name: string, value: string, options: CookieOptions) { cookieStore.set({ name, value, ...options }); },
+        remove(name: string, options: CookieOptions) { cookieStore.set({ name, value: '', ...options }); },
       },
     }
   );
 
-  // --- First, sign up the new user ---
+  // 3. Sign Up
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email,
+    email: normalizedEmail,
     password,
     options: {
-      data: {
-        full_name: name, // This data is passed to the trigger
-      },
+      data: { full_name: name },
     },
   });
 
   if (signUpError || !signUpData.user) {
-    console.error('❌ Supabase sign up error:', signUpError);
-    return NextResponse.json(
-      { error: 'Could not create user.', details: signUpError?.message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Could not create user.', details: signUpError?.message }, { status: 400 });
   }
 
-  // --- Create Stripe customer ---
+  const userId = signUpData.user.id;
+
+  // 4. Post-Signup Operations (Stripe + Profile Update)
   try {
+    // Create Stripe Customer
     const customer = await stripe.customers.create({
-      email: email,
+      email: normalizedEmail,
       name: name,
-      metadata: {
-        supabase_user_id: signUpData.user.id,
-      },
+      metadata: { supabase_user_id: userId, user_type: userType },
     });
 
-    // --- Update the user's profile with the Stripe ID using the ADMIN client ---
-    // The database trigger has already created the profile row.
-    // We just need to UPDATE it with the Stripe customer ID.
+    // Update Profile with Role and Stripe ID
+    // We use upsert to handle potential race conditions with database triggers
     const { error: updateError } = await supabaseAdmin
       .from('profiles')
-      .update({ stripe_customer_id: customer.id })
-      .eq('id', signUpData.user.id);
+      .upsert({ 
+        id: userId,
+        full_name: name,
+        avatar_url: null, // Default
+        stripe_customer_id: customer.id,
+        user_type: userType // This ensures they get the Artist role
+      })
+      .select();
 
     if (updateError) {
-      // Log the error, but don't block the user from signing up
       console.error('❌ Database profile update error:', updateError);
-    } else {
-      console.log('✅ User profile updated with Stripe ID:', customer.id);
     }
 
-  } catch (stripeError) {
-    console.error('❌ Stripe customer creation error:', stripeError);
-    // Continue with the process even if Stripe fails, so user can still sign up
+    // Mark invitation as used
+    if (invitationId) {
+      await supabaseAdmin
+        .from('artist_invitations')
+        .update({ used_at: new Date().toISOString() })
+        .eq('id', invitationId);
+    }
+
+  } catch (err) {
+    console.error('❌ Post-signup error:', err);
+    // We don't fail the request here because the user account was technically created
   }
 
-  // --- Sign them in to complete the flow ---
-  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  // 5. Sign In automatically to complete flow
+  await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
 
-  if (signInError) {
-    console.error('❌ Supabase sign in after sign up error:', signInError);
-    return NextResponse.json(
-      { error: 'Could not sign in user after sign up', details: signInError.message },
-      { status: 400 }
-    );
-  }
-
-  console.log('✅ Sign up and login successful!');
-
+  // 6. Return success with redirect hint
   return NextResponse.json(
-    { message: 'Sign up and login successful!', user: signInData.user },
+    { 
+      message: 'Sign up successful!', 
+      user: signUpData.user,
+      redirectTo: userType === 'artist' ? '/artist/dashboard' : '/'
+    },
     { status: 200 }
   );
 }
