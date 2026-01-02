@@ -175,7 +175,7 @@ function SignUpForm() {
             </div>
           </div>
           <Button type="submit" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90" disabled={isLoading || !termsAgreed}>
-            {isLoading ? 'Creating Account...' : inviteToken ? 'Claim Artist Account' : 'Create Fan Account'}
+            {isLoading ? 'Creating Account...' : inviteToken ? 'Claim Artist Account' : 'Create Account'}
           </Button>
         </form>
         <div className="mt-4 text-center text-sm text-white">

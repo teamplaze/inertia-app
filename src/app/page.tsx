@@ -1,5 +1,3 @@
-// File: src/app/page.tsx
-
 "use client"; 
 
 import { Button } from "@/components/ui/button";
@@ -21,17 +19,14 @@ export default function Component() {
       try {
         const response = await fetch('/api/projects/featured');
         if (!response.ok) {
-          console.log('API not available, using mock data');
           throw new Error("API not available");
         }
         const data: Project[] = await response.json();
         setProjects(data);
       } catch (error) {
-        console.log("Using fallback mock data:", error);
-        const mockProjects: Project[] = [
-          // ... your mock project data is still here ...
-        ];
-        setProjects(mockProjects);
+        console.error("Error fetching projects:", error);
+        // Set to empty array on error, ensuring no stale/mock data is shown
+        setProjects([]);
       }
     };
     fetchProjects();
@@ -81,7 +76,6 @@ export default function Component() {
   };
 
   return (
-    // The main Header and outer div are gone, provided by layout.tsx
     <main className="flex-1">
       {/* Hero section */}
       <section className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: '#64918E' }}>
@@ -103,13 +97,6 @@ export default function Component() {
                 </Button>
               </div>
             </div>
-            {/*<Image
-              src="/hero_image.svg"  // or whatever you named the file
-              width="600"
-              height="300"
-              alt="Independent music investment platform"
-              className="mx-auto aspect-[2/1] rounded-2xl object-contain shadow-lg border border-gray-600/30"
-            />*/}
           </div>
         </div>
       </section>
@@ -122,7 +109,9 @@ export default function Component() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => {
-              const fundedPercent = Math.round((project.current_funding / project.funding_goal) * 100);
+              const fundedPercent = project.funding_goal > 0 
+                ? Math.round((project.current_funding / project.funding_goal) * 100) 
+                : 0;
               return (
                 <Card key={project.id} className="overflow-hidden rounded-xl" style={regularCardStyle}>
                   <Image
@@ -143,7 +132,9 @@ export default function Component() {
                     </div>
                     <div className="text-xs text-white/70 mb-2">🕒 {project.status}</div>
                     <div className="text-xs text-white/70 mb-3 truncate">⭐ {project.artist_bio}</div>
-                    <Link href={`/projects/${project.id}`}>
+                    
+                    {/* UPDATED LINK: Uses slug if available */}
+                    <Link href={`/${project.slug || `projects/${project.id}`}`}>
                       <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                         View Project <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
@@ -216,18 +207,8 @@ export default function Component() {
               </div>
             </div>
           </div>
-          {/*<div className="text-center mt-8">
-            <Button
-              variant="outline"
-              className="border-[#64918E] text-[#64918E] hover:bg-[#64918E]/20 hover:text-[#64918E] hover:border-[#64918E]"
-            >
-              About Us
-            </Button>
-          </div> */}
         </div>
       </section>
-      {/* The form is now part of the shared footer, so we can remove it from here */}
     </main>
-    // The main Footer is also gone, provided by layout.tsx
   );
 }

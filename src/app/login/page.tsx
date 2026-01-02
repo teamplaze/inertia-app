@@ -1,5 +1,3 @@
-// File: src/app/login/page.tsx
-
 "use client";
 
 import { useState, type FormEvent } from "react";
@@ -30,14 +28,16 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password }),
     });
 
+    const data = await response.json();
+
     if (response.ok) {
       setMessage('Login successful! Redirecting...');
       // Force a full page reload to ensure the Header component updates
-      window.location.href = '/';
+      // and redirect to the specific page returned by the API (e.g. /artist/dashboard)
+      window.location.href = data.redirectTo || '/';
     }
     else {
-      const errorData = await response.json();
-      setMessage(`Login failed: ${errorData.details || 'Invalid credentials.'}`);
+      setMessage(`Login failed: ${data.details || 'Invalid credentials.'}`);
       setIsLoading(false);
     }
   };

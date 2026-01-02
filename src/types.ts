@@ -74,6 +74,7 @@ export type Project = {
   from_the_artist_message: string;
   tiers: Tier[];
   testimonials: Testimonial[];
+  slug?: string;
   // This is the new field for our nested budget data
   budget_categories: BudgetCategory[];
 };
