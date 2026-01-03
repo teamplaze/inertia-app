@@ -1,27 +1,59 @@
-// File: src/app/artist/dashboard/page.tsx
-import { createClient } from '../../../../src/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, Star } from "lucide-react";
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export default async function ArtistDashboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     
+    if (!user) {
+        return <div>Please log in.</div>;
+    }
+
     // Fetch generic profile info for the welcome message
     const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
-        .eq('id', user?.id!)
+        .eq('id', user.id)
         .single();
+
+    // Fetch project stats for the logged-in artist
+    const { data: projects, error: projectsError } = await supabase
+        .from('projects')
+        .select('id, current_funding, backer_count, status')
+        .eq('user_id', user.id);
+
+    if (projectsError) {
+        console.error("Error fetching projects:", projectsError);
+    }
+
+    // Calculate Stats
+    // Active Campaigns: Fundraising, Funded, or legacy 'Live'
+    const activeCampaignsCount = projects?.filter(p => 
+        p.status === 'Fundraising' || 
+        p.status === 'Funded' || 
+        p.status === 'Live' || 
+        p.status === 'active'
+    ).length || 0;
+    
+    // Total Funds: Sum of current_funding
+    const totalFundsRaised = projects?.reduce((sum, p) => sum + (Number(p.current_funding) || 0), 0) || 0;
+    
+    // Total Fans: Sum of backer_count
+    const totalBackers = projects?.reduce((sum, p) => sum + (p.backer_count || 0), 0) || 0;
 
     return (
         <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
-                <p className="text-gray-400 mt-2">Here is what is happening with your projects.</p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
+                    <p className="text-gray-400 mt-2">Here is what is happening with your projects.</p>
+                </div>
             </div>
 
-            {/* Placeholder Stats Widgets */}
+            {/* Stats Widgets */}
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="bg-[#64918E] border-none text-white shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -29,8 +61,8 @@ export default async function ArtistDashboardPage() {
                         <DollarSign className="h-4 w-4 text-[#CB945E]" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">$0.00</div>
-                        <p className="text-xs text-gray-200">+0% from last month</p>
+                        <div className="text-2xl font-bold">${totalFundsRaised.toLocaleString()}</div>
+                        <p className="text-xs text-gray-200">Across all projects</p>
                     </CardContent>
                 </Card>
                  <Card className="bg-[#64918E] border-none text-white shadow-lg">
@@ -39,8 +71,8 @@ export default async function ArtistDashboardPage() {
                         <Users className="h-4 w-4 text-[#CB945E]" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
-                         <p className="text-xs text-gray-200">Just getting started</p>
+                        <div className="text-2xl font-bold">{totalBackers.toLocaleString()}</div>
+                         <p className="text-xs text-gray-200">Lifetime backers</p>
                     </CardContent>
                 </Card>
                  <Card className="bg-[#64918E] border-none text-white shadow-lg">
@@ -49,19 +81,21 @@ export default async function ArtistDashboardPage() {
                         <Star className="h-4 w-4 text-[#CB945E]" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-gray-200">No active projects</p>
+                        <div className="text-2xl font-bold">{activeCampaignsCount}</div>
+                        <p className="text-xs text-gray-200">Currently live</p>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Empty State Call to Action */}
-            <div className="rounded-lg border border-dashed border-gray-600 p-12 text-center bg-black/20">
-                <h3 className="text-lg font-semibold text-white">Your dashboard is ready</h3>
-                <p className="mt-2 text-gray-400 max-w-md mx-auto">
-                    This is your command center. In the next sprint, we will unlock the tools to create your first campaign and customize your artist profile.
-                </p>
-            </div>
+            {/* Conditional Empty State */}
+            {(!projects || projects.length === 0) && (
+                <div className="rounded-lg border border-dashed border-gray-600 p-12 text-center bg-black/20">
+                    <h3 className="text-lg font-semibold text-white">Your dashboard is ready</h3>
+                    <p className="mt-2 text-gray-400 max-w-md mx-auto">
+                        This is your command center. You haven't launched any projects yet.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
