@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, Star } from "lucide-react";
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 
 export default async function ArtistDashboardPage() {
     const supabase = await createClient();
@@ -12,37 +10,45 @@ export default async function ArtistDashboardPage() {
         return <div>Please log in.</div>;
     }
 
-    // Fetch generic profile info for the welcome message
     const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('id', user.id)
         .single();
 
-    // Fetch project stats for the logged-in artist
-    const { data: projects, error: projectsError } = await supabase
-        .from('projects')
-        .select('id, current_funding, backer_count, status')
+    // Fetch projects via the new project_members table
+    // We select the linked project data
+    const { data: memberships, error: projectsError } = await supabase
+        .from('project_members')
+        .select(`
+            project:projects (
+                id,
+                current_funding,
+                backer_count,
+                status
+            )
+        `)
         .eq('user_id', user.id);
 
     if (projectsError) {
         console.error("Error fetching projects:", projectsError);
     }
 
+    // Flatten the data: extracting the 'project' object from each membership row
+    // Typescript might complain about 'project' being an array or object depending on relationship,
+    // usually it returns an object for 1:1 relation in the join.
+    const projects = memberships?.map((m: any) => m.project) || [];
+
     // Calculate Stats
-    // Active Campaigns: Fundraising, Funded, or legacy 'Live'
-    const activeCampaignsCount = projects?.filter(p => 
+    const activeCampaignsCount = projects.filter((p: any) => 
         p.status === 'Fundraising' || 
         p.status === 'Funded' || 
         p.status === 'Live' || 
         p.status === 'active'
-    ).length || 0;
+    ).length;
     
-    // Total Funds: Sum of current_funding
-    const totalFundsRaised = projects?.reduce((sum, p) => sum + (Number(p.current_funding) || 0), 0) || 0;
-    
-    // Total Fans: Sum of backer_count
-    const totalBackers = projects?.reduce((sum, p) => sum + (p.backer_count || 0), 0) || 0;
+    const totalFundsRaised = projects.reduce((sum: number, p: any) => sum + (Number(p.current_funding) || 0), 0);
+    const totalBackers = projects.reduce((sum: number, p: any) => sum + (p.backer_count || 0), 0);
 
     return (
         <div className="space-y-8">
@@ -53,7 +59,6 @@ export default async function ArtistDashboardPage() {
                 </div>
             </div>
 
-            {/* Stats Widgets */}
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="bg-[#64918E] border-none text-white shadow-lg">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -87,12 +92,11 @@ export default async function ArtistDashboardPage() {
                 </Card>
             </div>
 
-            {/* Conditional Empty State */}
             {(!projects || projects.length === 0) && (
                 <div className="rounded-lg border border-dashed border-gray-600 p-12 text-center bg-black/20">
                     <h3 className="text-lg font-semibold text-white">Your dashboard is ready</h3>
                     <p className="mt-2 text-gray-400 max-w-md mx-auto">
-                        This is your command center. You haven't launched any projects yet.
+                        This is your command center. You haven't joined any project teams yet.
                     </p>
                 </div>
             )}

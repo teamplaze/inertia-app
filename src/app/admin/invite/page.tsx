@@ -1,19 +1,46 @@
-// File: src/app/admin/invite/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Copy, Check, ShieldAlert } from "lucide-react";
+// Using relative import to ensure build stability
+import { createClient } from "../../../lib/supabase/client";
+
+type Project = {
+  id: number;
+  project_title: string;
+  artist_name: string; // Added artist_name to type
+};
 
 export default function AdminInvitePage() {
   const [email, setEmail] = useState("");
+  const [projectId, setProjectId] = useState<string>("");
+  const [projects, setProjects] = useState<Project[]>([]);
   const [inviteLink, setInviteLink] = useState("");
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      // Fetch all projects. We don't filter for orphans anymore because
+      // multiple people can now be invited to the same project.
+      const { data, error } = await supabase
+        .from('projects')
+        .select('id, project_title, artist_name') // Fetch artist_name as well
+        .order('created_at', { ascending: false });
+      
+      if (data) setProjects(data);
+      if (error) console.error("Error fetching projects:", error);
+    };
+    fetchProjects();
+  }, [supabase]);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +53,10 @@ export default function AdminInvitePage() {
       const res = await fetch('/api/admin/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ 
+            email, 
+            projectId: projectId ? parseInt(projectId) : null 
+        })
       });
       
       const data = await res.json();
@@ -60,7 +90,7 @@ export default function AdminInvitePage() {
           </div>
           <CardTitle className="text-2xl text-white">Generate Artist Invite</CardTitle>
           <CardDescription className="text-gray-400">
-            Create a secure, one-time signup link for a new artist.
+            Create a secure, one-time signup link for a new artist and link them to a project team.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -76,6 +106,25 @@ export default function AdminInvitePage() {
                 className="bg-black/20 border-gray-600 text-white focus-visible:ring-[#CB945E]"
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="project" className="text-gray-200">Link to Project (Optional)</Label>
+              <Select onValueChange={setProjectId} value={projectId}>
+                <SelectTrigger className="bg-black/20 border-gray-600 text-white w-full">
+                  <SelectValue placeholder="Select a project" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#2D3534] text-white border-gray-600">
+                  {projects.map((p) => (
+                    <SelectItem key={p.id} value={p.id.toString()}>
+                      {p.artist_name} - {p.project_title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-400">
+                The user will be added as a member of this project.
+              </p>
             </div>
             
             {error && (
@@ -112,7 +161,7 @@ export default function AdminInvitePage() {
                 </Button>
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                Share this link with the artist. They will be guided through the artist onboarding flow.
+                Share this link with the artist. They will generally be added to the project upon signup.
               </p>
             </div>
           )}

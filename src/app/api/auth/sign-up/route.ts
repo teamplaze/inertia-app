@@ -1,5 +1,3 @@
-// File: src/app/api/auth/sign-up/route.ts
-
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js'; 
 import { cookies } from 'next/headers';
@@ -8,7 +6,6 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Admin client for checking invites and updating profiles (bypasses RLS)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -16,26 +13,17 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   const formData = await request.json();
-  
-  // Debugging: Log full raw body to inspect structure
-  console.log('📦 Raw Signup Body:', JSON.stringify(formData, null, 2));
-
   const { email, password, name, inviteToken } = formData;
   
-  // Debugging Logs: Check your terminal to see these values when you test
-  console.log('📝 Signup Attempt:', { email, name, hasInviteToken: !!inviteToken });
-
-  // Normalize email for comparison
   const normalizedEmail = email.toLowerCase().trim();
-
   const cookieStore = await cookies();
 
   // 1. Verify Invitation if provided
   let userType = 'fan';
   let invitationId = null;
+  let linkedProjectId = null;
 
   if (inviteToken) {
-    console.log('🔍 Validating Invite Token:', inviteToken);
     
     const { data: invite, error: inviteError } = await supabaseAdmin
       .from('artist_invitations')
@@ -46,30 +34,21 @@ export async function POST(request: Request) {
       .single();
 
     if (inviteError || !invite) {
-      console.error('❌ Invite Invalid/Expired:', inviteError);
       return NextResponse.json({ error: 'Invalid or expired invitation token.' }, { status: 400 });
     }
 
-    console.log('✅ Invite Found for:', invite.email);
-
-    // SECURITY CHECK: Email Mismatch
-    // Ensure the signup email matches the invited email
+    // Security Check: Email match
     const inviteEmail = invite.email.toLowerCase().trim();
-     if (inviteEmail !== normalizedEmail) {
-      // Keep detailed logs for server admin
-      console.error(`❌ Email Mismatch: Invitation is for ${inviteEmail}, but signup is for ${normalizedEmail}`);
-      
-      // Return generic message to client to prevent email enumeration
+    if (inviteEmail !== normalizedEmail) {
       return NextResponse.json({ 
         error: 'Email mismatch', 
-        details: 'Email provided does not match invite' 
+        details: 'Email does not match invite' 
       }, { status: 400 });
     }
     
     userType = 'artist';
     invitationId = invite.id;
-  } else {
-    console.log('ℹ️ No invite token provided. Creating standard Fan account.');
+    linkedProjectId = invite.project_id; // Capture the linked project ID
   }
 
   // 2. Standard Auth Client for user creation
@@ -100,31 +79,27 @@ export async function POST(request: Request) {
 
   const userId = signUpData.user.id;
 
-  // 4. Post-Signup Operations (Stripe + Profile Update)
+  // 4. Post-Signup Operations
   try {
-    // Create Stripe Customer
     const customer = await stripe.customers.create({
       email: normalizedEmail,
       name: name,
       metadata: { supabase_user_id: userId, user_type: userType },
     });
 
-    // Update Profile with Role and Stripe ID
-    // We use upsert to handle potential race conditions with database triggers
+    // Update Profile
     const { error: updateError } = await supabaseAdmin
       .from('profiles')
       .upsert({ 
         id: userId,
         full_name: name,
-        avatar_url: null, // Default
+        avatar_url: null, 
         stripe_customer_id: customer.id,
-        user_type: userType // This ensures they get the Artist role
+        user_type: userType 
       })
       .select();
 
-    if (updateError) {
-      console.error('❌ Database profile update error:', updateError);
-    }
+    if (updateError) console.error('DB Profile Error:', updateError);
 
     // Mark invitation as used
     if (invitationId) {
@@ -132,17 +107,32 @@ export async function POST(request: Request) {
         .from('artist_invitations')
         .update({ used_at: new Date().toISOString() })
         .eq('id', invitationId);
+        
+      // NEW: Link Project to User via project_members table
+      if (linkedProjectId) {
+          const { error: linkError } = await supabaseAdmin
+            .from('project_members')
+            .insert([{
+                project_id: linkedProjectId,
+                user_id: userId,
+                role: 'owner' // Default to owner, can be expanded later
+            }]);
+            
+          if (linkError) {
+              console.error('❌ Failed to add user to project team:', linkError);
+          } else {
+              console.log(`✅ Successfully added Artist ${userId} to Project ${linkedProjectId}`);
+          }
+      }
     }
 
   } catch (err) {
     console.error('❌ Post-signup error:', err);
-    // We don't fail the request here because the user account was technically created
   }
 
-  // 5. Sign In automatically to complete flow
+  // 5. Sign In
   await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
 
-  // 6. Return success with redirect hint
   return NextResponse.json(
     { 
       message: 'Sign up successful!', 
