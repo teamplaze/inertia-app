@@ -18,16 +18,15 @@ export default async function ArtistDashboardLayout({
     redirect('/login');
   }
 
-  // Verify User Role is 'artist'
+  // Verify User Role
   const { data: profile } = await supabase
     .from('profiles')
     .select('user_type')
     .eq('id', user.id)
     .single();
 
-  // If they aren't an artist, block access and show the Forbidden UI
-  // This error will be caught by src/app/artist/forbidden.tsx
-  if (!profile || profile.user_type !== 'artist') {
+  // Allow Artists OR Admins. Block everyone else (Fans).
+  if (!profile || (profile.user_type !== 'artist' && profile.user_type !== 'admin')) {
     forbidden();
   }
 
@@ -37,6 +36,12 @@ export default async function ArtistDashboardLayout({
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <span className="font-bold text-[#CB945E] tracking-wider uppercase">Artist Dashboard</span>
+                {/* Visual indicator for Admins */}
+                {profile.user_type === 'admin' && (
+                   <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest">
+                     Admin View
+                   </span>
+                )}
             </div>
             <div className="text-sm text-gray-400">{user.email}</div>
         </div>

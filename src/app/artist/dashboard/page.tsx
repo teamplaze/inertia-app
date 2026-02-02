@@ -1,5 +1,6 @@
+// File: src/app/artist/dashboard/page.tsx
 import { createClient } from '@/lib/supabase/server';
-import { createClient as createAdminClient } from '@supabase/supabase-js'; // Import for admin
+import { createClient as createAdminClient } from '@supabase/supabase-js'; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Users, Star, ExternalLink } from "lucide-react";
 import Link from 'next/link';
@@ -25,41 +26,72 @@ export default async function ArtistDashboardPage(props: {
         return <div>Please log in.</div>;
     }
 
-    // Check if current user is admin to allow "viewAs" functionality
     const { data: currentUserProfile } = await supabase
         .from('profiles')
         .select('user_type')
         .eq('id', user.id)
         .single();
 
-    let targetUserId = user.id;
-    const viewAs = searchParams.viewAs;
+    // DETERMINE ACTIVE PROJECT
+    // 1. Check for 'projectId' in query params (e.g. from "Manage Project" button)
+    // 2. Check for 'viewAs' user override
+    // 3. Fallback to user's memberships
 
-    // If admin, allow overriding the user ID to view another artist's dashboard
-    if (currentUserProfile?.user_type === 'admin' && typeof viewAs === 'string') {
-        targetUserId = viewAs;
+    let targetProjectId = searchParams.projectId as string | undefined;
+    let targetUserId = user.id;
+    
+    const isAdmin = currentUserProfile?.user_type === 'admin';
+
+    // Handle viewAs (Override user context)
+    if (isAdmin && typeof searchParams.viewAs === 'string') {
+        targetUserId = searchParams.viewAs;
     }
 
-    const { data: profile } = await supabaseAdmin // Use admin to ensure we get profile even if RLS is strict
+    const { data: profile } = await supabaseAdmin 
         .from('profiles')
         .select('full_name')
         .eq('id', targetUserId)
         .single();
 
-    // 1. Fetch ALL projects for the artist via project_members
-    const { data: memberships } = await supabaseAdmin // Use admin to ensure we get membership data
-        .from('project_members')
-        .select(`
-            project:projects (*)
-        `)
-        .eq('user_id', targetUserId);
+    let activeProject = null;
 
-    const projects = memberships?.map((m: any) => m.project) || [];
-    
-    // 2. Select Spotlight Project (Most recent active)
-    const activeProject = projects.sort((a: any, b: any) => b.id - a.id)[0];
+    // Strategy 1: Explicit Project ID Requested
+    if (targetProjectId) {
+        // If Admin, fetch directly. If Artist, verify membership first.
+        let hasAccess = isAdmin;
 
-    // If no project, show empty state
+        if (!isAdmin) {
+             const { data: member } = await supabaseAdmin
+                .from('project_members')
+                .select('id')
+                .eq('project_id', targetProjectId)
+                .eq('user_id', user.id)
+                .single();
+             if (member) hasAccess = true;
+        }
+
+        if (hasAccess) {
+             const { data: p } = await supabaseAdmin
+                .from('projects')
+                .select('*')
+                .eq('id', targetProjectId)
+                .single();
+             if (p) activeProject = p;
+        }
+    }
+
+    // Strategy 2: Fallback to finding most recent project for the target user
+    if (!activeProject) {
+        const { data: memberships } = await supabaseAdmin 
+            .from('project_members')
+            .select(`project:projects (*)`)
+            .eq('user_id', targetUserId);
+
+        const projects = memberships?.map((m: any) => m.project) || [];
+        activeProject = projects.sort((a: any, b: any) => b.id - a.id)[0];
+    }
+
+    // If still no project, show empty state
     if (!activeProject) {
         return (
             <div className="space-y-8">
@@ -67,14 +99,17 @@ export default async function ArtistDashboardPage(props: {
                 <div className="rounded-lg border border-dashed border-gray-600 p-12 text-center bg-black/20">
                     <h3 className="text-lg font-semibold text-white">Your dashboard is ready</h3>
                     <p className="mt-2 text-gray-400 max-w-md mx-auto">
-                        This is your command center. You haven't joined any project teams yet. Contact an admin to get started.
+                        This is your command center. No active projects found.
+                        {isAdmin && " (As an Admin, use the 'Manage Project' button on a project page to view its stats.)"}
                     </p>
                 </div>
             </div>
         );
     }
 
-    // 3. Fetch Tier Stats for Spotlight Project (Using Admin to bypass RLS)
+    // --- FETCH STATS FOR ACTIVE PROJECT ---
+
+    // 3. Fetch Tier Stats for Spotlight Project
     const { data: tierStats } = await supabaseAdmin
         .from('contributions')
         .select('tier_id, amount_paid')
@@ -160,24 +195,28 @@ export default async function ArtistDashboardPage(props: {
 
                 {/* 2.1 & 2.2 Funds & Momentum */}
                 <Card className="bg-[#1E2322] border-none text-white shadow-lg lg:col-span-2">
-                    <CardContent className="p-6 h-full flex flex-col md:flex-row gap-8 items-center justify-around">
-                        <div className="text-center md:text-left">
+                    <CardContent className="p-6 h-full flex flex-col lg:flex-row gap-8 items-center justify-around">
+                        <div className="text-center lg:text-left">
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Total Funds Raised</p>
-                            <div className="text-5xl font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                            <div className="text-5xl font-bold text-white flex items-center justify-center lg:justify-start gap-2">
                                 <span className="text-[#CB945E] text-3xl">$</span>
                                 {totalRaised.toLocaleString()}
                             </div>
                         </div>
-                        <div className="h-px w-full md:w-px md:h-16 bg-gray-700"></div>
-                        <div className="text-center md:text-left">
+                        
+                        <div className="h-px w-full lg:w-px lg:h-16 bg-gray-700"></div>
+                        
+                        <div className="text-center lg:text-left">
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Total Backers</p>
-                            <div className="text-5xl font-bold text-white flex items-center justify-center md:justify-start gap-2">
+                            <div className="text-5xl font-bold text-white flex items-center justify-center lg:justify-start gap-2">
                                 <Users className="w-8 h-8 text-[#CB945E]" />
                                 {totalBackers.toLocaleString()}
                             </div>
                         </div>
-                        <div className="h-px w-full md:w-px md:h-16 bg-gray-700"></div>
-                        <div className="text-center md:text-left">
+                        
+                        <div className="h-px w-full lg:w-px lg:h-16 bg-gray-700"></div>
+                        
+                        <div className="text-center lg:text-left">
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Last Contribution</p>
                             <div className="text-2xl font-semibold text-white">
                                 {timeAgoStr}
@@ -203,7 +242,6 @@ export default async function ArtistDashboardPage(props: {
                                         <TableHead className="text-gray-400">Price</TableHead>
                                         <TableHead className="text-gray-400">Seats Sold</TableHead>
                                         <TableHead className="text-gray-400">Total Raised</TableHead>
-                                        {/* Show Remaining if any tier has a limit */}
                                         <TableHead className="text-gray-400 text-right">Availability</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -248,14 +286,13 @@ function Badge({ status }: { status: string }) {
 }
 
 // Helper to calculate "Time Ago" without external deps
-// FIX: Added Math.abs() to handle slight clock skew resulting in negative seconds
 function timeAgo(date: Date) {
     let seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     
     // Handle future dates or clock skew by treating as "Just now"
     if (seconds < 0) {
-        if (seconds > -60) return "Just now"; // Tolerance for 1 min skew
-        seconds = 0; // Otherwise clamp to 0
+        if (seconds > -60) return "Just now"; 
+        seconds = 0; 
     }
     
     let interval = seconds / 31536000;

@@ -71,11 +71,10 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
     <Card className="bg-[#2D3534] border-[#CB945E] text-white">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Contributions</CardTitle>
-        <Button 
-            variant="outline" 
+        <Button  
             size="sm" 
             onClick={handleExport}
-            className="border-[#CB945E] text-[#CB945E] hover:bg-[#CB945E] hover:text-white"
+            className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
         >
           <Download className="w-4 h-4 mr-2" />
           Export CSV
