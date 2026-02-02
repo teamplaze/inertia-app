@@ -1,3 +1,4 @@
+// File: src/app/projects/[id]/project-client-ui.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,24 +6,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, Heart, Play } from "lucide-react";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
-import type { Project, Tier, Testimonial } from "@/types";
+import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-// Check if payments are enabled via environment variable (same as header)
+// Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return false;
   return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
 })();
 
-export default function ProjectUI({ projectData }: { projectData: Project }) {
+interface ProjectUIProps {
+  projectData: Project;
+  isProjectMember: boolean;
+}
+
+export default function ProjectUI({ projectData, isProjectMember }: ProjectUIProps) {
   const { user } = useAuth();
   const router = useRouter();
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -73,13 +79,12 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
     }
 
     try {
-      // 1. Call your backend API to create the checkout session
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ tierId: selectedTierData.id }),
+        body: JSON.stringify({ tierId: selectedTierData.id, projectId: project.id }),
       });
 
       if (!response.ok) {
@@ -88,18 +93,15 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
 
       const { sessionId } = await response.json();
 
-      // 2. Redirect to Stripe's hosted checkout page
       const stripe = await stripePromise;
       if (stripe) {
         const { error } = await stripe.redirectToCheckout({ sessionId });
         if (error) {
           console.error('Stripe redirect error:', error);
-          // Optionally show an error message to the user
         }
       }
     } catch (error) {
       console.error('Checkout failed:', error);
-      // Optionally show an error message to the user
     }
   };
   
@@ -138,12 +140,25 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
         <div className="space-y-6">
           <div>
-            <Badge
-              variant={project.status === "Completed" ? "secondary" : "default"}
-              className="mb-4 bg-gray-600 text-white"
-            >
-              {project.status}
-            </Badge>
+            <div className="flex justify-between items-start">
+              <Badge
+                variant={project.status === "Completed" ? "secondary" : "default"}
+                className="mb-4 bg-gray-600 text-white"
+              >
+                {project.status}
+              </Badge>
+
+              {/* --- ARTIST DASHBOARD BUTTON (Conditional) --- */}
+              {isProjectMember && (
+                <Link href={`/artist/dashboard?projectId=${project.id}`}>
+                    <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Project Results
+                    </Button>
+                </Link>
+              )}
+            </div>
+
             <h1 className="text-4xl font-bold mb-2" style={{ color: "#64918E" }}>
               {project.project_title}
             </h1>
@@ -197,22 +212,21 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </div>
       </div>
 
-      {/* === FROM THE ARTIST SECTION UPDATED === */}
+      {/* === FROM THE ARTIST SECTION === */}
       <section id="from-artist" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>From the Artist</h2>
         <Card className="rounded-xl" style={gradientCardStyle}>
           <CardContent className="p-6">
             <div className="prose prose-lg max-w-none prose-invert">
-                {/* Now using the new dedicated field from the database */}
                 {project.from_the_artist_message && project.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
-    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
-))}
+                    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
+                ))}
             </div>
           </CardContent>
         </Card>
       </section>
 
-      {/* === PREVIEWS SECTION UPDATED === */}
+      {/* === PREVIEWS SECTION === */}
       <section id="previews" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>Previews</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -289,7 +303,6 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
       <section id="support-levels" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {/* THIS IS THE CORRECTED LINE */}
           {tiers.sort((a, b) => a.price - b.price).map((tier) => (
             <Card
               key={tier.id}
@@ -367,15 +380,6 @@ export default function ProjectUI({ projectData }: { projectData: Project }) {
         </section>
       )}
 
-      <section>
-        <Card className="rounded-xl" style={gradientCardStyle}>
-          <CardContent className="p-8 text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">Join the Community</h3>
-            <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Connect with {project.artist_name} and other supporters in our exclusive community. Share your thoughts, get updates, and be part of the creative journey.</p>
-            <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">Join the Discussion</Button>
-          </CardContent>
-        </Card>
-      </section>
     </main>
   );
 }

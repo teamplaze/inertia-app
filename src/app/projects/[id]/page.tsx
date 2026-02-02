@@ -1,18 +1,18 @@
-// File: src/app/projects/[id]/page.tsx
-// Fixed version with complete type mapping
-
+// File: src/app/[slug]/page.tsx
 import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 import Link from "next/link";
-import ProjectUI from "./project-client-ui";
-import type { Project } from "@/types";
+import ProjectUI from '@/app/projects/[id]/project-client-ui';
+import type { Project } from '@/types';
 
-async function getProjectData(id: string): Promise<Project | null> {
+// Force dynamic rendering to ensure auth checks run on every request
+export const dynamic = 'force-dynamic';
+
+async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
     const supabase = await createClient();
     
-    console.log('🔍 Fetching project data for ID:', id);
-    
-    // Direct database query
+    // Query by 'slug' instead of 'id'
     const { data: projectData, error } = await supabase
       .from('projects')
       .select(`
@@ -24,7 +24,7 @@ async function getProjectData(id: string): Promise<Project | null> {
           budget_line_items (*)
         )
       `)
-      .eq('id', id)
+      .eq('slug', slug)
       .single();
 
     if (error) {
@@ -33,14 +33,10 @@ async function getProjectData(id: string): Promise<Project | null> {
     }
 
     if (!projectData) {
-      console.log('📭 No project found with ID:', id);
       return null;
     }
 
-    console.log('✅ Project data fetched successfully:', projectData.project_title);
-    
-
-    // Transform the data to match your Project type
+    // Transform data
     const project: Project = {
       id: projectData.id,
       created_at: projectData.created_at,
@@ -58,31 +54,33 @@ async function getProjectData(id: string): Promise<Project | null> {
       from_the_artist_message: projectData.from_the_artist_message,
       tiers: projectData.tiers || [],
       testimonials: projectData.testimonials || [],
-      budget_categories: projectData.budget_categories || []
+      budget_categories: projectData.budget_categories || [],
+      slug: projectData.slug
     };
     
     return project;
     
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('💥 Unexpected error fetching project:', errorMessage);
+    console.error('💥 Unexpected error fetching project:', error);
     return null;
   }
 }
 
-export default async function ProjectPage({ 
-  params 
-}: { 
-  params: Promise<{ id: string }> 
-}) {
+// In Next.js 15, params is a Promise
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function ProjectPage({ params }: Props) {
   const resolvedParams = await params;
-  const projectData = await getProjectData(resolvedParams.id);
+  const projectData = await getProjectBySlug(resolvedParams.slug);
+  const supabase = await createClient();
 
   if (!projectData) {
     return (
       <div className="min-h-screen text-white text-center pt-32">
         <h2 className="text-2xl font-bold">Project not found</h2>
-        <p className="mt-2 text-gray-400">Could not load the project data. Please try again later.</p>
         <Link href="/" className="text-lg text-[#CB945E] hover:underline mt-6 inline-block">
             &larr; Back to Homepage
         </Link>
@@ -90,5 +88,34 @@ export default async function ProjectPage({
     );
   }
 
-  return <ProjectUI projectData={projectData} />;
+  // --- CHECK MANAGEMENT PERMISSIONS ---
+  let canManageProject = false;
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    // 1. Check if Admin
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type')
+        .eq('id', user.id)
+        .single();
+    
+    if (profile?.user_type === 'admin') {
+        canManageProject = true;
+    } else {
+        // 2. Check if Project Member
+        const { data: member } = await supabase
+          .from('project_members')
+          .select('id')
+          .eq('project_id', projectData.id)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (member) {
+          canManageProject = true;
+        }
+    }
+  }
+
+  return <ProjectUI projectData={projectData as Project} isProjectMember={canManageProject} />;
 }
