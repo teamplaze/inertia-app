@@ -10,7 +10,7 @@ import type { BudgetCategory } from "@/types";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Badge } from "@/components/ui/badge";
 
-const COLORS = ['#A67C5A', '#B8860B', '#6B8E23', '#708090', '#CD5C5C', '#4682B4'];
+const COLORS = ['#692baf', '#b80b76', '#538e23', '#708090', '#CD5C5C', '#B8860B'];
 
 export default function BudgetBreakdown({ categories }: { categories: BudgetCategory[] }) {
   const [view, setView] = useState<'summary' | 'detailed'>('summary');

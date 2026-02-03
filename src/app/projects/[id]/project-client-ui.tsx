@@ -163,13 +163,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             <h1 className="text-4xl font-bold mb-2" style={{ color: "#64918E" }}>
               {project.project_title}
             </h1>
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-start gap-3 mb-6">
               <Image
                 src={project.artist_profile_image_url || "/placeholder.svg"}
                 alt={project.artist_name}
                 width={48}
                 height={48}
-                className="w-12 h-12 rounded-full object-cover border-2 border-gray-600"
+                className="w-12 h-12 rounded-xl object-cover border-2 border-gray-600 shrink-0"
               />
               <div>
                 <p className="font-semibold text-white">{project.artist_name}</p>
