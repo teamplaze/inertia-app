@@ -15,6 +15,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Component
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -379,6 +380,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </Card>
         </section>
       )}
+
+      <FAQSection />
 
     </main>
   );
