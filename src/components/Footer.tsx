@@ -9,7 +9,7 @@ export default function Footer() {
             <p className="text-sm text-white">&copy; {new Date().getFullYear()} Inertia. All rights reserved.</p>
             <div className="flex gap-4 mt-2 justify-center">
                 <Link href="#" className="text-xs hover:underline underline-offset-4 text-gray-300 hover:text-white">Terms & Conditions</Link>
-                <Link href="#" className="text-xs hover:underline underline-offset-4 text-gray-300 hover:text-white">Legal Disclosures</Link>
+                {/* <Link href="#" className="text-xs hover:underline underline-offset-4 text-gray-300 hover:text-white">Legal Disclosures</Link> */}
             </div>
         </div>
       </div>
