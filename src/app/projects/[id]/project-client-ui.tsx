@@ -29,6 +29,15 @@ interface ProjectUIProps {
   isProjectMember: boolean;
 }
 
+// Helper to get tier subtitle
+const getTierSubtitle = (name: string) => {
+  const n = name.toUpperCase();
+  if (n.includes("GA")) return "For fans who want to be part of the journey and the fun";
+  if (n.includes("PIT")) return "For fans who want deeper access and real conversations";
+  if (n.includes("VIP")) return "For fans who want to leave their mark on the project";
+  return null;
+};
+
 export default function ProjectUI({ projectData, isProjectMember }: ProjectUIProps) {
   const { user } = useAuth();
   const router = useRouter();
@@ -302,7 +311,10 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       <BudgetBreakdown categories={project.budget_categories} />
 
       <section id="support-levels" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
+          <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           {tiers.sort((a, b) => a.price - b.price).map((tier) => (
             <Card
@@ -316,10 +328,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             >
               <CardHeader>
                 <div className="flex justify-between items-start">
-                  <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
+                  <div className="space-y-1">
+                    <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
+                    {/* ADDED SUBTITLE HERE */}
+                    <p className="text-xs text-white/90 font-medium font-medium italic">{getTierSubtitle(tier.name)}</p>
+                  </div>
                   {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: "#CB945E" }} />}
                 </div>
-                <div className="text-3xl font-bold text-white">${tier.price}</div>
+                <div className="text-3xl font-bold text-white mt-2">${tier.price}</div>
               </CardHeader>
               <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                 <ul className="space-y-2">
