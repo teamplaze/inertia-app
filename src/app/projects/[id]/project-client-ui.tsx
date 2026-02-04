@@ -20,7 +20,6 @@ import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Comp
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
-  if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') return false;
   return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
 })();
 
