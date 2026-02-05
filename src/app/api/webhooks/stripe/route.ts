@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     
     const { userId, tierId, projectId } = session.metadata || {};
+    const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
 
     if (!userId || !tierId || !projectId) {
       return NextResponse.json({ error: 'Webhook Error: Missing required metadata' }, { status: 400 });
@@ -85,11 +86,20 @@ export async function POST(request: Request) {
       if (contributionError) throw contributionError;
       
       // --- 5. Update counts using RPC functions ---
-      await supabaseAdmin.rpc('increment_claimed_slots', { tier_id_to_update: tierId });
-      await supabaseAdmin.rpc('update_project_funding', { 
-        project_id_to_update: projectId, 
-        amount_to_add: (session.amount_total || 0) / 100 
+      // UPDATED: Using standardized names matching the migration script
+      
+      // Increment Tier Stats (Claimed Slots)
+      const { error: tierStatsError } = await supabaseAdmin.rpc('increment_tier_stats', { 
+          t_id: Number(tierId) 
       });
+      if (tierStatsError) throw tierStatsError;
+
+      // Increment Project Stats (Funding & Backer Count)
+      const { error: projectStatsError } = await supabaseAdmin.rpc('increment_project_stats', { 
+          p_id: Number(projectId), 
+          amount: amountTotal 
+      });
+      if (projectStatsError) throw projectStatsError;
 
       // --- 6. Send the confirmation email via Loops.so ---
       const customerEmail = session.customer_details?.email;
