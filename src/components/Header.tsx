@@ -73,7 +73,7 @@ export default function Header() {
         <Image src="/Inertia-Logo-w-tagline.svg" alt="Inertia Logo" width={120} height={60} />
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
-        <Link href="/#how-it-works" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">
+        <Link href="/#how-it-works" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white hidden sm:block" >
           How It Works
         </Link>
         <Link href="/#featured-projects" className="text-sm font-medium hover:underline underline-offset-4 text-gray-300 hover:text-white">

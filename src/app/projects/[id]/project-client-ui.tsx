@@ -214,7 +214,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 <DollarSign className="w-4 h-4 mr-2" /> Budget
               </Button>
               <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                <Star className="w-4 h-4 mr-2" /> Support
+                <Star className="w-4 h-4 mr-2" /> Contribute
               </Button>
             </div>
           </div>
@@ -314,71 +314,103 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
         </div>
+        {/* Changed items-stretch to items-start to prevent neighbors from stretching when checkout box appears */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           {tiers.sort((a, b) => a.price - b.price).map((tier) => (
-            <Card
-              key={tier.id}
-              className={`flex flex-col relative transition-all duration-200 rounded-xl ${
-                selectedTier === tier.id 
-                  ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
-                  : "hover:shadow-md hover:shadow-gray-700/50"
-              }`}
-              style={regularCardStyle}
-            >
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div className="space-y-1">
-                    <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
-                    {/* ADDED SUBTITLE HERE */}
-                    <p className="text-xs text-white/90 font-medium font-medium italic">{getTierSubtitle(tier.name)}</p>
+            <div key={tier.id} className="flex flex-col gap-4">
+              <Card
+                className={`flex flex-col relative transition-all duration-200 rounded-xl h-full ${
+                  selectedTier === tier.id 
+                    ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
+                    : "hover:shadow-md hover:shadow-gray-700/50"
+                }`}
+                style={regularCardStyle}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
+                      <p className="text-xs text-white/90 font-medium italic">{getTierSubtitle(tier.name)}</p>
+                    </div>
+                    {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: "#CB945E" }} />}
                   </div>
-                  {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: "#CB945E" }} />}
-                </div>
-                <div className="text-3xl font-bold text-white mt-2">${tier.price}</div>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                <ul className="space-y-2">
-                  {tier.perks.map((perk, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
-                      <span className="text-sm text-white">{perk}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="pt-4 border-t border-white/20">
-                  <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
-                  
-                  {paymentsEnabled ? (
-                    user ? (
-                      <Button 
-                        onClick={() => handleTierSelect(tier.id)} 
-                        className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
-                        disabled={(tier.total_slots - tier.claimed_slots) === 0}
-                      >
-                        {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
-                      </Button>
-                    ) : (
-                      <Link href={`/login?redirect=/projects/${project.id}#support-levels`}>
+                  <div className="text-3xl font-bold text-white mt-2">${tier.price}</div>
+                </CardHeader>
+                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+                  <ul className="space-y-2">
+                    {tier.perks.map((perk, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                        <span className="text-sm text-white">{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="pt-4 border-t border-white/20">
+                    <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
+                    
+                    {paymentsEnabled ? (
+                      user ? (
+                        <Button 
+                          onClick={() => handleTierSelect(tier.id)} 
+                          className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
+                          disabled={(tier.total_slots - tier.claimed_slots) === 0}
+                        >
+                          {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
+                        </Button>
+                      ) : (
+                        <Link href={`/sign-up?action=checkout&projectId=${project.id}&tierId=${tier.id}`}>
                         <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                          Login/Sign up to contribute
+                          Sign up/Login to contribute
                         </Button>
                       </Link>
-                    )
-                  ) : (
-                    <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
-                      Coming Soon
-                    </div>
-                  )}
-                  
+                      )
+                    ) : (
+                      <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
+                        Coming Soon
+                      </div>
+                    )}
+                    
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* INLINE CHECKOUT BOX: Visible only on MOBILE (< md) */}
+              {paymentsEnabled && showCheckout && selectedTier === tier.id && (
+                <div className="md:hidden"> {/* Only show this block on mobile */}
+                    <Card className="rounded-xl animate-in fade-in slide-in-from-top-2 duration-300 border-2 border-[#CB945E] shadow-xl" style={gradientCardStyle}>
+                    <CardContent className="p-4">
+                        <div className="space-y-4">
+                        <div>
+                            <h3 className="text-lg font-bold text-white mb-1">Ready to support?</h3>
+                            <p className="text-sm text-gray-200 leading-snug">
+                            You've selected the <strong className="text-white">{tier.name}</strong> tier for <strong style={{ color: "#CB945E" }}>${tier.price}</strong>
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <Button onClick={handleCheckout} className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-semibold">
+                            Continue to Checkout
+                            </Button>
+                            <Button 
+                            variant="ghost" 
+                            className="w-full text-gray-300 hover:text-white hover:bg-white/10 h-8 text-xs" 
+                            onClick={() => { setSelectedTier(null); setShowCheckout(false); }}
+                            >
+                            Change Selection
+                            </Button>
+                        </div>
+                        </div>
+                    </CardContent>
+                    </Card>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           ))}
         </div>
       </section>
 
+      {/* DESKTOP CHECKOUT BOX: Visible only on DESKTOP (>= md) */}
       {paymentsEnabled && showCheckout && selectedTierData && (
-        <section className="mb-12">
+        <section className="mb-12 hidden md:block"> {/* Only show on desktop */}
           <Card className="rounded-xl" style={gradientCardStyle}>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

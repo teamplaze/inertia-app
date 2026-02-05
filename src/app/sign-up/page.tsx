@@ -11,14 +11,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
+import { loadStripe } from '@stripe/stripe-js'; // Import Stripe loader
+
+// Load Stripe outside render
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get('invite');
-
-  // Debug: Log on render to verify the hook is working
-  console.log('Rendering SignUpForm. URL Token:', inviteToken);
+  
+  // Capture Checkout Intent
+  const action = searchParams.get('action');
+  const projectId = searchParams.get('projectId');
+  const tierId = searchParams.get('tierId');
+  // Also support generic redirect if used elsewhere
+  const redirectUrl = searchParams.get('redirect'); 
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,35 +41,68 @@ function SignUpForm() {
     setIsLoading(true);
     setMessage('');
 
-    console.log('Submitting Form. Invite Token:', inviteToken);
-
-    const response = await fetch('/api/auth/sign-up', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        // Explicitly handle null/undefined to ensure we know what we are sending
-        inviteToken: inviteToken || null, 
-      }),
-    });
-
-    if (response.ok) {
-      setMessage('Account created successfully! Redirecting...');
-      setTimeout(() => {
-        const data = response.clone().json().then(d => {
-           window.location.href = d.redirectTo || '/';
-        }).catch(() => {
-           window.location.href = '/';
+    try {
+        const response = await fetch('/api/auth/sign-up', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+            inviteToken: inviteToken || null, 
+          }),
         });
-      }, 1500);
-    } else {
-      const errorData = await response.json();
-      setMessage(`Sign-up failed: ${errorData.details || errorData.error || 'Please try again.'}`);
-      setIsLoading(false);
+    
+        const data = await response.json();
+    
+        if (response.ok) {
+          setMessage('Account created! preparing next step...');
+          
+          // --- CHECKOUT REDIRECT LOGIC ---
+          if (action === 'checkout' && projectId && tierId) {
+             setMessage('Redirecting to checkout...');
+             
+             // Initiate Checkout immediately
+             const checkoutRes = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tierId: Number(tierId), projectId: Number(projectId) }),
+             });
+             
+             if (checkoutRes.ok) {
+                 const { sessionId } = await checkoutRes.json();
+                 const stripe = await stripePromise;
+                 if (stripe) {
+                     await stripe.redirectToCheckout({ sessionId });
+                     return; // Stop execution, browser is redirecting
+                 }
+             } else {
+                 console.error('Auto-checkout failed, falling back to project page');
+                 // Fallback: Go to project page so they can click button again
+                 window.location.href = `/projects/${projectId}`;
+                 return;
+             }
+          }
+    
+          // --- STANDARD REDIRECT LOGIC ---
+          setTimeout(() => {
+             if (redirectUrl) {
+               window.location.href = redirectUrl;
+             } else {
+               window.location.href = data.redirectTo || '/';
+             }
+          }, 1000);
+          
+        } else {
+          setMessage(`Sign-up failed: ${data.details || data.error || 'Please try again.'}`);
+          setIsLoading(false);
+        }
+    } catch (error) {
+        console.error(error);
+        setMessage("An unexpected error occurred.");
+        setIsLoading(false);
     }
   };
 
@@ -70,6 +111,19 @@ function SignUpForm() {
     if (scrollHeight - scrollTop <= clientHeight + 1) {
       setTermsScrolled(true);
     }
+  };
+
+    // Construct the Login URL preserving params
+  const getLoginUrl = () => {
+      const params = new URLSearchParams();
+      if (action) params.set('action', action);
+      if (projectId) params.set('projectId', projectId);
+      if (tierId) params.set('tierId', tierId);
+      if (redirectUrl) params.set('redirect', redirectUrl);
+      if (inviteToken) params.set('invite', inviteToken);
+      
+      const queryString = params.toString();
+      return queryString ? `/login?${queryString}` : '/login';
   };
 
   return (
