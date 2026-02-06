@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart } from "lucide-react";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -216,6 +216,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 {project.backer_count} backers
               </span>
             </div>
+
+            <Button
+              onClick={() => scrollToSection("support-levels")}
+              className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white text-lg font-bold py-6 animate-pulse"
+            >
+              Purchase Options <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+
             <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
               <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
                 <User className="w-4 h-4 mr-2" /> From Artist
@@ -230,7 +238,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 <DollarSign className="w-4 h-4 mr-2" /> Budget
               </Button>
               <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                <Star className="w-4 h-4 mr-2" /> Contribute
+                <Star className="w-4 h-4 mr-2" /> Perks
               </Button>
             </div>
           </div>
