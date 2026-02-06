@@ -221,7 +221,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               onClick={() => scrollToSection("support-levels")}
               className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white text-lg font-bold py-6 animate-pulse"
             >
-              Purchase Options <ArrowRight className="ml-2 h-5 w-5" />
+              Buy Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
             <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
@@ -265,7 +265,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
-              <h3 className="font-semibold text-white">{project.artist_name}</h3>
               <div className="aspect-video bg-black rounded-lg">
                 {project.artist_message_video_url ? (
                   <iframe
@@ -283,13 +282,25 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </Card>
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
-              <h3 className="font-semibold text-white">Audio Preview</h3>
               <div className="bg-black/40 rounded-lg p-4">
+                {/* CONDITIONAL RENDER: Audio vs Spotify Embed */}
                 {project.audio_preview_url ? (
                   <audio controls className="w-full">
                     <source src={project.audio_preview_url} type="audio/mpeg" />
                     Your browser does not support the audio element.
                   </audio>
+                ) : project.spotify_artist_id ? (
+                  // Spotify Embed Fallback
+                  <iframe 
+                    style={{ borderRadius: '12px' }} 
+                    src={`https://open.spotify.com/embed/artist/${project.spotify_artist_id}?utm_source=generator&theme=0`} 
+                    width="100%" 
+                    height="152" 
+                    frameBorder="0" 
+                    allowFullScreen 
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                    loading="lazy"
+                  ></iframe>
                 ) : (
                   <p className="text-center text-gray-400">No audio preview available.</p>
                 )}

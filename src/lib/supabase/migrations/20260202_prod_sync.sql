@@ -82,3 +82,7 @@ END $$;
 -- Add donation_link column to projects table
 ALTER TABLE public.projects
 ADD COLUMN IF NOT EXISTS donation_link TEXT;
+
+-- Add spotify_artist_id column to projects table
+ALTER TABLE public.projects
+ADD COLUMN IF NOT EXISTS spotify_artist_id TEXT;

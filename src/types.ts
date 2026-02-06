@@ -79,4 +79,6 @@ export type Project = {
   budget_categories: BudgetCategory[];
   // Added donation_link property
   donation_link?: string;
+  // Added spotify_artist_id property
+  spotify_artist_id?: string;
 };
