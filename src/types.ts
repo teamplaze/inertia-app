@@ -77,4 +77,6 @@ export type Project = {
   slug?: string;
   // This is the new field for our nested budget data
   budget_categories: BudgetCategory[];
+  // Added donation_link property
+  donation_link?: string;
 };

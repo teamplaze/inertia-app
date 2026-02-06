@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard } from "lucide-react";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -22,6 +22,8 @@ const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
   return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
 })();
+
+const DONATION_LINK = "https://donate.stripe.com/test_fZu3cx9gD5ji6zve5g28800";
 
 interface ProjectUIProps {
   projectData: Project;
@@ -113,6 +115,20 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       console.error('Checkout failed:', error);
     }
   };
+
+  const getDonationUrl = () => {
+    // Priority: Project-specific link (DB field) only. No env var fallback.
+    const link = project.donation_link;
+    
+    if (!link) return null;
+
+    if (user && user.email) {
+        return `${link}?prefilled_email=${encodeURIComponent(user.email)}`;
+    }
+    return link;
+  };
+
+  const donationUrl = getDonationUrl();
   
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -314,8 +330,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
         </div>
-        {/* Changed items-stretch to items-start to prevent neighbors from stretching when checkout box appears */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+        {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
+        <div className={`grid grid-cols-1 md:grid-cols-3 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
           {tiers.sort((a, b) => a.price - b.price).map((tier) => (
             <div key={tier.id} className="flex flex-col gap-4">
               <Card
@@ -405,6 +421,58 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               )}
             </div>
           ))}
+
+          {/* === DONATION CARD === */}
+          {donationUrl && (
+            <div className="flex flex-col gap-4">
+               <Card
+                  className="flex flex-col relative transition-all duration-200 rounded-xl h-full hover:shadow-md hover:shadow-gray-700/50"
+                  style={regularCardStyle}
+                >
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-1">
+                        <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>Donate</CardTitle>
+                        <p className="text-xs text-white/90 font-medium italic">Support the project directly without the perks</p>
+                      </div>
+                    </div>
+                    <div className="text-3xl font-bold text-white mt-2">Any Amount</div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+                    <ul className="space-y-2">
+                       <li className="flex items-start gap-2">
+                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                         <span className="text-sm text-white">Help us reach our goal faster</span>
+                       </li>
+                       <li className="flex items-start gap-2">
+                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                         <span className="text-sm text-white">Every bit counts</span>
+                       </li>
+                    </ul>
+                    <div className="pt-4 border-t border-white/20">
+                    <div className="text-sm text-center text-white/80 mb-2"> Unlimited Love</div>
+                       {paymentsEnabled ? (
+                           <a 
+                             href={donationUrl} 
+                             target="_blank" 
+                             rel="noopener noreferrer"
+                             className="block w-full"
+                           >
+                             <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                                Donate Now
+                             </Button>
+                           </a>
+                       ) : (
+                         <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
+                           Coming Soon
+                         </div>
+                       )}
+                    </div>
+                  </CardContent>
+               </Card>
+            </div>
+          )}
+
         </div>
       </section>
 
