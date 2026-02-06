@@ -56,7 +56,8 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
       testimonials: projectData.testimonials || [],
       budget_categories: projectData.budget_categories || [],
       slug: projectData.slug,
-      donation_link: projectData.donation_link 
+      donation_link: projectData.donation_link,
+      spotify_artist_id: projectData.spotify_artist_id 
     };
     
     return project;
