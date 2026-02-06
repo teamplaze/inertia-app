@@ -55,7 +55,8 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
       tiers: projectData.tiers || [],
       testimonials: projectData.testimonials || [],
       budget_categories: projectData.budget_categories || [],
-      slug: projectData.slug
+      slug: projectData.slug,
+      donation_link: projectData.donation_link 
     };
     
     return project;

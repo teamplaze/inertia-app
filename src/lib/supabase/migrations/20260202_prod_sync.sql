@@ -78,3 +78,7 @@ DO $$ BEGIN
         CREATE POLICY "Users can view their own project memberships" ON public.project_members FOR SELECT USING (auth.uid() = user_id);
     END IF;
 END $$;
+
+-- Add donation_link column to projects table
+ALTER TABLE public.projects
+ADD COLUMN IF NOT EXISTS donation_link TEXT;
