@@ -10,6 +10,11 @@ const PostHogPageView = dynamic(() => import('./PostHogPageView'), {
   ssr: false,
 })
 
+// Import the User Tracker dynamically
+const PostHogUserTracker = dynamic(() => import('./PostHogUserTracker'), {
+  ssr: false,
+})
+
 export function PHProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Only initialize in production to avoid polluting data with local dev
@@ -27,9 +32,10 @@ export function PHProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <PostHogProvider client={posthog}>
-      {/* We wrap the tracker in Suspense to avoid de-opting the whole app on build */}
+      {/* We wrap the trackers in Suspense to avoid de-opting the whole app on build */}
       <Suspense fallback={null}>
         <PostHogPageView />
+        <PostHogUserTracker />
       </Suspense>
       {children}
     </PostHogProvider>
