@@ -81,4 +81,7 @@ export type Project = {
   donation_link?: string;
   // Added spotify_artist_id property
   spotify_artist_id?: string;
+  // Added video fields
+  video_thumbnail_url?: string;
+  video_url?: string;
 };

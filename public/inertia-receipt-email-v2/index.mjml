@@ -1,0 +1,179 @@
+<mjml>
+  <mj-head>
+    <mj-title>Thank You for Supporting {DATA_VARIABLE:projectName} - Receipt</mj-title>
+    <mj-attributes>
+      <mj-text font-family="Arial, sans-serif" font-size="16px" line-height="1.6" color="#2D3534" />
+      <mj-section background-color="#ffffff" />
+    </mj-attributes>
+  </mj-head>
+  
+  <mj-body background-color="#f4f4f4">
+    
+    <!-- Header with Logo -->
+    <mj-section background-color="#2D3534" border-radius="8px 8px 0 0" padding="30px 20px">
+      <mj-column>
+        <mj-image 
+          src="https://www.theinertiaproject.com/Inertia-Logo-Alternate-2-w-tagline.png" 
+          alt="Inertia Logo" 
+          width="250px" 
+          href="https://theinertiaproject.com/"
+        />
+      </mj-column>
+    </mj-section>
+    
+    <!-- Main Content -->
+    <mj-section padding="40px 30px">
+      <mj-column>
+        
+        <!-- Thank You Header -->
+        <mj-text align="center" font-size="32px" font-weight="bold" color="#2D3534" padding-bottom="30px">
+          Thank You for Your Support!
+        </mj-text>
+        
+        <!-- Greeting -->
+        <mj-text padding-bottom="20px">
+          What up {DATA_VARIABLE:customerName}!
+        </mj-text>
+        
+        <!-- Success Message -->
+        <mj-text padding-bottom="20px">
+          Your contribution to the <strong style="color: #64918E;">{DATA_VARIABLE:projectName}</strong> campaign has been successfully processed — and just like that, you're officially part of the The Inertia Project!
+        </mj-text>
+        
+        <mj-text padding-bottom="20px">
+          Thank you for supporting this campaign and for backing independent artists in a way that truly matters. Because of you, this music video is moving from idea to reality — and you now have a front-row seat as it comes to life.
+        </mj-text>
+        
+        <mj-text font-weight="bold" padding-bottom="15px">
+          Here's what's coming next:
+        </mj-text>
+        
+        <mj-text padding-bottom="10px" line-height="1.4">
+          <div style="padding-left: 30px;">
+            🎟 An invitation to {DATA_VARIABLE:artistName}'s exclusive supporter community at the conclusion of the fundraise<br/>
+            🎥 Behind-the-scenes and VIP-only content from the video creation process<br/>
+            👀 First-hand updates on the progress of the music video, from concept to final cut<br/>
+            🔥 Exclusive {DATA_VARIABLE:artistName} moments and insights fans won't see anywhere else
+          </div>
+        </mj-text>
+        
+        <mj-text padding-bottom="20px">
+          This isn't just about watching the finished video — it's about being part of the journey, the build, and the life behind it.
+        </mj-text>
+        
+        <mj-text padding-bottom="15px">
+          Keep an eye on your inbox — your first insider update is coming soon.
+        </mj-text>
+        
+        <!-- Thank You Note with Video -->
+        <mj-text background-color="#fff8e1" border="1px solid #ffcc02" border-radius="6px" padding="20px 20px 10px 20px">
+          <h3 style="margin: 0 0 15px 0; color: #64918E; font-size: 16px; font-weight: bold;">
+            A Personal Thank You from {DATA_VARIABLE:artistName}
+          </h3>
+        </mj-text>
+        
+        <mj-image
+          src="{DATA_VARIABLE:videoThumbnailUrl}"
+          alt="Thank you video from {DATA_VARIABLE:artistName}"
+          href="{DATA_VARIABLE:videoUrl}"
+          align="center"
+          width="500px"
+          padding="0px"
+        />
+        
+        <mj-text background-color="#fff8e1" border="1px solid #ffcc02" border-top="0" border-radius="0 0 6px 6px" padding="10px 20px 20px 20px">
+          <p style="margin: 0; text-align: center; color: #64918E; font-size: 12px; font-style: italic;">
+            Click above to watch the video
+          </p>
+        </mj-text>
+        
+      </mj-column>
+    </mj-section>
+
+    <!-- Receipt Details Box -->
+    <mj-section background-color="#f8f9fa" border="2px solid #CB945E" border-radius="8px" padding="25px">
+      <mj-column>
+        <mj-text font-size="18px" font-weight="bold" color="#2D3534" padding-bottom="15px">
+          Receipt Details
+        </mj-text>
+        
+        <mj-table>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Project:</strong></td>
+            <td style="padding: 8px 0; text-align: right;"><span style="color: #64918E; font-weight: bold;">{DATA_VARIABLE:projectName}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Artist:</strong></td>
+            <td style="padding: 8px 0; text-align: right;">{DATA_VARIABLE:artistName}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Support Tier:</strong></td>
+            <td style="padding: 8px 0; text-align: right;">{DATA_VARIABLE:tierName}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Amount:</strong></td>
+            <td style="padding: 8px 0; text-align: right;"><span style="color: #22C55E; font-weight: bold; font-size: 18px;">${DATA_VARIABLE:amount}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Transaction ID:</strong></td>
+            <td style="padding: 8px 0; text-align: right;"><span style="font-family: monospace; font-size: 12px;">{DATA_VARIABLE:transactionId}</span></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: #2D3534;">Date:</strong></td>
+            <td style="padding: 8px 0; text-align: right;">{DATA_VARIABLE:paymentDate}</td>
+          </tr>
+        </mj-table>
+        
+      </mj-column>
+    </mj-section>
+
+    <!-- Why Crowdfunding Matters -->
+    <mj-section padding="30px">
+      <mj-column>
+        <mj-text font-size="20px" font-weight="bold" color="#64918E" padding-bottom="15px">
+          Why Music Crowdfunding Matters
+        </mj-text>
+        
+        <mj-text padding-bottom="20px">
+          By supporting {DATA_VARIABLE:artistName}, you're not just funding music—you're investing in artistic independence and authentic creativity. Your contribution helps artists stay true to their vision while building sustainable careers.
+        </mj-text>
+        
+        <mj-text font-weight="bold" padding-bottom="5px">
+          STAY INDIE!
+        </mj-text>
+        
+        <mj-text>
+          The Inertia Team
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    
+    <!-- Footer -->
+    <mj-section background-color="#2D3534" border-radius="0 0 8px 8px" padding="30px">
+      <mj-column>
+        <mj-text align="center" color="#ffffff" font-size="16px" font-weight="bold" padding-bottom="20px">
+          Need help or have questions?
+        </mj-text>
+        <mj-text align="center" color="#ffffff" font-size="14px" padding-bottom="20px">
+          Contact our support team at 
+          <a href="mailto:team@theinertiaproject.com" style="color: #CB945E; text-decoration: none;">
+            team@theinertiaproject.com
+          </a>
+        </mj-text>
+        
+        <mj-divider border-color="#64918E" border-width="1px" />
+        
+        <mj-text align="center" color="#ffffff" font-size="12px" line-height="1.5" padding-top="20px">
+          © 2026 The Inertia Project. All rights reserved.
+        </mj-text>
+        <mj-text align="center" color="#ffffff" font-size="12px" padding-top="10px">
+          <a href="https://theinertiaproject.com/" target="_blank" style="color: #CB945E; text-decoration: none;">Visit Inertia</a> | 
+          <a href="https://theinertiaproject.com/account" target="_blank" style="color: #CB945E; text-decoration: none;">My Account</a> | 
+          <a href="mailto:team@theinertiaproject.com" style="color: #CB945E; text-decoration: none;">Contact Us</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+  </mj-body>
+</mjml>

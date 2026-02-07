@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       // --- 1. Fetch Project Data ---
       const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
-        .select('project_title, artist_name')
+        .select('project_title, artist_name, video_thumbnail_url, video_url')
         .eq('id', projectId)
         .single();
       
@@ -123,6 +123,9 @@ export async function POST(request: Request) {
               transactionId: session.payment_intent as string,
               paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               projectId: projectId,
+              // Add new video variables (with fallbacks if empty in DB)
+              videoThumbnailUrl: projectData.video_thumbnail_url || "https://www.theinertiaproject.com/placeholder-video-thumb.jpg", 
+              videoUrl: projectData.video_url || "https://www.theinertiaproject.com/"
             },
           }),
         });
