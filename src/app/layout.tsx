@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PHProvider } from "./providers"; 
 
 export const metadata: Metadata = {
   title: "Inertia",
@@ -16,13 +17,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={{ backgroundColor: "#2D3534", color: "white" }}>
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </body>
+      <PHProvider>
+        <body style={{ backgroundColor: "#2D3534", color: "white" }}>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </body>
+      </PHProvider>
     </html>
   );
 }
