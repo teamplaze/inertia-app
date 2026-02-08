@@ -29,7 +29,19 @@ export async function POST(request: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     
     const { userId, tierId, projectId } = session.metadata || {};
-    const amountTotal = session.amount_total ? session.amount_total / 100 : 0;
+    
+    // 1. Calculate Amounts
+    const amountTotalCents = session.amount_total || 0;
+    
+    // Retrieve the processing fee we added during checkout (if any)
+    const feeCents = session.metadata?.processingFee ? parseInt(session.metadata.processingFee) : 0;
+    
+    // Net Amount is what goes to the project (Total - Fee)
+    const netAmountCents = amountTotalCents - feeCents;
+    
+    // Convert to dollars for DB
+    const netAmount = netAmountCents / 100;
+    const grossAmount = amountTotalCents / 100;
 
     if (!userId || !tierId || !projectId) {
       return NextResponse.json({ error: 'Webhook Error: Missing required metadata' }, { status: 400 });
@@ -39,7 +51,7 @@ export async function POST(request: Request) {
       // --- 1. Fetch Project Data ---
       const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
-        .select('project_title, artist_name')
+        .select('project_title, artist_name, video_thumbnail_url, video_url')
         .eq('id', projectId)
         .single();
       
@@ -72,32 +84,29 @@ export async function POST(request: Request) {
         throw profileError;
       }
 
-      // --- 4. Record the successful contribution ---
+      // --- 4. Record the successful contribution (NET AMOUNT) ---
+      // We store the net amount so dashboard totals reflect actual project funds
       const { error: contributionError } = await supabaseAdmin
         .from('contributions')
         .insert({
           user_id: userId,
-          project_id: projectId,
-          tier_id: tierId,
-          amount_paid: (session.amount_total || 0) / 100,
+          project_id: Number(projectId),
+          tier_id: Number(tierId),
+          amount_paid: netAmount, // <--- CHANGED to Net Amount
           stripe_payment_intent_id: session.payment_intent as string,
         });
 
       if (contributionError) throw contributionError;
       
       // --- 5. Update counts using RPC functions ---
-      // UPDATED: Using standardized names matching the migration script
-      
-      // Increment Tier Stats (Claimed Slots)
       const { error: tierStatsError } = await supabaseAdmin.rpc('increment_tier_stats', { 
           t_id: Number(tierId) 
       });
       if (tierStatsError) throw tierStatsError;
 
-      // Increment Project Stats (Funding & Backer Count)
       const { error: projectStatsError } = await supabaseAdmin.rpc('increment_project_stats', { 
           p_id: Number(projectId), 
-          amount: amountTotal 
+          amount: netAmount // <--- CHANGED to Net Amount
       });
       if (projectStatsError) throw projectStatsError;
 
@@ -105,6 +114,11 @@ export async function POST(request: Request) {
       const customerEmail = session.customer_details?.email;
       if (customerEmail) {
         console.log('📬 Attempting to send confirmation email...');
+        
+        // Prepare fallbacks for required fields
+        const videoThumb = projectData.video_thumbnail_url || "https://www.theinertiaproject.com/placeholder-video-thumb.jpg";
+        const videoLink = projectData.video_url || "https://www.theinertiaproject.com/";
+
         const loopsResponse = await fetch('https://app.loops.so/api/v1/transactional', {
           method: 'POST',
           headers: {
@@ -119,21 +133,19 @@ export async function POST(request: Request) {
               projectName: projectData.project_title,
               artistName: projectData.artist_name,
               tierName: tierData.name || 'Selected Tier',
-              amount: ((session.amount_total || 0) / 100).toFixed(2),
+              amount: grossAmount.toFixed(2), // <--- KEPT as Gross Amount for Receipt accuracy
               transactionId: session.payment_intent as string,
               paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               projectId: projectId,
+              videoThumbnailUrl: videoThumb,
+              videoUrl: videoLink
             },
           }),
         });
 
-        // Log the detailed response from the Loops.so API
-        console.log(`- Loops.so API response status: ${loopsResponse.status}`);
         const loopsData = await loopsResponse.json();
-        console.log('- Loops.so API response body:', loopsData);
-
         if (!loopsResponse.ok) {
-          console.error('❌ Failed to send email via Loops.so.');
+          console.error('❌ Failed to send email via Loops.so.', loopsData);
         } else {
           console.log(`✅ Confirmation email sent successfully to ${customerEmail}`);
         }
