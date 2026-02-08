@@ -102,9 +102,9 @@ export default function Header() {
               <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
+                {/*<DropdownMenuItem asChild>
                   <Link href="/account/profile" className="cursor-pointer">User Profile</Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem>*/}
                 <DropdownMenuItem asChild>
                   <Link href="/account" className="cursor-pointer">My Projects</Link>
                 </DropdownMenuItem>
