@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       // --- 1. Fetch Project Data ---
       const { data: projectData, error: projectError } = await supabaseAdmin
         .from('projects')
-        .select('project_title, artist_name')
+        .select('project_title, artist_name, video_thumbnail_url, video_url')
         .eq('id', projectId)
         .single();
       
@@ -105,6 +105,8 @@ export async function POST(request: Request) {
       const customerEmail = session.customer_details?.email;
       if (customerEmail) {
         console.log('📬 Attempting to send confirmation email...');
+        const videoThumb = projectData.video_thumbnail_url || "https://www.theinertiaproject.com/placeholder-video-thumb.jpg";
+        const videoLink = projectData.video_url || "https://www.theinertiaproject.com/";
         const loopsResponse = await fetch('https://app.loops.so/api/v1/transactional', {
           method: 'POST',
           headers: {
@@ -123,6 +125,8 @@ export async function POST(request: Request) {
               transactionId: session.payment_intent as string,
               paymentDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
               projectId: projectId,
+              videoThumbnailUrl: videoThumb,
+              videoUrl: videoLink
             },
           }),
         });
