@@ -19,8 +19,14 @@ export async function POST(request: Request) {
       }
     );
 
-    // DEBUG: Check what the origin is being resolved to in PROD
-    const origin = request.headers.get('origin') || 'http://localhost:3000';
+    // DEBUG: Robustly determine the origin for production
+    // Vercel doesn't always provide 'origin' header in server actions/API routes called internally
+    // We prioritize the request origin, then the configured site URL, then localhost
+    const requestOrigin = request.headers.get('origin');
+    const configSiteUrl = process.env.NEXT_PUBLIC_SITE_URL; // Should be set in Vercel to https://theinertiaproject.com
+    
+    // Clean up the URL to ensure no trailing slash
+    const origin = (requestOrigin || configSiteUrl || 'http://localhost:3000').replace(/\/$/, '');
     
     // Construct the callback URL
     const callbackUrl = `${origin}/api/auth/callback?next=/reset-password`;
