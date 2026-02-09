@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight } from "lucide-react";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp  } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -50,6 +50,10 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   
   const [selectedTier, setSelectedTier] = useState<number | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
+
+  // New state for expandable fan stories
+  const [showAllStories, setShowAllStories] = useState(false);
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -149,6 +153,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     backgroundColor: "#64918E",
     border: "2px solid #CB945E",
   };
+
+  // Determine displayed stories based on state
+  const displayedStories = showAllStories 
+    ? project.testimonials 
+    : project.testimonials.slice(0, 2);
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -312,32 +321,54 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
       <section id="fan-stories" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Fan Stories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {project.testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-              <CardContent className="p-4">
-                <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
-                <div className="flex items-start gap-4 mb-4">
-                  {testimonial.profile_image_url && (
-                    <Image
-                      src={testimonial.profile_image_url}
-                      alt={testimonial.name}
-                      width={48}
-                      height={48}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
-                    />
-                  )}
-                  <div className="flex-1">
-                      <p className="text-sm text-gray-300">{testimonial.location}</p>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {displayedStories.map((testimonial) => (
+              <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
+                <CardContent className="p-4">
+                  <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
+                  <div className="flex items-start gap-4 mb-4">
+                    {testimonial.profile_image_url && (
+                      <Image
+                        src={testimonial.profile_image_url}
+                        alt={testimonial.name}
+                        width={48}
+                        height={48}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
+                      />
+                    )}
+                    <div className="flex-1">
+                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                        <p className="text-sm text-gray-300">{testimonial.location}</p>
+                    </div>
                   </div>
-                </div>
-                <p className="text-white leading-relaxed">{testimonial.story}</p>
-                <div className="text-right text-gray-300 italic mt-4">
-                  — {testimonial.name}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-white leading-relaxed">{testimonial.story}</p>
+                  <div className="text-right text-gray-300 italic mt-4">
+                    — {testimonial.name}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          {project.testimonials.length > 2 && (
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={() => setShowAllStories(!showAllStories)}
+                className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
+              >
+                {showAllStories ? (
+                  <>
+                    Show Less <ChevronUp className="w-4 h-4" />
+                  </>
+                ) : (
+                  <>
+                    Show More Stories <ChevronDown className="w-4 h-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
