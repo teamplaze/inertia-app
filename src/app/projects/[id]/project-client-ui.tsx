@@ -249,7 +249,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       <section id="from-artist" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>From the Artist</h2>
         <Card className="rounded-xl" style={gradientCardStyle}>
-          <CardContent className="p-6">
+          <CardContent className="p-4">
             <div className="prose prose-lg max-w-none prose-invert">
                 {project.from_the_artist_message && project.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
                     <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
@@ -315,7 +315,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {project.testimonials.map((testimonial) => (
             <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-              <CardContent className="p-6">
+              <CardContent className="p-4">
                 <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
                 <div className="flex items-start gap-4 mb-4">
                   {testimonial.profile_image_url && (
