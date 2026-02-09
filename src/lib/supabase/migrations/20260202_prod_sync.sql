@@ -86,3 +86,23 @@ ADD COLUMN IF NOT EXISTS donation_link TEXT;
 -- Add spotify_artist_id column to projects table
 ALTER TABLE public.projects
 ADD COLUMN IF NOT EXISTS spotify_artist_id TEXT;
+
+-- Add video fields to projects table for confirmation emails
+ALTER TABLE public.projects
+ADD COLUMN IF NOT EXISTS video_thumbnail_url TEXT,
+ADD COLUMN IF NOT EXISTS video_url TEXT;
+
+-- Allow users to view their own contributions (Fix for "My Projects" list)
+CREATE POLICY "Users can view their own contributions"
+ON public.contributions
+FOR SELECT
+USING (auth.uid() = user_id);
+
+-- Optional: Ensure projects are publicly viewable if RLS is enabled there too
+-- (If you can see project pages, this might already exist, but good to ensure)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'projects' AND policyname = 'Public projects are viewable by everyone') THEN
+        CREATE POLICY "Public projects are viewable by everyone" ON public.projects FOR SELECT USING (true);
+    END IF;
+END $$;

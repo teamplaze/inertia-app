@@ -136,10 +136,9 @@ export default function ContributionsTable({ contributions }: { contributions: C
           <div key={contribution.id} className="p-4 md:p-6 rounded-lg hover:shadow-lg transition-shadow" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 min-w-0 pr-3">
-                <Link href={`/projects/${contribution.projects.id}`} className="text-lg md:text-xl font-bold text-white hover:text-[#CB945E] inline-flex items-center gap-2 transition-colors">
-                  <span className="break-words">{contribution.projects.project_title}</span>
-                  <ExternalLink className="w-4 h-4 flex-shrink-0" />
-                </Link>
+                <span className="text-lg md:text-xl font-bold text-white block">
+                  {contribution.projects?.project_title || 'Unknown Project'}
+                </span>
                 <p className="text-sm md:text-base text-white mt-1">{contribution.projects.artist_name}</p>
               </div>
               <Badge 
