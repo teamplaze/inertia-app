@@ -19,39 +19,36 @@ export async function POST(request: Request) {
       }
     );
 
-    // DEBUG: Robustly determine the origin for production
-    // Vercel doesn't always provide 'origin' header in server actions/API routes called internally
-    // We prioritize the request origin, then the configured site URL, then localhost
+    // DEBUGGING LOGIC
     const requestOrigin = request.headers.get('origin');
-    const configSiteUrl = process.env.NEXT_PUBLIC_SITE_URL; // Should be set in Vercel to https://theinertiaproject.com
+    const configSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
     
-    // Clean up the URL to ensure no trailing slash
-    const origin = (requestOrigin || configSiteUrl || 'http://localhost:3000').replace(/\/$/, '');
+    // Prioritize the configured site URL to ensure consistency with Supabase Allow List
+    // Clean up trailing slash just in case
+    const origin = (configSiteUrl || requestOrigin || 'http://localhost:3000').replace(/\/$/, '');
     
-    // Construct the callback URL
     const callbackUrl = `${origin}/api/auth/callback?next=/reset-password`;
 
-    console.log('[Forgot Password] --------------------------------------------------');
-    console.log(`[Forgot Password] Processing request for email: ${email}`);
-    console.log(`[Forgot Password] Detected Origin: ${origin}`);
-    console.log(`[Forgot Password] Constructed Redirect URL: ${callbackUrl}`);
-    console.log('[Forgot Password] --------------------------------------------------');
+    console.log('--- FORGOT PASSWORD DEBUG ---');
+    console.log('1. NEXT_PUBLIC_SITE_URL Env Var:', configSiteUrl);
+    console.log('2. Request Header Origin:', requestOrigin);
+    console.log('3. Resolved Origin:', origin);
+    console.log('4. Final Redirect URL sent to Supabase:', callbackUrl);
+    console.log('-----------------------------');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: callbackUrl,
     });
 
     if (error) {
-      console.error('[Forgot Password] Supabase Error:', error.message);
-      // Return success anyway to prevent email enumeration, but log the error
+      console.error('Supabase Error:', error.message);
       return NextResponse.json({ message: 'Password reset email sent' });
     }
 
-    console.log('[Forgot Password] Success: Supabase accepted the request.');
     return NextResponse.json({ message: 'Password reset email sent' });
 
   } catch (err: any) {
-    console.error('[Forgot Password] Unexpected Critical Error:', err);
+    console.error('Critical Error:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
