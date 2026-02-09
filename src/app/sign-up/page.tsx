@@ -1,7 +1,7 @@
 // File: src/app/sign-up/page.tsx
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,14 +23,24 @@ function SignUpForm() {
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get('invite');
   const posthog = usePostHog();
-
-  
   // Capture Checkout Intent
   const action = searchParams.get('action');
   const projectId = searchParams.get('projectId');
   const tierId = searchParams.get('tierId');
   // Also support generic redirect if used elsewhere
   const redirectUrl = searchParams.get('redirect'); 
+
+  useEffect(() => {
+    posthog.capture("signup_page_viewed", {
+      via_invite: !!inviteToken,
+      user_type_intent: inviteToken ? "artist" : "fan",
+      signup_source: action === "checkout" ? "checkout_intent" : "standard",
+      project_id: projectId ? Number(projectId) : null,
+      tier_id: tierId ? Number(tierId) : null,
+    });
+    // run once per page load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
