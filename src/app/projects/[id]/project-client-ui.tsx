@@ -350,7 +350,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
         </div>
         {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
-        <div className={`grid grid-cols-1 md:grid-cols-3 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
+        <div className={`grid grid-cols-1 md:grid-cols-4 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
           {tiers.sort((a, b) => a.price - b.price).map((tier) => (
             <div key={tier.id} className="flex flex-col gap-4">
               <Card
