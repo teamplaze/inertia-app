@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { loadStripe } from '@stripe/stripe-js'; // Import Stripe loader
+import { usePostHog } from "posthog-js/react";
+
 
 // Load Stripe outside render
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -20,6 +22,8 @@ function SignUpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get('invite');
+  const posthog = usePostHog();
+
   
   // Capture Checkout Intent
   const action = searchParams.get('action');
@@ -59,7 +63,13 @@ function SignUpForm() {
     
         if (response.ok) {
           setMessage('Account created! preparing next step...');
-          
+          posthog.capture("user_signed_up", {
+          user_type: inviteToken ? "artist" : "fan",
+          via_invite: !!inviteToken,
+          signup_source: action === "checkout" ? "checkout_intent" : "standard",
+          project_id: projectId ? Number(projectId) : null,
+          tier_id: tierId ? Number(tierId) : null,
+        });
           // --- CHECKOUT REDIRECT LOGIC ---
           if (action === 'checkout' && projectId && tierId) {
              setMessage('Redirecting to checkout...');
