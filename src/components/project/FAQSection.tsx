@@ -9,8 +9,8 @@ export default function FAQSection() {
       answer: "You are backing a specific tier to support the artist's project. Think of it as buying a ticket that helps contribute to an independent artist’s next step in their music career, that also comes with perks—like exclusive access, merch, connections and experiences."
     },
     {
-      question: "When will I get my merch or rewards?",
-      answer: "Digital and Physical delivery times vary by project and are listed in their tier descriptions. Artists will post updates directly to the project page, and community area as production milestones are met. Additionally, you can refer to the project calendar for schedule perks and rewards."
+      question: "When will I get my perks & rewards?",
+      answer: "Digital and physical perk delivery timelines vary by project. Project-based communities will launch once the artist reaches their funding goal or after 30 days—whichever comes first."
     },
     {
       question: "Is my payment secure?",
@@ -22,7 +22,7 @@ export default function FAQSection() {
     },
     {
       question: "Can I upgrade or change my tier later?",
-      answer: "Contributions are final to help artists plan their budgets accurately. We are working to allow upgrades and when that option is available, we will notify everyone. If you want to send additional support, you can always make an additional contribution to a higher tier!"
+      answer: "Each tier has limited availability, so contributions are generally final to help artists plan their projects accurately. If you’d like to change your tier or contribution amount, please reach out to team@theinertiaproject.com and we’ll do our best to help, depending on availability."
     },
     {
       question: "How do I access the \"Artist Community\"?",
@@ -42,7 +42,7 @@ export default function FAQSection() {
     },
     {
       question: "Who do I contact if I have a question about the project?",
-      answer: "You can post questions directly in the Artist Community once you've joined that can be answered by the fans or the artist. For technical issues with the website or payment, you can contact Inertia support directly at team@theinertiaproject.com."
+      answer: "For technical issues with the website or payment, you can contact Inertia support directly at team@theinertiaproject.com. Once launched, you can post questions directly in the Artist Community."
     }
   ];
 
