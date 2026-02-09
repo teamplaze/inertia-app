@@ -198,8 +198,8 @@ export default function Component() {
             </div>
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">💸 Royalties + Memories</h3>
-                <p className="text-white/70">Emotional and financial return.</p>
+                <h3 className="text-xl font-bold text-white mb-2">🤝 Be Part of the Story</h3>
+                <p className="text-white/70">More than listening. You’re involved.</p>
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white mb-2">🔒 Transparent, Secure Platform</h3>
