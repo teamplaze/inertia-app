@@ -78,6 +78,9 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer_email: user.email,
+      automatic_tax: {
+        enabled: true,
+      },
       line_items: [
         // 1. The actual Tier Item
         {
@@ -88,6 +91,7 @@ export async function POST(request: Request) {
               description: `Contribution to ${project.artist_name}`,
             },
             unit_amount: tierPriceCents,
+            tax_behavior: 'exclusive', 
           },
           quantity: 1,
         },
@@ -100,6 +104,7 @@ export async function POST(request: Request) {
               description: 'Covers credit card processing costs',
             },
             unit_amount: processingFee,
+            tax_behavior: 'exclusive',
           },
           quantity: 1,
         },
