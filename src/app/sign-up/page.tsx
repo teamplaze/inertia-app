@@ -191,7 +191,7 @@ function SignUpForm() {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button type="button" className="underline ml-1 text-white/80 hover:text-white">
-                      Terms and Conditions
+                      Terms and Conditions (Must Read)
                     </button>
                   </DialogTrigger>
                   <DialogContent onScroll={handleTermsScroll} className="sm:max-w-[600px] h-[80vh] flex flex-col bg-[#2D3534] text-white border-[#64918E]">
