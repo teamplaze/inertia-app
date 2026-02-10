@@ -338,13 +338,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                       />
                     )}
                     <div className="flex-1">
+                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
                         <p className="text-sm text-gray-300">{testimonial.location}</p>
                     </div>
                   </div>
                   <p className="text-white leading-relaxed">{testimonial.story}</p>
-                  <div className="text-right text-gray-300 italic mt-4">
-                    — {testimonial.name}
-                  </div>
                 </CardContent>
               </Card>
             ))}
