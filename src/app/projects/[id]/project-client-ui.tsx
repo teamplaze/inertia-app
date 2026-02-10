@@ -338,7 +338,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                       />
                     )}
                     <div className="flex-1">
-                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
                         <p className="text-sm text-gray-300">{testimonial.location}</p>
                     </div>
                   </div>
