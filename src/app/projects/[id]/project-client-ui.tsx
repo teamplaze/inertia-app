@@ -378,7 +378,10 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </div>
         {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
         <div className={`grid grid-cols-1 md:grid-cols-4 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
-          {tiers.sort((a, b) => a.price - b.price).map((tier) => (
+            {tiers.sort((a, b) => a.price - b.price).map((tier) => {
+            const isSoldOut = (tier.total_slots - tier.claimed_slots) <= 0;
+            
+            return (
             <div key={tier.id} className="flex flex-col gap-4">
               <Card
                 className={`flex flex-col relative transition-all duration-200 rounded-xl h-full ${
@@ -411,20 +414,27 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                     <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
                     
                     {paymentsEnabled ? (
-                      user ? (
+                      isSoldOut ? (
+                        // SOLD OUT BUTTON (Shows for everyone)
+                        <Button 
+                          className="w-full text-white bg-gray-500 cursor-not-allowed hover:bg-gray-500" 
+                          disabled
+                        >
+                          Sold Out
+                        </Button>
+                      ) : user ? (
                         <Button 
                           onClick={() => handleTierSelect(tier.id)} 
-                          className={`w-full text-white ${ (tier.total_slots - tier.claimed_slots) === 0 ? "bg-gray-500" : selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
-                          disabled={(tier.total_slots - tier.claimed_slots) === 0}
+                          className={`w-full text-white ${selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
                         >
-                          {(tier.total_slots - tier.claimed_slots) === 0 ? "Sold Out" : selectedTier === tier.id ? "Selected" : "Select Tier"}
+                          {selectedTier === tier.id ? "Selected" : "Select Tier"}
                         </Button>
                       ) : (
                         <Link href={`/sign-up?action=checkout&projectId=${project.id}&tierId=${tier.id}`}>
-                        <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                          Sign up/Login to contribute
-                        </Button>
-                      </Link>
+                          <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white h-auto whitespace-normal" >
+                            Login/Sign up to contribute
+                          </Button>
+                        </Link>
                       )
                     ) : (
                       <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
@@ -437,8 +447,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               </Card>
 
               {/* INLINE CHECKOUT BOX: Visible only on MOBILE (< md) */}
-              {paymentsEnabled && showCheckout && selectedTier === tier.id && (
-                <div className="md:hidden"> {/* Only show this block on mobile */}
+              {paymentsEnabled && showCheckout && selectedTier === tier.id && !isSoldOut && (
+                <div className="md:hidden"> 
                     <Card className="rounded-xl animate-in fade-in slide-in-from-top-2 duration-300 border-2 border-[#CB945E] shadow-xl" style={gradientCardStyle}>
                     <CardContent className="p-4">
                         <div className="space-y-4">
@@ -466,7 +476,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 </div>
               )}
             </div>
-          ))}
+          );
+        })}
 
           {/* === DONATION CARD === */}
           {donationUrl && (
