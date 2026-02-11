@@ -1,0 +1,91 @@
+<mjml>
+  <mj-head>
+    <mj-title>New Contribution Alert - {DATA_VARIABLE:projectName}</mj-title>
+    <mj-attributes>
+      <mj-text font-family="Arial, sans-serif" font-size="16px" line-height="1.6" color="#2D3534" />
+      <mj-section background-color="#ffffff" />
+    </mj-attributes>
+  </mj-head>
+  
+  <mj-body background-color="#f4f4f4">
+    
+    <!-- Header with Logo -->
+    <mj-section background-color="#2D3534" border-radius="8px 8px 0 0" padding="30px 20px">
+      <mj-column>
+        <mj-image 
+          src="https://www.theinertiaproject.com/Inertia-Logo-Alternate-2-w-tagline.png" 
+          alt="Inertia Logo" 
+          width="200px" 
+          href="https://theinertiaproject.com/"
+        />
+      </mj-column>
+    </mj-section>
+    
+    <!-- Alert Banner -->
+    <mj-section background-color="#22C55E" padding="20px">
+      <mj-column>
+        <mj-text align="center" font-size="24px" font-weight="bold" color="#ffffff">
+          🎉 New Contribution Received!
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+    <!-- Contribution Details Box -->
+    <mj-section background-color="#f8f9fa" border="2px solid #64918E" border-radius="8px" padding="25px">
+      <mj-column>
+        <mj-text font-size="18px" font-weight="bold" color="#2D3534" padding-bottom="15px">
+          Contribution Details
+        </mj-text>
+        
+        <mj-table>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Supporter:</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><span style="color: #64918E; font-weight: bold; font-size: 18px;">{DATA_VARIABLE:customerName}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Project:</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><span style="font-weight: bold;">{DATA_VARIABLE:projectName}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Artist:</strong></td>
+            <td style="padding: 12px 0; text-align: right;">{DATA_VARIABLE:artistName}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Support Tier:</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><span style="color: #CB945E; font-weight: bold;">{DATA_VARIABLE:tierName}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Amount:</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><span style="color: #22C55E; font-weight: bold; font-size: 24px;">${DATA_VARIABLE:amount}</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e0e0e0;">
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Transaction ID:</strong></td>
+            <td style="padding: 12px 0; text-align: right;"><span style="font-family: monospace; font-size: 12px;">{DATA_VARIABLE:transactionId}</span></td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 0;"><strong style="color: #2D3534;">Date & Time:</strong></td>
+            <td style="padding: 12px 0; text-align: right;">{DATA_VARIABLE:paymentDate}</td>
+          </tr>
+        </mj-table>
+        
+      </mj-column>
+    </mj-section>
+
+    
+    <!-- Footer -->
+    <mj-section background-color="#2D3534" border-radius="0 0 8px 8px" padding="30px">
+      <mj-column>
+        <mj-text align="center" color="#ffffff" font-size="14px" padding-bottom="15px">
+          This is an automated notification from The Inertia Project
+        </mj-text>
+        
+        <mj-divider border-color="#64918E" border-width="1px" />
+        
+        <mj-text align="center" color="#ffffff" font-size="12px" line-height="1.5" padding-top="20px">
+          © 2026 The Inertia Project. All rights reserved.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+  </mj-body>
+</mjml>
