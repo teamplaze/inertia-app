@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp  } from "lucide-react";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown  } from "lucide-react";
 import Image from "next/image";
-import BudgetBreakdown from "@/components/BudgetBreakdown";
+import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Component
+import TierComparisonMatrix from "@/components/project/TierComparison";
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -375,6 +376,17 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
+          {/* Scroll to Compare Perks Button */}
+          {tiers.length > 1 && (
+            <div className="flex justify-center mt-6">
+              <Button 
+                onClick={() => scrollToSection("tier-comparison")}
+                className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
+              >
+                Compare Perks <ArrowDown className="ml-2 w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
         {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
         <div className={`grid grid-cols-1 md:grid-cols-4 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
@@ -403,12 +415,20 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                   <ul className="space-y-2">
-                    {tier.perks.map((perk, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
-                        <span className="text-sm text-white">{perk}</span>
-                      </li>
-                    ))}
+                    {tier.perks.map((perk, index) => {
+                      // THIS IS THE NEW LOGIC:
+                      const displayPerk = perk.includes(':') 
+                          ? perk.substring(perk.indexOf(':') + 1).trim() 
+                          : perk;
+                          
+                      return (
+                        <li key={index} className="flex items-start gap-2">
+                          <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                          {/* Render the cleaned string here */}
+                          <span className="text-sm text-white">{displayPerk}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <div className="pt-4 border-t border-white/20">
                     <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
@@ -553,7 +573,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
+      {/* === TIER COMPARISON MATRIX === */}
+      {tiers.length > 1 && (
+        <TierComparisonMatrix tiers={tiers} />
+      )}
+
       <FAQSection />
+
+      
 
     </main>
   );
