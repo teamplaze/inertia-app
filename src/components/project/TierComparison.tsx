@@ -2,7 +2,6 @@
 
 import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Check, Minus } from "lucide-react";
 import type { Tier } from "@/types";
 
@@ -65,10 +64,10 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
   return (
     <section id="tier-comparison" className="mb-16 scroll-mt-24">
       <h2 className="text-3xl font-bold mb-2 text-center" style={{ color: "#64918E" }}>
-        Compare Perks
+        Compare Tiers
       </h2>
       <p className="text-center text-gray-400 mb-8 max-w-2xl mx-auto px-4">
-        See exactly what you get at each level.
+        Every tier builds on the last. See exactly what you get at each level.
       </p>
 
       {/* ==================== UNIVERSAL TABLE ==================== */}
@@ -79,19 +78,11 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
             <thead>
               <tr className="border-b-2 border-[#CB945E]/30">
                 <th className="w-[40%] md:w-[45%] py-3 md:py-4 px-3 md:px-4 text-gray-300 font-semibold text-xs md:text-sm sticky top-0 bg-[#2D3534] z-10 align-bottom">
-                  Perk / Experience
+                  Benefit / Feature
                 </th>
-                {sortedTiers.map((tier, idx) => {
-                  const isPopular = idx === Math.floor(sortedTiers.length / 2); // Dynamically mark middle tier as popular
+                {sortedTiers.map((tier) => {
                   return (
                     <th key={tier.id} className="w-[20%] md:w-[18%] py-3 md:py-4 px-1 md:px-2 sticky top-0 bg-[#2D3534] z-10 text-center font-bold text-[10px] md:text-sm uppercase tracking-wider align-bottom">
-                      {isPopular && (
-                        <div className="flex justify-center mb-1">
-                          <Badge className="bg-[#CB945E] text-white text-[8px] md:text-[10px] px-1.5 py-0 leading-tight">
-                            Popular
-                          </Badge>
-                        </div>
-                      )}
                       <span className="text-white block break-words">{tier.name}</span>
                     </th>
                   );

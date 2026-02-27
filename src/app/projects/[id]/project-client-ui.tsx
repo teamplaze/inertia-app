@@ -35,7 +35,7 @@ interface ProjectUIProps {
 const getTierSubtitle = (name: string) => {
   const n = name.toUpperCase();
   if (n.includes("GA")) return "For fans who want to be part of the journey and the fun";
-  if (n.includes("PIT")) return "For fans who want deeper access and real conversations";
+  if (n.includes("PIT") || n.includes("BACKSTAGE")) return "For fans who want deeper access and real conversations";
   if (n.includes("VIP")) return "For fans who want to leave their mark on the project";
   return null;
 };
@@ -134,6 +134,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   };
 
   const donationUrl = getDonationUrl();
+
+  const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
   
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -377,7 +379,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
           {/* Scroll to Compare Perks Button */}
-          {tiers.length > 1 && (
+          {visibleTiers.length > 1 && (
             <div className="flex justify-center mt-6">
               <Button 
                 onClick={() => scrollToSection("tier-comparison")}
@@ -389,8 +391,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           )}
         </div>
         {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
-        <div className={`grid grid-cols-1 md:grid-cols-4 ${donationUrl ? 'xl:grid-cols-4' : ''} gap-6 items-stretch`}>
-            {tiers.sort((a, b) => a.price - b.price).map((tier) => {
+        <div className={`grid grid-cols-1 gap-6 items-stretch ${
+            (visibleTiers.length + (donationUrl ? 1 : 0)) === 1 ? 'md:grid-cols-1 max-w-md mx-auto' :
+            (visibleTiers.length + (donationUrl ? 1 : 0)) === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' :
+            (visibleTiers.length + (donationUrl ? 1 : 0)) === 3 ? 'md:grid-cols-3' :
+            'md:grid-cols-2 lg:grid-cols-4'
+        }`}>
+            {visibleTiers.sort((a, b) => a.price - b.price).map((tier) => {
             const isSoldOut = (tier.total_slots - tier.claimed_slots) <= 0;
             
             return (
@@ -574,8 +581,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       )}
 
       {/* === TIER COMPARISON MATRIX === */}
-      {tiers.length > 1 && (
-        <TierComparisonMatrix tiers={tiers} />
+      {visibleTiers.length > 1 && (
+        <TierComparisonMatrix tiers={visibleTiers} />
       )}
 
       <FAQSection />
