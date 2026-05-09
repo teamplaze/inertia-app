@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown  } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2  } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -23,8 +25,6 @@ const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
   return process.env.NEXT_PUBLIC_ENABLE_PAYMENTS === 'true';
 })();
-
-const DONATION_LINK = "https://donate.stripe.com/test_fZu3cx9gD5ji6zve5g28800";
 
 interface ProjectUIProps {
   projectData: Project;
@@ -55,6 +55,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   // New state for expandable fan stories
   const [showAllStories, setShowAllStories] = useState(false);
 
+    // --- NEW: Donation State ---
+  const [donationAmount, setDonationAmount] = useState<string>("");
+  const [coverFee, setCoverFee] = useState<boolean>(true); // Default to helping the artist
+  const [isDonating, setIsDonating] = useState<boolean>(false);
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -83,6 +88,40 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const fundingPercentage = Math.round((project.current_funding / project.funding_goal) * 100);
   const selectedTierData = tiers.find((tier) => tier.id === selectedTier);
 
+  // --- PATH A: Custom Donation Handler ---
+  const handleDonationCheckout = async () => {
+    const amount = parseFloat(donationAmount);
+    if (isNaN(amount) || amount <= 0) return;
+
+    setIsDonating(true);
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          projectId: project.id, 
+          donationAmount: amount,
+          coverFee 
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create checkout session.');
+
+      const { sessionId } = await response.json();
+      const stripe = await stripePromise;
+      
+      if (stripe) {
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        if (error) console.error('Stripe redirect error:', error);
+      }
+    } catch (error) {
+      console.error('Checkout failed:', error);
+    } finally {
+      setIsDonating(false);
+    }
+  };
+
+  // --- PATH B: Standard Tier Handler ---
   const handleTierSelect = (tierId: number) => {
     setSelectedTier(tierId);
     setShowCheckout(true);
@@ -121,19 +160,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     }
   };
 
-  const getDonationUrl = () => {
-    // Priority: Project-specific link (DB field) only. No env var fallback.
-    const link = project.donation_link;
-    
-    if (!link) return null;
-
-    if (user && user.email) {
-        return `${link}?prefilled_email=${encodeURIComponent(user.email)}`;
-    }
-    return link;
-  };
-
-  const donationUrl = getDonationUrl();
+  // We use the presence of the donation_link as a flag to enable the donate card
+  const hasDonationEnabled = !!project.donation_link;
 
   const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
   
@@ -392,9 +420,9 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </div>
         {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
         <div className={`grid grid-cols-1 gap-6 items-stretch ${
-            (visibleTiers.length + (donationUrl ? 1 : 0)) === 1 ? 'md:grid-cols-1 max-w-md mx-auto' :
-            (visibleTiers.length + (donationUrl ? 1 : 0)) === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' :
-            (visibleTiers.length + (donationUrl ? 1 : 0)) === 3 ? 'md:grid-cols-3' :
+            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 1 ? 'md:grid-cols-1 max-w-md mx-auto' :
+            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' :
+            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 3 ? 'md:grid-cols-3' :
             'md:grid-cols-2 lg:grid-cols-4'
         }`}>
             {visibleTiers.sort((a, b) => a.price - b.price).map((tier) => {
@@ -507,7 +535,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         })}
 
           {/* === DONATION CARD === */}
-          {donationUrl && (
+          {hasDonationEnabled && (
             <div className="flex flex-col gap-4">
                <Card
                   className="flex flex-col relative transition-all duration-200 rounded-xl h-full hover:shadow-md hover:shadow-gray-700/50"
@@ -534,18 +562,46 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                        </li>
                     </ul>
                     <div className="pt-4 border-t border-white/20">
-                    <div className="text-sm text-center text-white/80 mb-2"> Unlimited Love</div>
                        {paymentsEnabled ? (
-                           <a 
-                             href={donationUrl} 
-                             target="_blank" 
-                             rel="noopener noreferrer"
-                             className="block w-full"
+                         <div className="space-y-4">
+                           <div className="space-y-3">
+                             <div className="relative">
+                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white font-bold">$</span>
+                               <Input
+                                 type="number"
+                                 min="1"
+                                 step="1"
+                                 placeholder="50"
+                                 value={donationAmount}
+                                 onChange={(e) => setDonationAmount(e.target.value)}
+                                 className="pl-8 bg-black/20 border-[#CB945E]/50 text-white placeholder:text-gray-300 focus-visible:ring-[#CB945E]"
+                               />
+                             </div>
+                             <div className="flex items-start space-x-2">
+                               <Checkbox 
+                                 id="cover-fee" 
+                                 checked={coverFee} 
+                                 onCheckedChange={(checked) => setCoverFee(checked as boolean)}
+                                 className="mt-0.5 border-gray-300 data-[state=checked]:bg-[#CB945E] data-[state=checked]:border-[#CB945E]"
+                               />
+                               <label
+                                 htmlFor="cover-fee"
+                                 className="text-xs text-gray-200 leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                               >
+                                 Cover processing fee so the artist gets 100% of your donation
+                               </label>
+                             </div>
+                           </div>
+                           
+                           <Button 
+                             onClick={handleDonationCheckout} 
+                             disabled={isDonating || !donationAmount || parseFloat(donationAmount) <= 0}
+                             className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-bold transition-all"
                            >
-                             <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
-                                Donate Now
-                             </Button>
-                           </a>
+                             {isDonating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                             {isDonating ? "Processing..." : "Donate Now"}
+                           </Button>
+                         </div>
                        ) : (
                          <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
                            Coming Soon
