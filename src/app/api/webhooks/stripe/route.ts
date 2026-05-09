@@ -33,16 +33,37 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     
     // Extract metadata
-    const { userId, tierId, projectId, processingFee } = session.metadata || {};
+    const { userId, tierId, projectId, processingFee, is_donation, base_amount } = session.metadata || {};
     
-    // Calculate Net Amount
+    // Determine the user ID (null for guests)
+    let finalUserId = (userId && userId !== 'guest') ? userId : null;
+    
+    // Extract Stripe customer details for guest fallback
+    const customerEmail = session.customer_details?.email || session.customer_email || 'No email provided';
+    const customerName = session.customer_details?.name || 'Anonymous Fan';
+
+// Calculate Net Amount
     const amountTotalCents = session.amount_total || 0;
     const feeCents = processingFee ? parseInt(processingFee) : 0;
-    const netAmountCents = amountTotalCents - feeCents;
-    const netAmount = netAmountCents / 100;
+    
+    let netAmount = (amountTotalCents - feeCents) / 100;
     const grossAmount = amountTotalCents / 100;
 
-    if (userId && projectId) { // Tier ID is optional (donations)
+    // Use exact base_amount from metadata if it's a custom donation
+    if (is_donation === 'true' && base_amount) {
+        if (processingFee) {
+            // The fan chose to cover the fee. The artist gets 100% of the base amount.
+            netAmount = parseFloat(base_amount);
+        } else {
+            // The fan DID NOT cover the fee. Deduct Stripe's cut (2.9% + $0.30) 
+            // so the dashboard reflects the exact net payout to the artist.
+            const stripeFeeCents = Math.round(amountTotalCents * 0.029) + 30;
+            netAmount = (amountTotalCents - stripeFeeCents) / 100;
+        }
+    }
+
+    // Require projectId, but userId is now optional
+    if (projectId) { 
         try {
             // --- 1. Fetch Project Data ---
             const { data: projectData, error: projectError } = await supabaseAdmin
@@ -65,24 +86,32 @@ export async function POST(req: Request) {
                 if (tError) console.error('Tier fetch warning:', tError);
             }
             
-            // --- 3. Fetch Supporter Profile Data ---
-            // REMOVED 'email' from select as it likely doesn't exist on profiles table
-            const { data: profileData, error: profileError } = await supabaseAdmin
-                .from('profiles')
-                .select('full_name') 
-                .eq('id', userId)
-                .maybeSingle();
+            // --- 3. Fetch Supporter Profile Data (If logged in) ---
+            let backerDisplayName = customerName;
+            
+            if (finalUserId) {
+                const { data: profileData, error: profileError } = await supabaseAdmin
+                    .from('profiles')
+                    .select('full_name') 
+                    .eq('id', finalUserId)
+                    .maybeSingle();
 
-            if (profileError) throw profileError;
+                if (profileError) throw profileError;
+                if (profileData?.full_name) {
+                    backerDisplayName = profileData.full_name;
+                }
+            }
 
             // --- 4. Record Contribution ---
             const { error: contributionError } = await supabaseAdmin
                 .from('contributions')
                 .insert({
-                    user_id: userId,
+                    user_id: finalUserId, // Will be null for guests
                     project_id: Number(projectId),
                     tier_id: tierId ? Number(tierId) : null,
                     amount_paid: netAmount,
+                    backer_email: customerEmail,
+                    backer_name: customerName,
                     stripe_payment_intent_id: session.payment_intent as string,
                 });
 
@@ -104,8 +133,7 @@ export async function POST(req: Request) {
             });
 
             // --- 6. Send Fan Confirmation Email ---
-            const customerEmail = session.customer_details?.email;
-            if (customerEmail) {
+            if (customerEmail && customerEmail !== 'No email provided') {
                 const videoThumb = projectData.video_thumbnail_url || "https://www.theinertiaproject.com/placeholder-video-thumb.jpg";
                 const videoLink = projectData.video_url || "https://www.theinertiaproject.com/";
 
@@ -119,7 +147,7 @@ export async function POST(req: Request) {
                         transactionalId: process.env.LOOPS_TRANSACTIONAL_ID_CONFIRMATION,
                         email: customerEmail,
                         dataVariables: {
-                            customerName: profileData?.full_name || 'Valued Supporter',
+                            customerName: backerDisplayName, // Uses profile name or Stripe guest name
                             projectName: projectData.project_title,
                             artistName: projectData.artist_name,
                             tierName: tierData.name,
@@ -134,8 +162,7 @@ export async function POST(req: Request) {
                 });
             }
 
-            // --- 7. NEW: Send Admin/Member Notifications ---
-            // Requires a new env var: LOOPS_CONTRIBUTION_ALERT_ID
+            // --- 7. Send Admin/Member Notifications ---
             if (process.env.LOOPS_CONTRIBUTION_ALERT_ID) {
                 console.log('🔔 Sending team notifications...');
                 
@@ -159,7 +186,6 @@ export async function POST(req: Request) {
 
                 if (recipientUserIds.size > 0) {
                     // C. Fetch Emails for these users via Admin API
-                    // Note: Supabase Admin listUsers doesn't support "IN" filter easily.
                     const { data: { users: allUsers }, error: usersError } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
                     
                     if (!usersError && allUsers) {
@@ -179,7 +205,7 @@ export async function POST(req: Request) {
                                     transactionalId: process.env.LOOPS_CONTRIBUTION_ALERT_ID,
                                     email: email,
                                     dataVariables: {
-                                        customerName: profileData?.full_name || 'A Supporter',
+                                        customerName: backerDisplayName,
                                         projectName: projectData.project_title,
                                         artistName: projectData.artist_name,
                                         tierName: tierData.name,
