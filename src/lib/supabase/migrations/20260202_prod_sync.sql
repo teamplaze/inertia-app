@@ -106,3 +106,16 @@ BEGIN
         CREATE POLICY "Public projects are viewable by everyone" ON public.projects FOR SELECT USING (true);
     END IF;
 END $$;
+
+-- 1. Make user_id optional (nullable) to allow guest checkouts
+ALTER TABLE public.contributions ALTER COLUMN user_id DROP NOT NULL;
+
+-- 2. Add columns to store the guest's information
+ALTER TABLE public.contributions ADD COLUMN IF NOT EXISTS backer_email TEXT;
+ALTER TABLE public.contributions ADD COLUMN IF NOT EXISTS backer_name TEXT;
+
+-- 3. Add a Stripe Session ID column to prevent duplicate records if Stripe retries a webhook
+ALTER TABLE public.contributions ADD COLUMN IF NOT EXISTS stripe_session_id TEXT UNIQUE;
+
+-- 4. Make tier_id optional (nullable) to allow guest checkouts
+ALTER TABLE public.contributions ALTER COLUMN tier_id DROP NOT NULL;

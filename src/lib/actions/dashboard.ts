@@ -56,6 +56,7 @@ export async function getTransactions(projectId: number, page: number = 1, pageS
   const to = from + pageSize - 1;
 
   // 2. Fetch Contributions using Admin Client (Bypasses RLS)
+  // Added backer_name and backer_email to select
   const { data: contributions, count, error } = await supabaseAdmin
     .from('contributions')
     .select(`
@@ -63,6 +64,8 @@ export async function getTransactions(projectId: number, page: number = 1, pageS
       amount_paid,
       created_at,
       user_id,
+      backer_name,
+      backer_email,
       tiers ( name )
     `, { count: 'exact' })
     .eq('project_id', projectId)
@@ -74,51 +77,65 @@ export async function getTransactions(projectId: number, page: number = 1, pageS
     throw new Error(`Failed to fetch transactions: ${error.message}`);
   }
 
-  // 3. Fetch Profiles (Names) and Emails
-  // We collect User IDs to fetch details in bulk
-  const userIds = Array.from(new Set(contributions.map(c => c.user_id)));
+  // 3. Fetch Profiles (Names) and Emails for logged-in users
+  // Filter out null userIds (guest checkouts) before querying
+  const userIds = Array.from(new Set(contributions.map(c => c.user_id).filter(id => id !== null)));
   
-  // Fetch Profiles for Names (Public info, but getting via Admin is safe/easy here)
-  const { data: profiles } = await supabaseAdmin
-    .from('profiles')
-    .select('id, full_name')
-    .in('id', userIds);
-
   const profileMap = new Map<string, string>();
-  if (profiles) {
-    profiles.forEach(p => profileMap.set(p.id, p.full_name || 'Anonymous'));
-  }
-
-  // Fetch Emails via Admin API
-  // Note: List users might not scale infinitely but works for MVP. 
-  // Ideally use `admin.getUserById` in loop or mapping if Supabase supports bulk get.
-  const { data: users } = await supabaseAdmin.auth.admin.listUsers();
-  
   const userMap = new Map<string, string>();
-  if (users?.users) {
-      users.users.forEach(u => userMap.set(u.id, u.email || ''));
+
+  if (userIds.length > 0) {
+      // Fetch Profiles for Names 
+      const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds);
+
+      if (profiles) {
+        profiles.forEach(p => profileMap.set(p.id, p.full_name || 'Anonymous'));
+      }
+
+      // Fetch Emails via Admin API
+      const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+      if (users?.users) {
+          users.users.forEach(u => userMap.set(u.id, u.email || ''));
+      }
   }
 
-  // 4. Format Data
+  // 4. Format Data with Fallbacks
   const formatted: TransactionData[] = contributions.map(c => {
-    const fullName = profileMap.get(c.user_id) || 'Anonymous';
+    // Determine the raw full name (Profile > Stripe Data > Anonymous)
+    let rawFullName = 'Anonymous';
+    if (c.user_id && profileMap.has(c.user_id)) {
+        rawFullName = profileMap.get(c.user_id)!;
+    } else if (c.backer_name) {
+        rawFullName = c.backer_name;
+    }
     
-    // Format Name: First Name + Last Initial
+    // Format Name: First Name + Last Initial (for privacy on the dashboard if desired)
     let displayName = 'Anonymous';
-    if (fullName !== 'Anonymous') {
-        const nameParts = fullName.trim().split(/\s+/);
+    if (rawFullName !== 'Anonymous') {
+        const nameParts = rawFullName.trim().split(/\s+/);
         displayName = nameParts.length > 1 
             ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
             : nameParts[0];
+    }
+
+    // Determine Email (Auth DB > Stripe Data > N/A)
+    let finalEmail = 'N/A';
+    if (c.user_id && userMap.has(c.user_id)) {
+        finalEmail = userMap.get(c.user_id)!;
+    } else if (c.backer_email) {
+        finalEmail = c.backer_email;
     }
 
     return {
       id: c.id,
       amount: c.amount_paid,
       date: c.created_at,
-      tier_name: (c.tiers as any)?.name || 'Unknown',
+      tier_name: (c.tiers as any)?.name || 'Donation',
       backer_name: displayName,
-      backer_email: userMap.get(c.user_id) || 'N/A' 
+      backer_email: finalEmail
     };
   });
 
@@ -143,6 +160,8 @@ export async function getAllTransactionsForExport(projectId: number) {
         amount_paid,
         created_at,
         user_id,
+        backer_name,
+        backer_email,
         tiers ( name )
       `)
       .eq('project_id', projectId)
@@ -150,31 +169,52 @@ export async function getAllTransactionsForExport(projectId: number) {
   
     if (error) throw new Error(error.message);
 
-    const userIds = Array.from(new Set(contributions.map(c => c.user_id)));
-
-    // Fetch Profiles
-    const { data: profiles } = await supabaseAdmin
-      .from('profiles')
-      .select('id, full_name')
-      .in('id', userIds);
+    const userIds = Array.from(new Set(contributions.map(c => c.user_id).filter(id => id !== null)));
 
     const profileMap = new Map<string, string>();
-    if (profiles) {
-      profiles.forEach(p => profileMap.set(p.id, p.full_name || 'Anonymous'));
-    }
-
-    // Fetch emails
-    const { data: users } = await supabaseAdmin.auth.admin.listUsers();
     const userMap = new Map<string, string>();
-    if (users?.users) {
-        users.users.forEach(u => userMap.set(u.id, u.email || ''));
+
+    if (userIds.length > 0) {
+        // Fetch Profiles
+        const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds);
+
+        if (profiles) {
+        profiles.forEach(p => profileMap.set(p.id, p.full_name || 'Anonymous'));
+        }
+
+        // Fetch emails
+        const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+        if (users?.users) {
+            users.users.forEach(u => userMap.set(u.id, u.email || ''));
+        }
     }
 
-    return contributions.map(c => ({
-        Date: new Date(c.created_at).toLocaleDateString(),
-        Amount: c.amount_paid,
-        Tier: (c.tiers as any)?.name || 'Unknown',
-        Backer: profileMap.get(c.user_id) || 'Anonymous',
-        Email: userMap.get(c.user_id) || 'N/A'
-    }));
+    return contributions.map(c => {
+        // Raw Name Fallback
+        let fullName = 'Anonymous';
+        if (c.user_id && profileMap.has(c.user_id)) {
+            fullName = profileMap.get(c.user_id)!;
+        } else if (c.backer_name) {
+            fullName = c.backer_name;
+        }
+
+        // Email Fallback
+        let email = 'N/A';
+        if (c.user_id && userMap.has(c.user_id)) {
+            email = userMap.get(c.user_id)!;
+        } else if (c.backer_email) {
+            email = c.backer_email;
+        }
+
+        return {
+            Date: new Date(c.created_at).toLocaleDateString(),
+            Amount: c.amount_paid,
+            Tier: (c.tiers as any)?.name || 'Donation',
+            Backer: fullName,
+            Email: email
+        };
+    });
 }

@@ -1,0 +1,384 @@
+<mjml>
+  <mj-head>
+    <!-- Webfonts: will work in some clients (Apple Mail, iOS Mail, etc) but not all -->
+    <mj-font name="Bebas Neue" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" />
+    <mj-font name="DM Sans" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" />
+
+    <mj-attributes>
+      <mj-all font-family="DM Sans, Arial, sans-serif" />
+      <mj-text font-size="14px" line-height="1.6" color="#3a4140" />
+    </mj-attributes>
+
+    <!-- Keep CSS as "nice to have" only. Inline styles below do the heavy lifting. -->
+    <mj-style inline="inline">
+      .ticket-cell {
+        background: #1a1f1e;
+        border-radius: 8px;
+        border: 1px solid #3a4140;
+        text-align: center;
+        padding: 14px 10px;
+      }
+      .ticket-num {
+        font-family: 'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important;
+        font-size: 36px;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+      .ticket-label {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #a0a8a7;
+        line-height: 1.3;
+      }
+      .step-num-circle {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #2D3534;
+        color: #f0ede8;
+        font-weight: 700;
+        font-size: 12px;
+        text-align: center;
+        line-height: 28px;
+      }
+
+      /* Optional helpers */
+      .h-display {
+        font-family: 'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important;
+        font-weight: 400 !important;
+        mso-line-height-rule: exactly;
+      }
+      .h-kicker {
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#f4f4f4">
+
+    <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+    <mj-section background-color="#2D3534" border-radius="10px 10px 0 0" padding="24px 32px">
+      <mj-column vertical-align="middle">
+        <mj-image
+          src="https://www.theinertiaproject.com/Inertia-Logo-Alternate-2-w-tagline.png"
+          alt="The Inertia Project"
+          width="180px"
+          align="left"
+          href="https://theinertiaproject.com/"
+          padding="0"
+        />
+      </mj-column>
+      <mj-column vertical-align="middle">
+        <mj-text align="right" font-size="11px" font-weight="500" color="#64918E" padding="0">
+          <span style="border:1px solid #64918E;border-radius:4px;padding:4px 10px;text-transform:uppercase;letter-spacing:0.15em;">
+            Supporter Update
+          </span>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ DIVIDER ════════════════════════════ -->
+    <mj-section background-color="#2D3534" padding="0">
+      <mj-column>
+        <mj-divider border-color="#64918E" border-width="1px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+    <mj-section background-color="#2D3534" padding="24px 32px 40px">
+      <mj-column>
+
+        <!-- Kicker -->
+        <mj-text
+          css-class="h-kicker"
+          font-size="11px"
+          font-weight="500"
+          color="#22C55E"
+          padding-bottom="10px"
+          style="font-family:DM Sans, Arial, sans-serif; letter-spacing:3px; text-transform:uppercase;"
+        >
+          CAMPAIGN FINAL PUSH
+        </mj-text>
+
+        <!-- Display heading: enforce inline font stack -->
+        <mj-text
+          css-class="h-display"
+          font-size="64px"
+          line-height="0.92"
+          color="#f0ede8"
+          letter-spacing="1px"
+          padding-bottom="16px"
+          style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-weight:400; mso-line-height-rule:exactly;"
+        >
+          <span style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important; font-weight:400 !important; mso-line-height-rule:exactly;">
+            Help us<br />
+            <span style="color:#CB945E;font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important; font-weight:400 !important;">
+              Twist It
+            </span><br />
+            to the finish
+          </span>
+        </mj-text>
+
+        <mj-text font-size="15px" font-weight="300" color="#a0a8a7" line-height="1.5" padding="0">
+          The music video shoot is locked in for March 17th — and we want you right there with us when the curtain goes up.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ INTRO ════════════════════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="40px 32px 24px">
+      <mj-column>
+        <mj-text font-size="16px" line-height="1.75" color="#3a4140">
+          Hey {{firstName}} 👋
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.75" color="#3a4140" padding-top="12px">
+          We wanted to do something special for the people making this music video possible.
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.75" color="#3a4140" padding-top="12px">
+          From March 2 – March 16, we're running an exclusive referral contest inside our Twist It x Inertia community… <strong style="color:#2D3534;">and the prize is something you'll never be able to buy.</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ RAFFLE CARD TOP BAR ════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="0">
+      <mj-column>
+        <mj-divider border-color="#CB945E" border-width="3px" padding="0" />
+      </mj-column>
+    </mj-section>
+
+    <!-- RAFFLE CARD HEADER -->
+    <mj-section background-color="#2D3534" padding="24px 32px 0" border-radius="0">
+      <mj-column>
+
+        <mj-text
+          font-size="10px"
+          font-weight="600"
+          color="#CB945E"
+          letter-spacing="3px"
+          padding-bottom="6px"
+          style="font-family:DM Sans, Arial, sans-serif; text-transform:uppercase; letter-spacing:3px;"
+        >
+          ✦ LIMITED RAFFLE
+        </mj-text>
+
+        <mj-text
+          font-size="36px"
+          line-height="1"
+          color="#f0ede8"
+          letter-spacing="1px"
+          padding-bottom="20px"
+          style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-weight:400; mso-line-height-rule:exactly;"
+        >
+          <span style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important; font-weight:400 !important; mso-line-height-rule:exactly;">
+            Win Something From<br />The Music Video
+          </span>
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- RAFFLE ENTRIES ROW 1 -->
+    <mj-section background-color="#2D3534" padding="0 32px">
+      <mj-column padding="5px">
+        <mj-table>
+          <tr>
+            <td class="ticket-cell" style="background:#1a1f1e;border-radius:8px;border:1px solid #3a4140;text-align:center;padding:14px 10px;">
+              <div style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;font-size:36px;line-height:1;color:#64918E;margin-bottom:4px;font-weight:400;mso-line-height-rule:exactly;">1</div>
+              <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#a0a8a7;line-height:1.3;font-family:DM Sans, Arial, sans-serif;">
+                Raffle entry — just for being a backer
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+
+      <mj-column padding="5px">
+        <mj-table>
+          <tr>
+            <td class="ticket-cell" style="background:#1a1f1e;border-radius:8px;border:1px solid #3a4140;text-align:center;padding:14px 10px;">
+              <div style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;font-size:36px;line-height:1;color:#CB945E;margin-bottom:4px;font-weight:400;mso-line-height-rule:exactly;">+1</div>
+              <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#a0a8a7;line-height:1.3;font-family:DM Sans, Arial, sans-serif;">
+                Bonus entry for VIP backers
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- RAFFLE ENTRIES ROW 2 -->
+    <mj-section background-color="#2D3534" padding="0 32px 24px">
+      <mj-column padding="5px">
+        <mj-table>
+          <tr>
+            <td class="ticket-cell" style="background:#1a1f1e;border-radius:8px;border:1px solid #3a4140;text-align:center;padding:14px 10px;">
+              <div style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;font-size:36px;line-height:1;color:#22C55E;margin-bottom:4px;font-weight:400;mso-line-height-rule:exactly;">+1</div>
+              <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#a0a8a7;line-height:1.3;font-family:DM Sans, Arial, sans-serif;">
+                Entry for bringing in a new backer
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+
+      <mj-column padding="5px">
+        <mj-table>
+          <tr>
+            <td class="ticket-cell" style="background:#1a1f1e;border-radius:8px;border:1px solid #3a4140;text-align:center;padding:14px 10px;">
+              <div style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;font-size:36px;line-height:1;color:#64918E;margin-bottom:4px;font-weight:400;mso-line-height-rule:exactly;">1</div>
+              <div style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:#a0a8a7;line-height:1.3;font-family:DM Sans, Arial, sans-serif;">
+                Raffle entry for new referred backers
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ HOW IT WORKS ═══════════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="36px 32px 0">
+      <mj-column>
+        <mj-text
+          font-size="28px"
+          letter-spacing="2px"
+          color="#2D3534"
+          padding-bottom="16px"
+          style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-weight:400; mso-line-height-rule:exactly;"
+        >
+          <span style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important; font-weight:400 !important; mso-line-height-rule:exactly;">
+            How It Works
+          </span>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Steps 1–5 -->
+    <mj-section background-color="#f8f6f2" padding="0 32px 32px">
+      <mj-column>
+        <mj-table cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="width:38px;padding:8px 14px 8px 0;vertical-align:top;">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:#2D3534;color:#f0ede8;font-family:DM Sans,Arial,sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:28px;">1</span>
+            </td>
+            <td style="padding:8px 0;vertical-align:top;font-family:DM Sans,Arial,sans-serif;font-size:14px;line-height:1.6;color:#3a4140;">
+              <strong style="color:#2D3534;">You're already in.</strong> Every backer automatically receives 1 raffle entry — no action needed.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="width:38px;padding:8px 14px 8px 0;vertical-align:top;">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:#2D3534;color:#f0ede8;font-family:DM Sans,Arial,sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:28px;">2</span>
+            </td>
+            <td style="padding:8px 0;vertical-align:top;font-family:DM Sans,Arial,sans-serif;font-size:14px;line-height:1.6;color:#3a4140;">
+              <strong style="color:#2D3534;">VIP backers get a bonus entry.</strong> If you're on a VIP tier, you've already earned an extra raffle entry on top of your standard one.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="width:38px;padding:8px 14px 8px 0;vertical-align:top;">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:#2D3534;color:#f0ede8;font-family:DM Sans,Arial,sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:28px;">3</span>
+            </td>
+            <td style="padding:8px 0;vertical-align:top;font-family:DM Sans,Arial,sans-serif;font-size:14px;line-height:1.6;color:#3a4140;">
+              <strong style="color:#2D3534;">Bring in a new backer</strong> and earn 1 extra raffle entry. Just have them drop your name in the community when they join and we'll handle the rest.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="width:38px;padding:8px 14px 8px 0;vertical-align:top;">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:#2D3534;color:#f0ede8;font-family:DM Sans,Arial,sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:28px;">4</span>
+            </td>
+            <td style="padding:8px 0;vertical-align:top;font-family:DM Sans,Arial,sans-serif;font-size:14px;line-height:1.6;color:#3a4140;">
+              <strong style="color:#2D3534;">Just joined through a referral?</strong> Welcome! Drop your referrer's name in the community and you'll each get your bonus entry counted.
+            </td>
+          </tr>
+
+          <tr>
+            <td style="width:38px;padding:8px 14px 8px 0;vertical-align:top;">
+              <span style="display:inline-block;width:28px;height:28px;border-radius:50%;background:#2D3534;color:#f0ede8;font-family:DM Sans,Arial,sans-serif;font-weight:700;font-size:12px;text-align:center;line-height:28px;">5</span>
+            </td>
+            <td style="padding:8px 0;vertical-align:top;font-family:DM Sans,Arial,sans-serif;font-size:14px;line-height:1.6;color:#3a4140;">
+              <strong style="color:#2D3534;">Tune in March 17th</strong> for our closing livestream — we'll draw the winner live, celebrate every contributor, and share what's next for Twist It.
+            </td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ SEATS REMAINING ════════════════════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="5px 32px 24px">
+      <mj-column>
+        <mj-text font-size="16px" line-height="1.75" color="#3a4140" padding-top="12px">
+          The project is currently 69% funded and has 21 seats left for the band to hit their goal of $5,000. This will cover their full music video expense, and they need your help to make it happen.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════ MAKE SURE TO GET IN ══════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="0 32px 16px">
+      <mj-column border-left="4px solid #CB945E" background-color="#f0ede8" border-radius="0 8px 8px 0" padding="20px 22px">
+        <mj-text
+          font-size="22px"
+          color="#2D3534"
+          letter-spacing="1px"
+          padding-bottom="8px"
+          style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif; font-weight:400; mso-line-height-rule:exactly;"
+        >
+          <span style="font-family:'Bebas Neue', Impact, 'Arial Black', 'Helvetica Neue', Arial, sans-serif !important; font-weight:400 !important; mso-line-height-rule:exactly;">
+            Make Sure to Get In
+          </span>
+        </mj-text>
+        <mj-text font-size="14px" line-height="1.65" color="#3a4140" padding="0">
+          The referral contest and winner selection happen inside our community — so if you haven't joined yet, make sure to get in before March 16th. All the action will be happening there.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ CTA ══════════════════════════════ -->
+    <mj-section background-color="#f8f6f2" padding="8px 32px 40px">
+      <mj-column>
+        <mj-button
+          href="https://the-inertia-project.mn.co/plans/1952741?bundle_token=302eda44b9a286b786a94a1b360feb0a&utm_source=manual"
+          background-color="#22C55E"
+          color="#1a1f1e"
+          font-size="15px"
+          font-weight="700"
+          letter-spacing="1px"
+          border-radius="6px"
+          padding="14px 36px"
+          inner-padding="14px 36px"
+          align="center"
+        >
+          Join the Community →
+        </mj-button>
+        <mj-text align="center" font-size="13px" color="#7a8280" padding-top="12px">
+          Questions? <a href="mailto:team@theinertiaproject.com" style="color:#CB945E;text-decoration:none;">Reach out to the team.</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ═══════════════════════════════ FOOTER ═══════════════════════════ -->
+    <mj-section background-color="#2D3534" border-radius="0 0 10px 10px" padding="28px 32px">
+      <mj-column>
+        <mj-divider border-color="#64918E" border-width="1px" padding-bottom="20px" />
+        <mj-text align="center" font-size="12px" color="#7a8280" line-height="1.6" padding-bottom="8px">
+          This message was sent to {{email}} because you're a Twist It campaign backer.
+        </mj-text>
+        <mj-text align="center" font-size="12px" color="#7a8280" padding-bottom="12px">
+          © 2026 The Inertia Project. All rights reserved.
+        </mj-text>
+        <mj-text align="center" font-size="12px" padding="0">
+          <a href="https://theinertiaproject.com" style="color:#CB945E;text-decoration:none;">Visit Inertia</a>
+          &nbsp;|&nbsp;
+          <a href="mailto:team@theinertiaproject.com" style="color:#CB945E;text-decoration:none;">Contact Us</a>
+          &nbsp;|&nbsp;
+          <a href="{unsubscribe_link}" style="color:#7a8280;text-decoration:none;">Unsubscribe</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>
