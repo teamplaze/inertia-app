@@ -66,7 +66,7 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-50 px-4 lg:px-6 h-14 flex items-center backdrop-blur-md border-b border-gray-700"
+      className="sticky top-0 z-50 px-4 lg:px-6 h-14 flex items-center backdrop-blur-md"
       style={{ backgroundColor: "rgba(45, 53, 52, 0.95)" }}
     >
       <Link href="/" className="flex items-center justify-center font-bold text-lg">
@@ -102,12 +102,12 @@ export default function Header() {
               <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {/*<DropdownMenuItem asChild>
-                  <Link href="/account/profile" className="cursor-pointer">User Profile</Link>
-                </DropdownMenuItem>*/}
                 <DropdownMenuItem asChild>
                   <Link href="/account" className="cursor-pointer">My Projects</Link>
                 </DropdownMenuItem>
+                {<DropdownMenuItem asChild>
+                  <Link href="/account/profile" className="cursor-pointer">User Profile</Link>
+                </DropdownMenuItem>}
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#CB945E] hover:!text-[#CB945E]">
                   Log out
                 </DropdownMenuItem>

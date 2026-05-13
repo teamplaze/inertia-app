@@ -16,7 +16,7 @@ export default function AccountLayout({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Left Sidebar Navigation */}
         <aside className="md:col-span-1">
-          <div className="p-4 rounded-xl border border-gray-700" style={{ backgroundColor: "#2D3534" }}>
+          <div className="p-4 rounded-xl border-2 border-[#CB945E]" style={{ backgroundColor: "#2D3534" }}>
             <h2 className="text-xl font-bold text-white mb-6 pl-2">My Account</h2>
             <nav className="space-y-2">
               <Link
