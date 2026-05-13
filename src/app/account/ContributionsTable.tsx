@@ -159,7 +159,7 @@ export default function ContributionsTable({ contributions }: { contributions: C
               </div>
               <div className="flex justify-between md:flex-col md:justify-start">
                 <span className="text-white font-medium">Tier:</span>
-                <span className="text-white">{contribution.tiers.name}</span>
+                <span className="text-white">{contribution.tiers?.name || 'Donation'}</span>
               </div>
             </div>
           </div>

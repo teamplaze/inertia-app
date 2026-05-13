@@ -161,7 +161,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   };
 
   // We use the presence of the donation_link as a flag to enable the donate card
-  const hasDonationEnabled = !!project.donation_link;
+  const hasDonationEnabled = true;
 
   const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
   
