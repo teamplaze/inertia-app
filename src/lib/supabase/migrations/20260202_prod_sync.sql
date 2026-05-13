@@ -119,3 +119,9 @@ ALTER TABLE public.contributions ADD COLUMN IF NOT EXISTS stripe_session_id TEXT
 
 -- 4. Make tier_id optional (nullable) to allow guest checkouts
 ALTER TABLE public.contributions ALTER COLUMN tier_id DROP NOT NULL;
+
+-- Add Profile fields for phone, address, and socials
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS phone text,
+ADD COLUMN IF NOT EXISTS address jsonb DEFAULT '{}'::jsonb,
+ADD COLUMN IF NOT EXISTS socials jsonb DEFAULT '{}'::jsonb;
