@@ -26,6 +26,7 @@ export type BudgetLineItem = {
   name: string;
   notes: string | null;
   cost: number;
+  milestone_id?: number | null;
 };
 
 export type BudgetCategory = {
@@ -33,6 +34,13 @@ export type BudgetCategory = {
   project_id: number;
   name: string;
   // This will hold the nested line items for each category
+  budget_line_items: BudgetLineItem[];
+};
+
+export type ProjectMilestone = {
+  id: number;
+  title: string;
+  sort_order: number;
   budget_line_items: BudgetLineItem[];
 };
 
@@ -77,6 +85,8 @@ export type Project = {
   slug?: string;
   // This is the new field for our nested budget data
   budget_categories: BudgetCategory[];
+    // This is the new field for our milestone gamification data
+  project_milestones?: ProjectMilestone[];
   // Added donation_link property
   donation_link?: string;
   // Added spotify_artist_id property

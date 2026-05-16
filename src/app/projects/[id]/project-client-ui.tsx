@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2  } from "lucide-react";
@@ -19,6 +18,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Component
 import TierComparisonMatrix from "@/components/project/TierComparison";
+import FundingMeter from "@/components/project/FundingMeter";
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -248,7 +248,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               </span>
               <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
             </div>
-            <Progress value={fundingPercentage} className="h-3 bg-gray-700" />
+            <FundingMeter 
+              currentFunds={project.current_funding} 
+              totalGoal={project.funding_goal} 
+              milestones={project.project_milestones} 
+            />
             <div className="flex justify-between text-sm text-gray-400">
               <span>{fundingPercentage}% funded</span>
               <span className="flex items-center gap-1">
