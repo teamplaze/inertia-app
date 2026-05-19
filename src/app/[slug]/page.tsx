@@ -27,8 +27,11 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
           id,
           title,
           sort_order,
-          budget_line_items (
-            cost
+          budget_line_items!milestone_id (
+            id,
+            name,
+            cost,
+            notes
           )
         )
       `)

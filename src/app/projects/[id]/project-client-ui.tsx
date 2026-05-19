@@ -404,7 +404,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </div>
       </section>
 
-      <BudgetBreakdown categories={project.budget_categories} />
+      <BudgetBreakdown milestones={project.project_milestones ?? []} />
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
