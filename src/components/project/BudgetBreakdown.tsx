@@ -22,9 +22,10 @@ export type Milestone = {
   budget_line_items: MilestoneLineItem[];
 };
 
-const COLORS = ['#D57A08', '#895224', '#99280C'];
+const DEFAULT_COLORS = ['#2D3534', '#CB945E', '#E5E1DC', '#0c6a8f', '#2E8B57'];
 
-export default function BudgetBreakdown({ milestones }: { milestones: Milestone[] }) {
+export default function BudgetBreakdown({ milestones, colors }: { milestones: Milestone[]; colors?: string[] }) {
+  const COLORS = colors?.length ? colors : DEFAULT_COLORS;
   const { totalBudget, chartData } = useMemo(() => {
     if (!milestones || milestones.length === 0) {
       return { totalBudget: 0, chartData: [] };

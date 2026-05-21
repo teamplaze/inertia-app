@@ -91,4 +91,6 @@ export type Project = {
   donation_link?: string;
   // Added spotify_artist_id property
   spotify_artist_id?: string;
+  // Per-project color palette (hex strings) — used for budget chart and future theming
+  project_colors?: string[] | null;
 };

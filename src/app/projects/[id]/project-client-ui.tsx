@@ -164,6 +164,16 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const hasDonationEnabled = true;
 
   const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
+
+  // Fall back to budget_categories for projects that predate the milestones feature
+  const budgetMilestones = (project.project_milestones?.length ?? 0) > 0
+    ? project.project_milestones!
+    : (project.budget_categories ?? []).map(cat => ({
+        id: cat.id,
+        title: cat.name,
+        sort_order: 0,
+        budget_line_items: cat.budget_line_items,
+      }));
   
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -404,7 +414,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </div>
       </section>
 
-      <BudgetBreakdown milestones={project.project_milestones ?? []} />
+      <BudgetBreakdown milestones={budgetMilestones} colors={project.project_colors ?? undefined} />
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
