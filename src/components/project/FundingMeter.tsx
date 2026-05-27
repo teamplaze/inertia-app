@@ -15,14 +15,6 @@ export default function FundingMeter({ currentFunds, totalGoal, milestones = [] 
   const safeTotalGoal = totalGoal > 0 ? totalGoal : 1;
   const progressPercentage = Math.min((currentFunds / safeTotalGoal) * 100, 100);
 
-  // --- DEBUG LOGGING ---
-  console.log("🛠️ [FundingMeter Debug] Received Props:", { 
-    currentFunds, 
-    totalGoal, 
-    milestonesLength: milestones?.length,
-    milestones 
-  });
-
   // Calculate cumulative targets for milestones
   const processedMilestones = useMemo(() => {
     if (!milestones || milestones.length === 0) return [];
@@ -45,7 +37,6 @@ export default function FundingMeter({ currentFunds, totalGoal, milestones = [] 
       };
     });
 
-    console.log("🛠️ [FundingMeter Debug] Processed Milestones:", processed);
     return processed;
   }, [milestones, safeTotalGoal]);
 
