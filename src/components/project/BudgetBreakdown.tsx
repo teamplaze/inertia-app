@@ -1,152 +1,173 @@
-// File: src/components/BudgetBreakdown.tsx
+// File: src/components/project/BudgetBreakdown.tsx
 "use client";
 
-import { useState, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { BudgetCategory } from "@/types";
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Badge } from "@/components/ui/badge";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
+import type { SectorProps } from 'recharts';
 
-const COLORS = ['#692baf', '#b80b76', '#538e23', '#708090', '#CD5C5C', '#B8860B'];
+export type MilestoneLineItem = {
+  id: string | number;
+  name: string;
+  cost: number;
+  notes?: string | null;
+  category_name?: string;
+};
 
-export default function BudgetBreakdown({ categories }: { categories: BudgetCategory[] }) {
-  const [view, setView] = useState<'summary' | 'detailed'>('summary');
+export type Milestone = {
+  id: string | number;
+  title: string;
+  budget_line_items: MilestoneLineItem[];
+};
 
+const DEFAULT_COLORS = ['#2D3534', '#CB945E', '#E5E1DC', '#0c6a8f', '#2E8B57'];
+
+export default function BudgetBreakdown({ milestones, colors }: { milestones: Milestone[]; colors?: string[] }) {
+  const COLORS = colors?.length ? colors : DEFAULT_COLORS;
   const { totalBudget, chartData } = useMemo(() => {
-    if (!categories || categories.length === 0) {
+    if (!milestones || milestones.length === 0) {
       return { totalBudget: 0, chartData: [] };
     }
 
     let total = 0;
-    const data = categories.map(category => {
-      const categoryTotal = category.budget_line_items.reduce((acc, item) => acc + item.cost, 0);
-      total += categoryTotal;
+    const data = milestones.map(milestone => {
+      const milestoneTotal = milestone.budget_line_items.reduce((acc, item) => acc + item.cost, 0);
+      total += milestoneTotal;
       return {
-        name: category.name,
-        value: categoryTotal,
+        name: milestone.title,
+        value: milestoneTotal,
       };
     });
 
     return { totalBudget: total, chartData: data };
-  }, [categories]);
-  
-  if (!categories || categories.length === 0) {
+  }, [milestones]);
+
+  if (!milestones || milestones.length === 0) {
     return null;
   }
 
   return (
-    <>
     <section id="budget-breakdown" className="mb-12">
-      {/* This div is now outside and above the Card */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Budget Breakdown</h2>
-        <p className="text-gray-200 mb-6 max-w-2xl mx-auto">See how your support helps bring this album to life. Full transparency on where every dollar goes.</p>
+        <p className="text-gray-200 mb-6 max-w-2xl mx-auto">
+          See how your support helps bring this project to life. Full transparency on where every dollar goes.
+        </p>
       </div>
 
-      <Card className="rounded-xl w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
-        <CardContent className="p-6">
-          {/* View Toggle Buttons */}
-          <Tabs value={view} onValueChange={(value) => setView(value as 'summary' | 'detailed')} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-10 items-center justify-center rounded-lg bg-white/20 p-1 mb-6">
-              <TabsTrigger 
-                value="summary" 
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium text-white transition-all data-[state=active]:bg-[#CB945E] data-[state=active]:text-white data-[state=active]:shadow-sm"
-              >
-                Summary View
-              </TabsTrigger>
-              <TabsTrigger 
-                value="detailed" 
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium text-white transition-all data-[state=active]:bg-[#CB945E] data-[state=active]:text-white data-[state=active]:shadow-sm"
-              >
-                Detailed View
-              </TabsTrigger>
-            </TabsList>
-          {/* Conditional Rendering based on view */}
-         <TabsContent value="summary">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="w-full h-[300px]">
+      <div className="rounded-xl w-full p-6" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+
+            {/* Left Side: The Donut Chart */}
+            <div className="min-w-0 w-full flex flex-col items-center justify-center lg:sticky lg:top-24">
+              <div className="w-full h-[350px] overflow-hidden">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={2}>
+                  <PieChart style={{ outline: 'none', background: 'transparent' }}>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={90}
+                      outerRadius={140}
+                      paddingAngle={2}
+                      stroke="none"
+                      activeShape={(props: SectorProps) => <Sector {...props} stroke="none" />}
+                    >
                       {chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} contentStyle={{ backgroundColor: 'rgba(45, 53, 52, 0.9)', borderColor: '#64918E', color: 'white' }} />
+                    <Tooltip
+                      cursor={false}
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null;
+                        const { name, value } = payload[0];
+                        const color = (payload[0] as any).payload?.fill ?? '#2D3534';
+                        return (
+                          <div style={{ backgroundColor: '#ffffff', border: '2px solid #CB945E', borderRadius: '8px', padding: '8px 12px' }}>
+                            <p style={{ color: '#2D3534', fontWeight: 700, marginBottom: 2 }}>{name}</p>
+                            <p style={{ color, fontWeight: 600 }}>${(value as number).toLocaleString()}</p>
+                          </div>
+                        );
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="space-y-2">
-                {chartData.map((entry, index) => (
-                  <div key={entry.name} className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors min-h-[52px]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                      <span className="font-semibold text-sm text-[#2D3534]">{entry.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-sm text-[#64918E]">${entry.value.toLocaleString()}</div>
-                      <div className="text-xs text-[#2D3534]/70">{((entry.value / totalBudget) * 100).toFixed(0)}%</div>
-                    </div>
-                  </div>
-                ))}
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border-2 border-[#CB945E] min-h-[52px]">
-                    <div className="font-semibold text-lg text-[#2D3534]">Total Project Budget</div>
-                    <div className="font-bold text-lg text-green-500">${totalBudget.toLocaleString()}</div>
+
+              <div className="flex items-center justify-between w-full max-w-sm p-4 bg-white rounded-xl border-2 border-[#CB945E] mt-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                    <span className="font-semibold text-lg text-[#2D3534]">Total Goal</span>
                 </div>
+                <div className="font-bold text-lg text-green-600">${totalBudget.toLocaleString()}</div>
               </div>
             </div>
-          </TabsContent>
 
-          <TabsContent value="detailed">
-            <div className="space-y-3">
+            {/* Right Side: The Milestone Accordion */}
+            <div className="min-w-0 space-y-3 w-full">
               <Accordion type="multiple" className="w-full">
-                {categories.map((category, index) => {
-                  const categoryTotal = category.budget_line_items.reduce((acc, item) => acc + item.cost, 0);
+                {milestones.map((milestone, index) => {
+                  const milestoneTotal = milestone.budget_line_items.reduce((acc, item) => acc + item.cost, 0);
+                  const color = COLORS[index % COLORS.length];
+
                   return (
-                    <AccordionItem value={`item-${category.id}`} key={category.id} className=" mb-2 border-b-0">
-                      <AccordionTrigger className="flex items-center justify-between p-3 bg-white rounded-lg hover:bg-gray-50 transition-colors min-h-[52px] group hover:no-underline">
-                        <div className="flex items-center gap-3">
-                          <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                          <span className="font-semibold text-sm text-[#2D3534] group-hover:text-[#64918E] transition-colors">{category.name}</span>
-                          <Badge className="bg-[#CB945E] text-white font-semibold text-xs ml-2">{category.budget_line_items.length} items</Badge>
+                    <AccordionItem value={`item-${milestone.id}`} key={milestone.id} className="mb-3 border-b-0">
+
+                      <AccordionTrigger className="flex items-center justify-between p-4 bg-white rounded-xl hover:bg-gray-50 transition-colors group hover:no-underline border border-gray-100 shadow-sm">
+                        <div className="flex items-center gap-3 text-left">
+                          <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: color }}></div>
+                          <div>
+                            <span className="font-semibold text-sm text-[#2D3534] group-hover:text-[#64918E] transition-colors block">
+                              {milestone.title}
+                            </span>
+                            <span className="text-xs text-gray-500 font-normal">
+                              {totalBudget > 0 ? ((milestoneTotal / totalBudget) * 100).toFixed(0) : 0}% of total budget
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-1 justify-end items-center gap-3">
-                          <span className="font-bold text-sm text-[#64918E]">${categoryTotal.toLocaleString()}</span>
+                        <div className="flex items-center gap-3 ml-4">
+                          <span className="font-bold text-sm" style={{ color: color }}>
+                            ${milestoneTotal.toLocaleString()}
+                          </span>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-1">
-                        <div className="ml-[28px] space-y-2 mt-2">
-                          {category.budget_line_items.map(item => (
-                            <div key={item.id} className="flex justify-between items-center px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                              <div>
-                                <div className="font-medium text-sm text-[#2D3534]">{item.name}</div>
-                                {item.notes && <div className="text-xs text-[#2D3534]/70 mt-1">{item.notes}</div>}
+
+                      <AccordionContent className="pt-3 pb-1">
+                        <div className="ml-[28px] space-y-3">
+                          {milestone.budget_line_items.map((item, itemIndex) => (
+                            <div key={item.id ?? `${milestone.id}-${itemIndex}`} className="flex justify-between items-start p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:bg-gray-50 transition-colors" style={{ borderLeftColor: color }}>
+                              <div className="pr-4">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="font-medium text-sm text-[#2D3534]">{item.name}</div>
+                                  {item.category_name && (
+                                    <Badge variant="outline" className="text-[10px] font-semibold text-gray-500 border-gray-300">
+                                      {item.category_name}
+                                    </Badge>
+                                  )}
+                                </div>
+                                {item.notes && <div className="text-xs text-gray-600 leading-snug">{item.notes}</div>}
                               </div>
-                              <div className="font-semibold text-sm text-[#64918E]">${item.cost.toLocaleString()}</div>
+                              <div className="font-semibold text-sm text-[#2D3534] whitespace-nowrap mt-0.5">
+                                ${item.cost.toLocaleString()}
+                              </div>
                             </div>
                           ))}
                         </div>
                       </AccordionContent>
                     </AccordionItem>
-                  )
+                  );
                 })}
               </Accordion>
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border-2 border-[#CB945E] mt-3 min-h-[52px]">
-                <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                    <span className="font-semibold text-lg text-[#2D3534]">Total Project Budget</span>
-                </div>
-                <div className="font-bold text-lg text-green-500">${totalBudget.toLocaleString()}</div>
-              </div>
             </div>
-          </TabsContent>
-        </Tabs>
-        </CardContent>
-      </Card>
+
+          </div>
+      </div>
     </section>
-    </>
   );
 }

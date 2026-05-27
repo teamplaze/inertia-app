@@ -125,3 +125,12 @@ ALTER TABLE public.profiles
 ADD COLUMN IF NOT EXISTS phone text,
 ADD COLUMN IF NOT EXISTS address jsonb DEFAULT '{}'::jsonb,
 ADD COLUMN IF NOT EXISTS socials jsonb DEFAULT '{}'::jsonb;
+
+ -- ADD COLORS to project config, the Supabase migration:
+ALTER TABLE projects
+ADD COLUMN budget_colors text[] DEFAULT NULL;
+
+-- Then you can set colors per project:
+UPDATE projects
+SET budget_colors = ARRAY['#FF5733', '#C70039', '#900C3F']
+WHERE id = 1;

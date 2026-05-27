@@ -22,6 +22,17 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
         budget_categories (
           *,
           budget_line_items (*)
+        ),
+        project_milestones (
+          id,
+          title,
+          sort_order,
+          budget_line_items!milestone_id (
+            id,
+            name,
+            cost,
+            notes
+          )
         )
       `)
       .eq('slug', slug)
@@ -55,9 +66,11 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
       tiers: projectData.tiers || [],
       testimonials: projectData.testimonials || [],
       budget_categories: projectData.budget_categories || [],
+      project_milestones: projectData.project_milestones || [],
       slug: projectData.slug,
       donation_link: projectData.donation_link,
-      spotify_artist_id: projectData.spotify_artist_id 
+      spotify_artist_id: projectData.spotify_artist_id,
+      project_colors: projectData.project_colors ?? null,
     };
     
     return project;
