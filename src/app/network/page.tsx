@@ -76,27 +76,27 @@ export default function NetworkPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first-name" className="font-medium text-gray-200">First Name (required)</Label>
-                <Input id="first-name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                <Input id="first-name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} variant="dark" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="last-name" className="font-medium text-gray-200">Last Name (required)</Label>
-                <Input id="last-name" required value={lastName} onChange={(e) => setLastName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                <Input id="last-name" required value={lastName} onChange={(e) => setLastName(e.target.value)} variant="dark" />
               </div>
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="email" className="font-medium text-gray-200">Email (required)</Label>
-              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} variant="dark" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="phone" className="font-medium text-gray-200">Phone</Label>
-                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} variant="dark" />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="company" className="font-medium text-gray-200">Company Name</Label>
-                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} variant="dark" />
                 </div>
             </div>
 
@@ -143,12 +143,12 @@ export default function NetworkPage() {
 
             <div className="space-y-2">
                 <Label htmlFor="portfolio" className="font-medium text-gray-200">Portfolio</Label>
-                <Input id="portfolio" placeholder="https://yourportfolio.com" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                <Input id="portfolio" placeholder="https://yourportfolio.com" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} variant="dark" />
             </div>
 
             <div className="space-y-2">
                 <Label htmlFor="genre" className="font-medium text-gray-200">Preferred Genre</Label>
-                <Input id="genre" placeholder="e.g., Indie Rock, Folk, Electronic" value={genre} onChange={(e) => setGenre(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+                <Input id="genre" placeholder="e.g., Indie Rock, Folk, Electronic" value={genre} onChange={(e) => setGenre(e.target.value)} variant="dark" />
             </div>
 
             <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
