@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, BookOpen, PieChart, Send } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react"; 
-import type { Project } from "@/types"; 
+import { useEffect, useState, type FormEvent } from "react";
+import type { Project } from "@/types";
+import { BRAND } from "@/lib/colors";
 
 export default function Component() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -66,19 +67,19 @@ export default function Component() {
   };
 
   const regularCardStyle = {
-    backgroundColor: '#64918E',
-    border: '2px solid #CB945E',
+    backgroundColor: BRAND.teal,
+    border: `2px solid ${BRAND.copper}`,
   };
 
   const gradientCardStyle = {
-    background: 'linear-gradient(180deg, #64918E 0%, #000000 100%)',
-    border: '2px solid #CB945E',
+    background: `linear-gradient(180deg, ${BRAND.teal} 0%, #000000 100%)`,
+    border: `2px solid ${BRAND.copper}`,
   };
 
   return (
     <main className="flex-1">
       {/* Hero section */}
-      <section className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: '#64918E' }}>
+      <section className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: BRAND.teal }}>
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid max-w-[1300px] mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-2 md:gap-16">
             <div className="flex flex-col items-start space-y-4">
@@ -89,10 +90,10 @@ export default function Component() {
                 Support artists directly, earn exclusive perks, and become part of the creative journey.
               </p>
               <div className="space-x-4">
-                <Button onClick={() => scrollToSection('featured-projects')} className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                <Button onClick={() => scrollToSection('featured-projects')} className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                   Explore Projects
                 </Button>
-                <Button onClick={() => scrollToSection('how-it-works')} className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                <Button onClick={() => scrollToSection('how-it-works')} className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                   How It Works
                 </Button>
               </div>
@@ -126,16 +127,16 @@ export default function Component() {
                       🎤 {project.artist_name}
                     </CardTitle>
                     <CardDescription className="text-sm text-white/80">🎶 {project.project_title}</CardDescription>
-                    <div className="mt-2 text-sm font-medium text-[#CB945E]">💰 {fundedPercent}% Funded</div>
+                    <div className="mt-2 text-sm font-medium text-brand-copper">💰 {fundedPercent}% Funded</div>
                     <div className="w-full bg-black/30 rounded-full h-2 mb-2">
-                      <div className="bg-[#CB945E] h-2 rounded-full" style={{ width: `${fundedPercent}%` }}></div>
+                      <div className="bg-brand-copper h-2 rounded-full" style={{ width: `${fundedPercent}%` }}></div>
                     </div>
                     <div className="text-xs text-white/70 mb-2">🕒 {project.status}</div>
                     <div className="text-xs text-white/70 mb-3 truncate">⭐ {project.artist_bio}</div>
                     
                     {/* UPDATED LINK: Uses slug if available */}
                     <Link href={`/${project.slug || `projects/${project.id}`}`}>
-                      <Button size="sm" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                      <Button size="sm" className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white">
                         View Project <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
@@ -148,7 +149,7 @@ export default function Component() {
       </section>
 
       {/* How It Works section */}
-      <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: '#64918E' }}>
+      <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: BRAND.teal }}>
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
             How It Works
@@ -156,21 +157,21 @@ export default function Component() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="text-center rounded-xl" style={gradientCardStyle}>
               <CardContent className="p-6">
-                <BookOpen className="mx-auto h-12 w-12 text-[#CB945E] mb-4" />
+                <BookOpen className="mx-auto h-12 w-12 text-brand-copper mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-2">Browse Projects</h3>
                 <p className="text-white/80">Discover active music campaigns.</p>
               </CardContent>
             </Card>
             <Card className="text-center rounded-xl" style={gradientCardStyle}>
               <CardContent className="p-6">
-                <PieChart className="mx-auto h-12 w-12 text-[#CB945E] mb-4" />
+                <PieChart className="mx-auto h-12 w-12 text-brand-copper mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-2">Reserve Your Seat</h3>
                 <p className="text-white/80">Choose your contribution tier.</p>
               </CardContent>
             </Card>
             <Card className="text-center rounded-xl" style={gradientCardStyle}>
               <CardContent className="p-6">
-                <Send className="mx-auto h-12 w-12 text-[#CB945E] mb-4" />
+                <Send className="mx-auto h-12 w-12 text-brand-copper mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-2">Enjoy the Journey</h3>
                 <p className="text-white/80">Track progress, unlock perks, earn returns.</p>
               </CardContent>

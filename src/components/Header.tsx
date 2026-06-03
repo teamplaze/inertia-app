@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from 'next/navigation';
+import { BRAND } from "@/lib/colors";
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -67,7 +68,7 @@ export default function Header() {
   return (
     <header
       className="sticky top-0 z-50 px-4 lg:px-6 h-14 flex items-center backdrop-blur-md"
-      style={{ backgroundColor: "rgba(45, 53, 52, 0.95)" }}
+      style={{ backgroundColor: BRAND.darkA95 }}
     >
       <Link href="/" className="flex items-center justify-center font-bold text-lg">
         <Image src="/Inertia-Logo-w-tagline.svg" alt="Inertia Logo" width={120} height={60} />
@@ -95,11 +96,11 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer">
                   <AvatarImage src={user.user_metadata.avatar_url} />
-                  <AvatarFallback className="bg-[#CB945E] text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
+                  <AvatarFallback className="bg-brand-copper text-white">{getInitials(user.user_metadata.full_name || user.email || 'U')}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               {/* --- THIS IS THE UPDATED DROPDOWN CONTENT --- */}
-              <DropdownMenuContent className="bg-[#2D3534] text-white border-gray-700">
+              <DropdownMenuContent className="bg-brand-dark text-white border-gray-700">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -108,7 +109,7 @@ export default function Header() {
                 {<DropdownMenuItem asChild>
                   <Link href="/account/profile" className="cursor-pointer">User Profile</Link>
                 </DropdownMenuItem>}
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-[#CB945E] hover:!text-[#CB945E]">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-brand-copper hover:!text-brand-copper">
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -117,7 +118,7 @@ export default function Header() {
           ) : (
             // If no user is logged in, show the Login button
             <Link href="/login">
-              <Button size="sm" className="bg-[#CB945E] text-white hover:bg-white hover:text-[#CB945E]">
+              <Button size="sm" className="bg-brand-copper text-white hover:bg-white hover:text-brand-copper">
                 Login
               </Button>
             </Link>

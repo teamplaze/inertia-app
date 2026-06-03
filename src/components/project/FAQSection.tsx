@@ -47,10 +47,10 @@ export default function FAQSection() {
   ];
 
   return (
-    <Card className="bg-[#2D3534] border-[#CB945E] text-white mt-12">
+    <Card className="bg-brand-dark border-brand-copper text-white mt-12">
       <CardHeader>
         <CardTitle className="text-2xl font-bold flex items-center gap-2">
-          <HelpCircle className="w-6 h-6 text-[#CB945E]" />
+          <HelpCircle className="w-6 h-6 text-brand-copper" />
           Frequently Asked Questions
         </CardTitle>
       </CardHeader>
@@ -58,7 +58,7 @@ export default function FAQSection() {
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={`item-${index}`} className="border-white/15">
-              <AccordionTrigger className="text-left text-lg font-medium hover:text-[#CB945E] transition-colors [&>svg]:text-white">
+              <AccordionTrigger className="text-left text-lg font-medium hover:text-brand-copper transition-colors [&>svg]:text-white">
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="mb-4 text-white-200 leading-relaxed">

@@ -32,10 +32,10 @@ export default async function AdminLayout({
 
   // 3. Render the admin page if authorized
   return (
-    <div className="min-h-screen bg-[#1E2322]">
-      <header className="border-b border-[#CB945E]/20 bg-[#2D3534]/50 backdrop-blur sticky top-0 z-40">
+    <div className="min-h-screen bg-brand-darker">
+      <header className="border-b border-brand-copper/20 bg-brand-dark/50 backdrop-blur sticky top-0 z-40">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <span className="text-[#CB945E] font-bold tracking-wider">INERTIA ADMIN</span>
+          <span className="text-brand-copper font-bold tracking-wider">INERTIA ADMIN</span>
           <div className="text-xs text-gray-400">
             {user.email}
           </div>

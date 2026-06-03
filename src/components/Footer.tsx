@@ -1,9 +1,10 @@
 // File: src/components/Footer.tsx
 import Link from "next/link";
+import { BRAND } from "@/lib/colors";
 
 export default function Footer() {
   return (
-    <footer className="py-8" style={{ backgroundColor: "#2D3534", borderTop: "1px solid #64918E" }}>
+    <footer className="py-8" style={{ backgroundColor: BRAND.dark, borderTop: `1px solid ${BRAND.teal}` }}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center">
             <p className="text-sm text-white">&copy; {new Date().getFullYear()} Inertia. All rights reserved.</p>

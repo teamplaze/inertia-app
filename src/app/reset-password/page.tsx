@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { BRAND } from "@/lib/colors";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -51,7 +52,7 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="flex-1 flex items-center justify-center py-12">
-      <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+      <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
         <CardHeader>
           <CardTitle className="text-2xl text-white">Reset Password</CardTitle>
           <CardDescription className="text-white">
@@ -68,7 +69,7 @@ export default function ResetPasswordPage() {
                 required 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" 
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" 
               />
             </div>
             <div className="grid gap-2">
@@ -79,10 +80,10 @@ export default function ResetPasswordPage() {
                 required 
                 value={confirmPassword} 
                 onChange={(e) => setConfirmPassword(e.target.value)} 
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" 
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" 
               />
             </div>
-            <Button type="submit" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
               {isLoading ? 'Resetting...' : 'Reset Password'}
             </Button>
           </form>

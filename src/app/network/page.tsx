@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { BRAND } from "@/lib/colors";
 
 export default function NetworkPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +64,7 @@ export default function NetworkPage() {
 
   return (
     <main className="flex-1 flex items-center justify-center py-12 md:py-24">
-      <Card className="mx-auto max-w-3xl w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+      <Card className="mx-auto max-w-3xl w-full" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
         <CardHeader className="text-center">
           <CardTitle className="text-3xl text-white">Join Our Network</CardTitle>
           <CardDescription className="text-white pt-2 px-4">
@@ -75,37 +76,37 @@ export default function NetworkPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first-name" className="font-medium text-gray-200">First Name (required)</Label>
-                <Input id="first-name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                <Input id="first-name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="last-name" className="font-medium text-gray-200">Last Name (required)</Label>
-                <Input id="last-name" required value={lastName} onChange={(e) => setLastName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                <Input id="last-name" required value={lastName} onChange={(e) => setLastName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
               </div>
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="email" className="font-medium text-gray-200">Email (required)</Label>
-              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label htmlFor="phone" className="font-medium text-gray-200">Phone</Label>
-                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="company" className="font-medium text-gray-200">Company Name</Label>
-                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
                 </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="specialty" className="font-medium text-gray-200">What type of work do you specialize in? (required)</Label>
               <Select required onValueChange={setSpecialty}>
-                <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E] [&>span]:text-white/70 data-[placeholder]:text-white/70">
+                <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-brand-copper [&>span]:text-white/70 data-[placeholder]:text-white/70">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#2D3534] text-white border-gray-700">
+                <SelectContent className="bg-brand-dark text-white border-gray-700">
                 <SelectItem value="graphic-design">Graphic Design</SelectItem>
                   <SelectItem value="video-photo">Videography/Photography</SelectItem>
                   <SelectItem value="publicity">Publicity</SelectItem>
@@ -125,10 +126,10 @@ export default function NetworkPage() {
             <div className="space-y-2">
                 <Label htmlFor="contact-method" className="font-medium text-gray-200">Preferred Contact Method (required)</Label>
                 <Select required onValueChange={setContactMethod}>
-                    <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-[#CB945E] [&>span]:text-white/70 data-[placeholder]:text-white/70">
+                    <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-brand-copper [&>span]:text-white/70 data-[placeholder]:text-white/70">
                         <SelectValue placeholder="Select an option" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#2D3534] text-white border-gray-700">
+                    <SelectContent className="bg-brand-dark text-white border-gray-700">
                         <SelectItem value="email">Email</SelectItem>
                         <SelectItem value="phone">Phone</SelectItem>
                     </SelectContent>
@@ -137,20 +138,20 @@ export default function NetworkPage() {
             
             <div className="space-y-2">
                 <Label htmlFor="socials" className="font-medium text-gray-200">Socials</Label>
-                <Textarea id="socials" placeholder="e.g., Instagram: @inertia_music" value={socials} onChange={(e) => setSocials(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                <Textarea id="socials" placeholder="e.g., Instagram: @inertia_music" value={socials} onChange={(e) => setSocials(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
             </div>
 
             <div className="space-y-2">
                 <Label htmlFor="portfolio" className="font-medium text-gray-200">Portfolio</Label>
-                <Input id="portfolio" placeholder="https://yourportfolio.com" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                <Input id="portfolio" placeholder="https://yourportfolio.com" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
             </div>
 
             <div className="space-y-2">
                 <Label htmlFor="genre" className="font-medium text-gray-200">Preferred Genre</Label>
-                <Input id="genre" placeholder="e.g., Indie Rock, Folk, Electronic" value={genre} onChange={(e) => setGenre(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+                <Input id="genre" placeholder="e.g., Indie Rock, Folk, Electronic" value={genre} onChange={(e) => setGenre(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
             </div>
 
-            <Button type="submit" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
               {isLoading ? 'Submitting...' : 'Submit'}
             </Button>
           </form>

@@ -68,13 +68,13 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
   const endRow = Math.min(page * pageSize, totalCount);
 
   return (
-    <Card className="bg-[#2D3534] border-[#CB945E] text-white">
+    <Card className="bg-brand-dark border-brand-copper text-white">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Contributions</CardTitle>
         <Button  
             size="sm" 
             onClick={handleExport}
-            className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
+            className="bg-brand-copper hover:bg-brand-copper/90 text-white"
         >
           <Download className="w-4 h-4 mr-2" />
           Export CSV
@@ -83,13 +83,13 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
       <CardContent>
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="w-8 h-8 animate-spin text-[#CB945E]" />
+            <Loader2 className="w-8 h-8 animate-spin text-brand-copper" />
           </div>
         ) : (
           <>
             <div className="rounded-md border border-gray-700 overflow-hidden">
                 <Table>
-                <TableHeader className="bg-[#1E2322]">
+                <TableHeader className="bg-brand-darker">
                     <TableRow className="border-gray-700 hover:bg-transparent">
                     <TableHead className="text-gray-400">Amount</TableHead>
                     <TableHead className="text-gray-400">Tier</TableHead>
@@ -101,7 +101,7 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
                 <TableBody>
                     {transactions.length > 0 ? transactions.map((tx) => (
                     <TableRow key={tx.id} className="border-gray-700 hover:bg-white/5">
-                        <TableCell className="font-medium text-[#CB945E]">
+                        <TableCell className="font-medium text-brand-copper">
                             ${tx.amount.toLocaleString()}
                         </TableCell>
                         <TableCell>{tx.tier_name}</TableCell>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
+import { BRAND } from "@/lib/colors";
 import { loadStripe } from '@stripe/stripe-js'; // Import Stripe loader
 import { usePostHog } from "posthog-js/react";
 
@@ -147,12 +148,12 @@ function SignUpForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+    <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
       <CardHeader>
         <CardTitle className="text-2xl text-white flex items-center gap-2">
           {inviteToken ? (
             <>
-              <Sparkles className="w-6 h-6 text-[#CB945E]" />
+              <Sparkles className="w-6 h-6 text-brand-copper" />
               Artist Access
             </>
           ) : (
@@ -169,15 +170,15 @@ function SignUpForm() {
         <form onSubmit={handleSignUpSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="name" className="font-medium text-gray-200">Name</Label>
-            <Input id="name" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+            <Input id="name" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email" className="font-medium text-gray-200">Email</Label>
-            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password" className="font-medium text-gray-200">Password</Label>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 
@@ -194,7 +195,7 @@ function SignUpForm() {
                       Terms and Conditions (Must Read)
                     </button>
                   </DialogTrigger>
-                  <DialogContent onScroll={handleTermsScroll} className="sm:max-w-[600px] h-[80vh] flex flex-col bg-[#2D3534] text-white border-[#64918E]">
+                  <DialogContent onScroll={handleTermsScroll} className="sm:max-w-[600px] h-[80vh] flex flex-col bg-brand-dark text-white border-brand-teal">
                     <DialogHeader>
                       <DialogTitle>Terms & Conditions</DialogTitle>
                       <DialogDescription>Please scroll to the bottom to agree.</DialogDescription>
@@ -410,7 +411,7 @@ function SignUpForm() {
                     </div>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button type="button" className="bg-[#CB945E] hover:bg-[#CB945E]/90">Close</Button>
+                        <Button type="button" className="bg-brand-copper hover:bg-brand-copper/90">Close</Button>
                       </DialogClose>
                     </DialogFooter>
                   </DialogContent>
@@ -418,7 +419,7 @@ function SignUpForm() {
               </label>
             </div>
           </div>
-          <Button type="submit" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90" disabled={isLoading || !termsAgreed}>
+          <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading || !termsAgreed}>
             {isLoading ? 'Creating Account...' : inviteToken ? 'Claim Artist Account' : 'Create Account'}
           </Button>
         </form>

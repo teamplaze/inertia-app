@@ -4,6 +4,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-brand-copper:        #CB945E;
+  --color-brand-dark:          #2D3534;
+  --color-brand-darker:        #1E2322;
+  --color-brand-teal:          #64918E;
+  --color-brand-teal-selected: #4A6B68;
+  --color-brand-green:         #22C55E;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);

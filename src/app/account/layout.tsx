@@ -3,6 +3,7 @@
 import { User, Library } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { BRAND } from "@/lib/colors";
 
 export default function AccountLayout({
   children,
@@ -16,15 +17,15 @@ export default function AccountLayout({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Left Sidebar Navigation */}
         <aside className="md:col-span-1">
-          <div className="p-4 rounded-xl border-2 border-[#CB945E]" style={{ backgroundColor: "#2D3534" }}>
+          <div className="p-4 rounded-xl border-2 border-brand-copper" style={{ backgroundColor: BRAND.dark }}>
             <h2 className="text-xl font-bold text-white mb-6 pl-2">My Account</h2>
             <nav className="space-y-2">
               <Link
                 href="/account"
                 className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   pathname === '/account' 
-                    ? 'bg-[#64918E] text-white font-medium' 
-                    : 'text-gray-300 hover:bg-[#64918E]/50 hover:text-white'
+                    ? 'bg-brand-teal text-white font-medium' 
+                    : 'text-gray-300 hover:bg-brand-teal/50 hover:text-white'
                 }`}
               >
                 <Library className="w-5 h-5" />
@@ -34,8 +35,8 @@ export default function AccountLayout({
                 href="/account/profile"
                 className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                   pathname === '/account/profile' 
-                    ? 'bg-[#64918E] text-white font-medium' 
-                    : 'text-gray-300 hover:bg-[#64918E]/50 hover:text-white'
+                    ? 'bg-brand-teal text-white font-medium' 
+                    : 'text-gray-300 hover:bg-brand-teal/50 hover:text-white'
                 }`}
               >
                 <User className="w-5 h-5" />
