@@ -31,11 +31,11 @@ export default async function ArtistDashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#2D3534]">
-      <header className="border-b border-[#64918E]/30 bg-[#2D3534] sticky top-0 z-40">
+    <div className="min-h-screen bg-brand-dark">
+      <header className="border-b border-brand-teal/30 bg-brand-dark sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <span className="font-bold text-[#CB945E] tracking-wider uppercase">Artist Dashboard</span>
+                <span className="font-bold text-brand-copper tracking-wider uppercase">Artist Dashboard</span>
                 {/* Visual indicator for Admins */}
                 {profile.user_type === 'admin' && (
                    <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest">

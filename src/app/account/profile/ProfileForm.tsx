@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Save, AlertCircle, CheckCircle2 } from "lucide-react";
+import { BRAND } from "@/lib/colors";
 
 export default function ProfileForm({ userId }: { userId: string }) {
   const supabase = createClient();
@@ -110,7 +111,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
   if (loading) {
     return (
       <div className="flex justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-[#CB945E]" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-copper" />
       </div>
     );
   }
@@ -118,7 +119,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
   return (
     <div className="space-y-8 max-w-2xl">
       {/* Contact Information Card */}
-      <Card className="rounded-xl" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+      <Card className="rounded-xl" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
         <CardHeader>
           <CardTitle className="text-xl text-white">Contact Information</CardTitle>
           <p className="text-sm text-gray-200 mt-2">
@@ -140,8 +141,8 @@ export default function ProfileForm({ userId }: { userId: string }) {
               }}
               placeholder="+1 (555) 123-4567"
               type="tel"
-              className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E] ${
-                errors.phone ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:border-[#CB945E]"
+              className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
+                errors.phone ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:border-brand-copper"
               }`}
             />
             {errors.phone && (
@@ -163,7 +164,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                     if (errors.street) setErrors({ ...errors, street: "" });
                   }}
                   placeholder="Street Address"
-                  className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E] ${
+                  className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
                     errors.street ? "border-red-400" : ""
                   }`}
                 />
@@ -179,7 +180,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                       if (errors.city) setErrors({ ...errors, city: "" });
                     }}
                     placeholder="City"
-                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E] ${
+                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
                       errors.city ? "border-red-400" : ""
                     }`}
                   />
@@ -189,7 +190,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                   value={address.state}
                   onChange={(e) => setAddress({ ...address, state: e.target.value })}
                   placeholder="State / Province"
-                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
                 />
               </div>
 
@@ -202,7 +203,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                       if (errors.zipCode) setErrors({ ...errors, zipCode: "" });
                     }}
                     placeholder="ZIP / Postal Code"
-                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E] ${
+                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
                       errors.zipCode ? "border-red-400" : ""
                     }`}
                   />
@@ -212,7 +213,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                   value={address.country}
                   onChange={(e) => setAddress({ ...address, country: e.target.value })}
                   placeholder="Country"
-                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
                 />
               </div>
             </div>
@@ -221,7 +222,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
       </Card>
 
       {/* Social Handles Card */}
-      <Card className="rounded-xl" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+      <Card className="rounded-xl" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
         <CardHeader>
           <CardTitle className="text-xl text-white">Social Handles</CardTitle>
           <p className="text-sm text-gray-200 mt-2">
@@ -238,7 +239,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.tiktok}
                 onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
               />
             </div>
           </div>
@@ -252,7 +253,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.instagram}
                 onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
               />
             </div>
           </div>
@@ -266,7 +267,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.youtube}
                 onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
                 placeholder="channel"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
               />
             </div>
           </div>
@@ -280,7 +281,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.x}
                 onChange={(e) => setSocials({ ...socials, x: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
               />
             </div>
           </div>
@@ -292,7 +293,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
               value={socials.facebook}
               onChange={(e) => setSocials({ ...socials, facebook: e.target.value })}
               placeholder="facebook.com/yourprofile"
-              className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]"
+              className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
             />
           </div>
         </CardContent>
@@ -308,7 +309,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
         <Button
           onClick={handleSaveContactInfo}
           disabled={saving}
-          className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-bold min-w-[200px]"
+          className="bg-brand-copper hover:bg-brand-copper/90 text-white font-bold min-w-[200px]"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

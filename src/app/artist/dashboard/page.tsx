@@ -156,7 +156,7 @@ export default async function ArtistDashboardPage(props: {
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
-                    <p className="text-gray-400 mt-1">Here is the latest on <span className="text-[#CB945E] font-semibold">{activeProject.project_title}</span>.</p>
+                    <p className="text-gray-400 mt-1">Here is the latest on <span className="text-brand-copper font-semibold">{activeProject.project_title}</span>.</p>
                 </div>
             </div>
 
@@ -164,7 +164,7 @@ export default async function ArtistDashboardPage(props: {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 
                 {/* 1.1 Project Spotlight Card */}
-                <Card className="bg-[#2D3534] border-[#CB945E] text-white col-span-1 lg:col-span-1">
+                <Card className="bg-brand-dark border-brand-copper text-white col-span-1 lg:col-span-1">
                     <CardHeader>
                         <CardTitle className="flex justify-between items-center text-lg">
                             Project Spotlight
@@ -175,10 +175,10 @@ export default async function ArtistDashboardPage(props: {
                         <div>
                             <div className="flex justify-between text-sm mb-1">
                                 <span className="text-gray-300">Progress</span>
-                                <span className="text-[#CB945E] font-bold">{fundingProgress}%</span>
+                                <span className="text-brand-copper font-bold">{fundingProgress}%</span>
                             </div>
                             <div className="h-3 w-full bg-black/40 rounded-full overflow-hidden border border-gray-700">
-                                <div className="h-full bg-[#CB945E]" style={{ width: `${fundingProgress}%` }}></div>
+                                <div className="h-full bg-brand-copper" style={{ width: `${fundingProgress}%` }}></div>
                             </div>
                             <div className="flex justify-between text-xs mt-1 text-gray-400">
                                 <span>${totalRaised.toLocaleString()}</span>
@@ -186,7 +186,7 @@ export default async function ArtistDashboardPage(props: {
                             </div>
                         </div>
                         <Link href={`/${activeProject.slug || `projects/${activeProject.id}`}`} target="_blank">
-                            <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white mt-2">
+                            <Button className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white mt-2">
                                 View Public Page <ExternalLink className="ml-2 w-4 h-4" />
                             </Button>
                         </Link>
@@ -194,12 +194,12 @@ export default async function ArtistDashboardPage(props: {
                 </Card>
 
                 {/* 2.1 & 2.2 Funds & Momentum */}
-                <Card className="bg-[#1E2322] border-none text-white shadow-lg lg:col-span-2">
+                <Card className="bg-brand-darker border-none text-white shadow-lg lg:col-span-2">
                     <CardContent className="p-6 h-full flex flex-col lg:flex-row gap-8 items-center justify-around">
                         <div className="text-center lg:text-left">
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Total Funds Raised</p>
                             <div className="text-5xl font-bold text-white flex items-center justify-center lg:justify-start gap-2">
-                                <span className="text-[#CB945E] text-3xl">$</span>
+                                <span className="text-brand-copper text-3xl">$</span>
                                 {totalRaised.toLocaleString()}
                             </div>
                         </div>
@@ -209,7 +209,7 @@ export default async function ArtistDashboardPage(props: {
                         <div className="text-center lg:text-left">
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Total Backers</p>
                             <div className="text-5xl font-bold text-white flex items-center justify-center lg:justify-start gap-2">
-                                <Users className="w-8 h-8 text-[#CB945E]" />
+                                <Users className="w-8 h-8 text-brand-copper" />
                                 {totalBackers.toLocaleString()}
                             </div>
                         </div>
@@ -229,14 +229,14 @@ export default async function ArtistDashboardPage(props: {
 
             {/* --- SECTION 3: Tier Performance --- */}
             <div className="grid gap-6 lg:grid-cols-3">
-                <Card className="bg-[#2D3534] border-[#CB945E] text-white lg:col-span-3">
+                <Card className="bg-brand-dark border-brand-copper text-white lg:col-span-3">
                     <CardHeader>
                         <CardTitle>Tier Performance</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="rounded-md border border-gray-700 overflow-hidden">
                             <Table>
-                                <TableHeader className="bg-[#1E2322]">
+                                <TableHeader className="bg-brand-darker">
                                     <TableRow className="border-gray-700 hover:bg-transparent">
                                         <TableHead className="text-gray-400">Tier Name</TableHead>
                                         <TableHead className="text-gray-400">Price</TableHead>
@@ -251,7 +251,7 @@ export default async function ArtistDashboardPage(props: {
                                             <TableCell className="font-medium text-white">{tier.name}</TableCell>
                                             <TableCell className="text-gray-300">${tier.price}</TableCell>
                                             <TableCell className="text-white">{tier.count}</TableCell>
-                                            <TableCell className="text-[#CB945E] font-bold">${tier.total.toLocaleString()}</TableCell>
+                                            <TableCell className="text-brand-copper font-bold">${tier.total.toLocaleString()}</TableCell>
                                             <TableCell className="text-right text-gray-300">
                                                 {tier.total_slots 
                                                     ? `${Math.max(0, tier.total_slots - tier.claimed_slots)} / ${tier.total_slots} left`

@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Component
 import TierComparisonMatrix from "@/components/project/TierComparison";
 import FundingMeter from "@/components/project/FundingMeter";
+import { BRAND } from "@/lib/colors";
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -186,13 +187,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   };
 
   const gradientCardStyle = {
-    background: "linear-gradient(180deg, #64918E 0%, #000000 100%)",
-    border: "2px solid #CB945E",
+    background: `linear-gradient(180deg, ${BRAND.teal} 0%, #000000 100%)`,
+    border: `2px solid ${BRAND.copper}`,
   };
 
   const regularCardStyle = {
-    backgroundColor: "#64918E",
-    border: "2px solid #CB945E",
+    backgroundColor: BRAND.teal,
+    border: `2px solid ${BRAND.copper}`,
   };
 
   // Determine displayed stories based on state
@@ -226,7 +227,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               {/* --- ARTIST DASHBOARD BUTTON (Conditional) --- */}
               {isProjectMember && (
                 <Link href={`/artist/dashboard?projectId=${project.id}`}>
-                    <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+                    <Button className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Project Results
                     </Button>
@@ -234,7 +235,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               )}
             </div>
 
-            <h1 className="text-4xl font-bold mb-2" style={{ color: "#64918E" }}>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: BRAND.teal }}>
               {project.project_title}
             </h1>
             <div className="flex items-start gap-3 mb-6">
@@ -253,7 +254,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold" style={{ color: "#22C55E" }}>
+              <span className="text-2xl font-bold" style={{ color: BRAND.green }}>
                 ${project.current_funding.toLocaleString()}
               </span>
               <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
@@ -273,25 +274,25 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
             <Button
               onClick={() => scrollToSection("support-levels")}
-              className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white text-lg font-bold py-6 animate-pulse"
+              className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white text-lg font-bold py-6 animate-pulse"
             >
               Buy Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
             <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
-              <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+              <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <User className="w-4 h-4 mr-2" /> From Artist
               </Button>
-              <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+              <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <Eye className="w-4 h-4 mr-2" /> Previews
               </Button>
-              <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+              <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
               </Button>
-              <Button onClick={() => scrollToSection("budget-breakdown")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+              <Button onClick={() => scrollToSection("budget-breakdown")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <DollarSign className="w-4 h-4 mr-2" /> Budget
               </Button>
-              <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+              <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <Star className="w-4 h-4 mr-2" /> Perks
               </Button>
             </div>
@@ -301,7 +302,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
       {/* === FROM THE ARTIST SECTION === */}
       <section id="from-artist" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>From the Artist</h2>
+        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>From the Artist</h2>
         <Card className="rounded-xl" style={gradientCardStyle}>
           <CardContent className="p-4">
             <div className="prose prose-lg max-w-none prose-invert">
@@ -315,7 +316,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
       {/* === PREVIEWS SECTION === */}
       <section id="previews" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: "#64918E" }}>Previews</h2>
+        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-xl" style={regularCardStyle}>
             <CardContent className="p-4 space-y-2">
@@ -365,13 +366,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       </section>
 
       <section id="fan-stories" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: "#64918E" }}>Fan Stories</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {displayedStories.map((testimonial) => (
               <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
                 <CardContent className="p-4">
-                  <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: "#CB945E" }} />
+                  <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
                   <div className="flex items-start gap-4 mb-4">
                     {testimonial.profile_image_url && (
                       <Image
@@ -397,7 +398,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             <div className="flex justify-center pt-2">
               <Button
                 onClick={() => setShowAllStories(!showAllStories)}
-                className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
+                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
               >
                 {showAllStories ? (
                   <>
@@ -418,14 +419,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Choose Your Support Level</h2>
+          <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
           {/* Scroll to Compare Perks Button */}
           {visibleTiers.length > 1 && (
             <div className="flex justify-center mt-6">
               <Button 
                 onClick={() => scrollToSection("tier-comparison")}
-                className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white"
+                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
               >
                 Compare Perks <ArrowDown className="ml-2 w-4 h-4" />
               </Button>
@@ -447,7 +448,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <Card
                 className={`flex flex-col relative transition-all duration-200 rounded-xl h-full ${
                   selectedTier === tier.id 
-                    ? "ring-2 ring-offset-2 ring-offset-[#64918E] ring-[#CB945E] shadow-lg"
+                    ? "ring-2 ring-offset-2 ring-offset-brand-teal ring-brand-copper shadow-lg"
                     : "hover:shadow-md hover:shadow-gray-700/50"
                 }`}
                 style={regularCardStyle}
@@ -455,10 +456,10 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
-                      <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>{tier.name}</CardTitle>
+                      <CardTitle className="text-xl font-bold" style={{ color: BRAND.copper }}>{tier.name}</CardTitle>
                       <p className="text-xs text-white/90 font-medium italic">{getTierSubtitle(tier.name)}</p>
                     </div>
-                    {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: "#CB945E" }} />}
+                    {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: BRAND.copper }} />}
                   </div>
                   <div className="text-3xl font-bold text-white mt-2">${tier.price}</div>
                 </CardHeader>
@@ -472,7 +473,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                           
                       return (
                         <li key={index} className="flex items-start gap-2">
-                          <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                          <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
                           {/* Render the cleaned string here */}
                           <span className="text-sm text-white">{displayPerk}</span>
                         </li>
@@ -494,19 +495,19 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                       ) : user ? (
                         <Button 
                           onClick={() => handleTierSelect(tier.id)} 
-                          className={`w-full text-white ${selectedTier === tier.id ? "bg-[#4A6B68] hover:bg-[#4A6B68]/90" : "bg-[#CB945E] hover:bg-[#CB945E]/90"}`} 
+                          className={`w-full text-white ${selectedTier === tier.id ? "bg-brand-teal-selected hover:bg-brand-teal-selected/90" : "bg-brand-copper hover:bg-brand-copper/90"}`} 
                         >
                           {selectedTier === tier.id ? "Selected" : "Select Tier"}
                         </Button>
                       ) : (
                         <Link href={`/sign-up?action=checkout&projectId=${project.id}&tierId=${tier.id}`}>
-                          <Button className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white h-auto whitespace-normal" >
+                          <Button className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white h-auto whitespace-normal" >
                             Login/Sign up to contribute
                           </Button>
                         </Link>
                       )
                     ) : (
-                      <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
+                      <div className="w-full bg-brand-copper text-white text-center cursor-not-allowed opacity-60 hover:bg-brand-copper rounded-md px-4 py-2 font-medium text-sm">
                         Coming Soon
                       </div>
                     )}
@@ -518,17 +519,17 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               {/* INLINE CHECKOUT BOX: Visible only on MOBILE (< md) */}
               {paymentsEnabled && showCheckout && selectedTier === tier.id && !isSoldOut && (
                 <div className="md:hidden"> 
-                    <Card className="rounded-xl animate-in fade-in slide-in-from-top-2 duration-300 border-2 border-[#CB945E] shadow-xl" style={gradientCardStyle}>
+                    <Card className="rounded-xl animate-in fade-in slide-in-from-top-2 duration-300 border-2 border-brand-copper shadow-xl" style={gradientCardStyle}>
                     <CardContent className="p-4">
                         <div className="space-y-4">
                         <div>
                             <h3 className="text-lg font-bold text-white mb-1">Ready to support?</h3>
                             <p className="text-sm text-gray-200 leading-snug">
-                            You've selected the <strong className="text-white">{tier.name}</strong> tier for <strong style={{ color: "#CB945E" }}>${tier.price}</strong>
+                            You've selected the <strong className="text-white">{tier.name}</strong> tier for <strong style={{ color: BRAND.copper }}>${tier.price}</strong>
                             </p>
                         </div>
                         <div className="flex flex-col gap-2">
-                            <Button onClick={handleCheckout} className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-semibold">
+                            <Button onClick={handleCheckout} className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-semibold">
                             Continue to Checkout
                             </Button>
                             <Button 
@@ -558,7 +559,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
-                        <CardTitle className="text-xl font-bold" style={{ color: "#CB945E" }}>Donate</CardTitle>
+                        <CardTitle className="text-xl font-bold" style={{ color: BRAND.copper }}>Donate</CardTitle>
                         <p className="text-xs text-white/90 font-medium italic">Support the project directly without the perks</p>
                       </div>
                     </div>
@@ -567,11 +568,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                   <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                     <ul className="space-y-2">
                        <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
                          <span className="text-sm text-white">Help us reach our goal faster</span>
                        </li>
                        <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: "#CB945E" }} />
+                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
                          <span className="text-sm text-white">Every bit counts</span>
                        </li>
                     </ul>
@@ -588,7 +589,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                                  placeholder="50"
                                  value={donationAmount}
                                  onChange={(e) => setDonationAmount(e.target.value)}
-                                 className="pl-8 bg-black/20 border-[#CB945E]/50 text-white placeholder:text-gray-300 focus-visible:ring-[#CB945E]"
+                                 className="pl-8 bg-black/20 border-brand-copper/50 text-white placeholder:text-gray-300 focus-visible:ring-brand-copper"
                                />
                              </div>
                              <div className="flex items-start space-x-2">
@@ -596,7 +597,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                                  id="cover-fee" 
                                  checked={coverFee} 
                                  onCheckedChange={(checked) => setCoverFee(checked as boolean)}
-                                 className="mt-0.5 border-gray-300 data-[state=checked]:bg-[#CB945E] data-[state=checked]:border-[#CB945E]"
+                                 className="mt-0.5 border-gray-300 data-[state=checked]:bg-brand-copper data-[state=checked]:border-brand-copper"
                                />
                                <label
                                  htmlFor="cover-fee"
@@ -610,14 +611,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                            <Button 
                              onClick={handleDonationCheckout} 
                              disabled={isDonating || !donationAmount || parseFloat(donationAmount) <= 0}
-                             className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-bold transition-all"
+                             className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-bold transition-all"
                            >
                              {isDonating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                              {isDonating ? "Processing..." : "Donate Now"}
                            </Button>
                          </div>
                        ) : (
-                         <div className="w-full bg-[#CB945E] text-white text-center cursor-not-allowed opacity-60 hover:bg-[#CB945E] rounded-md px-4 py-2 font-medium text-sm">
+                         <div className="w-full bg-brand-copper text-white text-center cursor-not-allowed opacity-60 hover:bg-brand-copper rounded-md px-4 py-2 font-medium text-sm">
                            Coming Soon
                          </div>
                        )}
@@ -638,11 +639,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                   <h3 className="text-xl font-bold text-white mb-2">Ready to support {project.artist_name}?</h3>
-                  <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: "#CB945E" }}>${selectedTierData.price}</strong></p>
+                  <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: BRAND.copper }}>${selectedTierData.price}</strong></p>
                 </div>
                 <div className="flex gap-3">
                   <Button variant="outline" className="border-gray-400 text-gray-200 bg-transparent hover:bg-black/30 hover:text-gray-200" onClick={() => { setSelectedTier(null); setShowCheckout(false); }}>Change Selection</Button>
-                  <Button onClick={handleCheckout} className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">Continue to Checkout</Button>
+                  <Button onClick={handleCheckout} className="bg-brand-copper hover:bg-brand-copper/90 text-white">Continue to Checkout</Button>
                 </div>
               </div>
             </CardContent>

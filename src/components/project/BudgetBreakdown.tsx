@@ -7,6 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
 import type { SectorProps } from 'recharts';
+import { BRAND } from "@/lib/colors";
 
 export type MilestoneLineItem = {
   id: string | number;
@@ -22,7 +23,7 @@ export type Milestone = {
   budget_line_items: MilestoneLineItem[];
 };
 
-const DEFAULT_COLORS = ['#2D3534', '#CB945E', '#E5E1DC', '#0c6a8f', '#2E8B57'];
+const DEFAULT_COLORS = [BRAND.dark, BRAND.copper, '#E5E1DC', '#0c6a8f', '#2E8B57'];
 
 export default function BudgetBreakdown({ milestones, colors }: { milestones: Milestone[]; colors?: string[] }) {
   const COLORS = colors?.length ? colors : DEFAULT_COLORS;
@@ -51,13 +52,13 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
   return (
     <section id="budget-breakdown" className="mb-12">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold mb-2" style={{ color: "#64918E" }}>Budget Breakdown</h2>
+        <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Budget Breakdown</h2>
         <p className="text-gray-200 mb-6 max-w-2xl mx-auto">
           See how your support helps bring this project to life. Full transparency on where every dollar goes.
         </p>
       </div>
 
-      <div className="rounded-xl w-full p-6" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+      <div className="rounded-xl w-full p-6" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
@@ -87,10 +88,10 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
                       content={({ active, payload }) => {
                         if (!active || !payload?.length) return null;
                         const { name, value } = payload[0];
-                        const color = (payload[0] as any).payload?.fill ?? '#2D3534';
+                        const color = (payload[0] as any).payload?.fill ?? BRAND.dark;
                         return (
-                          <div style={{ backgroundColor: '#ffffff', border: '2px solid #CB945E', borderRadius: '8px', padding: '8px 12px' }}>
-                            <p style={{ color: '#2D3534', fontWeight: 700, marginBottom: 2 }}>{name}</p>
+                          <div style={{ backgroundColor: '#ffffff', border: `2px solid ${BRAND.copper}`, borderRadius: '8px', padding: '8px 12px' }}>
+                            <p style={{ color: BRAND.dark, fontWeight: 700, marginBottom: 2 }}>{name}</p>
                             <p style={{ color, fontWeight: 600 }}>${(value as number).toLocaleString()}</p>
                           </div>
                         );
@@ -100,10 +101,10 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
                 </ResponsiveContainer>
               </div>
 
-              <div className="flex items-center justify-between w-full max-w-sm p-4 bg-white rounded-xl border-2 border-[#CB945E] mt-4">
+              <div className="flex items-center justify-between w-full max-w-sm p-4 bg-white rounded-xl border-2 border-brand-copper mt-4">
                 <div className="flex items-center gap-3">
                     <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                    <span className="font-semibold text-lg text-[#2D3534]">Total Goal</span>
+                    <span className="font-semibold text-lg text-brand-dark">Total Goal</span>
                 </div>
                 <div className="font-bold text-lg text-green-600">${totalBudget.toLocaleString()}</div>
               </div>
@@ -123,7 +124,7 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
                         <div className="flex items-center gap-3 text-left">
                           <div className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: color }}></div>
                           <div>
-                            <span className="font-semibold text-sm text-[#2D3534] group-hover:text-[#64918E] transition-colors block">
+                            <span className="font-semibold text-sm text-brand-dark group-hover:text-brand-teal transition-colors block">
                               {milestone.title}
                             </span>
                             <span className="text-xs text-gray-500 font-normal">
@@ -144,7 +145,7 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
                             <div key={item.id ?? `${milestone.id}-${itemIndex}`} className="flex justify-between items-start p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:bg-gray-50 transition-colors" style={{ borderLeftColor: color }}>
                               <div className="pr-4">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <div className="font-medium text-sm text-[#2D3534]">{item.name}</div>
+                                  <div className="font-medium text-sm text-brand-dark">{item.name}</div>
                                   {item.category_name && (
                                     <Badge variant="outline" className="text-[10px] font-semibold text-gray-500 border-gray-300">
                                       {item.category_name}
@@ -153,7 +154,7 @@ export default function BudgetBreakdown({ milestones, colors }: { milestones: Mi
                                 </div>
                                 {item.notes && <div className="text-xs text-gray-600 leading-snug">{item.notes}</div>}
                               </div>
-                              <div className="font-semibold text-sm text-[#2D3534] whitespace-nowrap mt-0.5">
+                              <div className="font-semibold text-sm text-brand-dark whitespace-nowrap mt-0.5">
                                 ${item.cost.toLocaleString()}
                               </div>
                             </div>

@@ -95,7 +95,7 @@ export default async function ProjectPage({ params }: Props) {
     return (
       <div className="min-h-screen text-white text-center pt-32">
         <h2 className="text-2xl font-bold">Project not found</h2>
-        <Link href="/" className="text-lg text-[#CB945E] hover:underline mt-6 inline-block">
+        <Link href="/" className="text-lg text-brand-copper hover:underline mt-6 inline-block">
             &larr; Back to Homepage
         </Link>
       </div>

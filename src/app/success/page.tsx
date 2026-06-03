@@ -11,7 +11,7 @@ export default function SuccessPage() {
         Thank you for supporting this project. Your contribution will help bring it to life.
       </p>
       <Link href="/">
-        <button className="bg-[#CB945E] text-white px-6 py-2 rounded-md hover:bg-[#CB945E]/90">
+        <button className="bg-brand-copper text-white px-6 py-2 rounded-md hover:bg-brand-copper/90">
           Back to Homepage
         </button>
       </Link>

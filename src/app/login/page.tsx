@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { BRAND } from "@/lib/colors";
 
 function LoginForm() {
   const router = useRouter();
@@ -75,7 +76,7 @@ function LoginForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+    <Card className="mx-auto max-w-sm w-full" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
       <CardHeader>
         <CardTitle className="text-2xl text-white">Login</CardTitle>
         <CardDescription className="text-white">
@@ -86,7 +87,7 @@ function LoginForm() {
         <form onSubmit={handleLoginSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email" className="font-medium text-gray-200">Email</Label>
-            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -95,9 +96,9 @@ function LoginForm() {
                 Forgot your password?
               </Link>
             </div>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-[#CB945E]" />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
           </div>
-          <Button type="submit" className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
             {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>

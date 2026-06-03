@@ -6,11 +6,11 @@ import { ShieldAlert } from 'lucide-react';
 
 export default function Forbidden() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#2D3534] p-4">
-      <Card className="w-full max-w-md bg-[#1E2322] border-[#CB945E]">
+    <div className="min-h-screen flex items-center justify-center bg-brand-dark p-4">
+      <Card className="w-full max-w-md bg-brand-darker border-brand-copper">
         <CardHeader className="text-center">
-          <div className="mx-auto bg-[#CB945E]/10 p-3 rounded-full w-fit mb-4">
-            <ShieldAlert className="w-8 h-8 text-[#CB945E]" />
+          <div className="mx-auto bg-brand-copper/10 p-3 rounded-full w-fit mb-4">
+            <ShieldAlert className="w-8 h-8 text-brand-copper" />
           </div>
           <CardTitle className="text-2xl text-white">Access Denied</CardTitle>
           <CardDescription className="text-gray-400">
@@ -24,12 +24,12 @@ export default function Forbidden() {
         </CardContent>
         <CardFooter className="flex justify-center gap-4">
           <Link href="/account">
-            <Button variant="secondary" className="bg-[#64918E] text-white hover:bg-[#64918E]/90">
+            <Button variant="secondary" className="bg-brand-teal text-white hover:bg-brand-teal/90">
               Go to My Account
             </Button>
           </Link>
           <Link href="/">
-            <Button variant="outline" className="border-[#CB945E] text-[#CB945E] hover:bg-[#CB945E]/10">
+            <Button variant="outline" className="border-brand-copper text-brand-copper hover:bg-brand-copper/10">
               Back Home
             </Button>
           </Link>

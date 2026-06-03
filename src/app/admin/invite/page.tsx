@@ -82,9 +82,9 @@ export default function AdminInvitePage() {
 
   return (
     <div className="container mx-auto py-20 px-4 flex justify-center min-h-[60vh] items-center">
-      <Card className="w-full max-w-md bg-[#2D3534] border-[#CB945E] text-white">
+      <Card className="w-full max-w-md bg-brand-dark border-brand-copper text-white">
         <CardHeader>
-          <div className="flex items-center gap-2 text-[#CB945E] mb-2">
+          <div className="flex items-center gap-2 text-brand-copper mb-2">
             <ShieldAlert className="w-5 h-5" />
             <span className="text-xs font-mono uppercase tracking-widest">Internal Tool</span>
           </div>
@@ -103,7 +103,7 @@ export default function AdminInvitePage() {
                 placeholder="artist@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-black/20 border-gray-600 text-white focus-visible:ring-[#CB945E]"
+                className="bg-black/20 border-gray-600 text-white focus-visible:ring-brand-copper"
                 required
               />
             </div>
@@ -114,7 +114,7 @@ export default function AdminInvitePage() {
                 <SelectTrigger className="bg-black/20 border-gray-600 text-white w-full">
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#2D3534] text-white border-gray-600">
+                <SelectContent className="bg-brand-dark text-white border-gray-600">
                   {projects.map((p) => (
                     <SelectItem key={p.id} value={p.id.toString()}>
                       {p.artist_name} - {p.project_title}
@@ -133,7 +133,7 @@ export default function AdminInvitePage() {
 
             <Button 
               type="submit" 
-              className="w-full bg-[#CB945E] hover:bg-[#CB945E]/90 text-white font-medium"
+              className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-medium"
               disabled={loading}
             >
               {loading ? "Generating Token..." : "Generate Invite Link"}
@@ -149,7 +149,7 @@ export default function AdminInvitePage() {
                 <Input 
                   value={inviteLink} 
                   readOnly 
-                  className="bg-transparent border-none text-sm text-[#CB945E] h-auto py-2 focus-visible:ring-0"
+                  className="bg-transparent border-none text-sm text-brand-copper h-auto py-2 focus-visible:ring-0"
                 />
                 <Button 
                   size="icon" 

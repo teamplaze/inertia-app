@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, ArrowUpDown } from 'lucide-react';
+import { BRAND } from "@/lib/colors";
 
 // Define the shape of the data we expect for each contribution
 type Contribution = {
@@ -76,11 +77,11 @@ export default function ContributionsTable({ contributions }: { contributions: C
   // MP-8: Empty State (No Contributions)
   if (!contributions || contributions.length === 0) {
     return (
-      <div className="text-center p-12 rounded-lg" style={{ backgroundColor: "#2D3534", border: "2px solid #CB945E" }}>
+      <div className="text-center p-12 rounded-lg" style={{ backgroundColor: BRAND.dark, border: `2px solid ${BRAND.copper}` }}>
         <h2 className="text-xl font-semibold text-white mb-2">No Contributions Yet</h2>
         <p className="text-gray-400 mb-6">You haven't supported any projects yet. Find one to back!</p>
         <Link href="/#featured-projects">
-          <Button className="bg-[#CB945E] hover:bg-[#CB945E]/90 text-white">
+          <Button className="bg-brand-copper hover:bg-brand-copper/90 text-white">
             Explore Featured Projects
           </Button>
         </Link>
@@ -99,8 +100,8 @@ export default function ContributionsTable({ contributions }: { contributions: C
             onClick={() => requestSort('date')}
             className={`${
               sortConfig.key === 'date'
-                ? 'bg-[#CB945E] text-white'
-                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+                ? 'bg-brand-copper text-white'
+                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
             } transition-colors`}
           >
             Date {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 ml-1" />}
@@ -110,8 +111,8 @@ export default function ContributionsTable({ contributions }: { contributions: C
             onClick={() => requestSort('amount')}
             className={`${
               sortConfig.key === 'amount'
-                ? 'bg-[#CB945E] text-white'
-                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+                ? 'bg-brand-copper text-white'
+                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
             } transition-colors`}
           >
             Amount {sortConfig.key === 'amount' && <ArrowUpDown className="w-3 h-3 ml-1" />}
@@ -121,8 +122,8 @@ export default function ContributionsTable({ contributions }: { contributions: C
             onClick={() => requestSort('project')}
             className={`${
               sortConfig.key === 'project'
-                ? 'bg-[#CB945E] text-white'
-                : 'bg-[#2D3534] text-gray-300 hover:bg-[#64918E]'
+                ? 'bg-brand-copper text-white'
+                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
             } transition-colors`}
           >
             Project {sortConfig.key === 'project' && <ArrowUpDown className="w-3 h-3 ml-1" />}
@@ -133,7 +134,7 @@ export default function ContributionsTable({ contributions }: { contributions: C
       {/* Card Layout for All Screen Sizes */}
       <div className="space-y-4">
         {sortedContributions.map((contribution) => (
-          <div key={contribution.id} className="p-4 md:p-6 rounded-lg hover:shadow-lg transition-shadow" style={{ backgroundColor: "#64918E", border: "2px solid #CB945E" }}>
+          <div key={contribution.id} className="p-4 md:p-6 rounded-lg hover:shadow-lg transition-shadow" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 min-w-0 pr-3">
                 <span className="text-lg md:text-xl font-bold text-white block">

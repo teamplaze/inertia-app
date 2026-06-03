@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Check, Minus } from "lucide-react";
 import type { Tier } from "@/types";
+import { BRAND } from "@/lib/colors";
 
 // ---------- Icon Helpers for Matrix ----------
 function IncludedIcon() {
@@ -63,7 +64,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
 
   return (
     <section id="tier-comparison" className="mb-16 scroll-mt-24">
-      <h2 className="text-3xl font-bold mb-2 text-center" style={{ color: "#64918E" }}>
+      <h2 className="text-3xl font-bold mb-2 text-center" style={{ color: BRAND.teal }}>
         Compare Tiers
       </h2>
       <p className="text-center text-gray-400 mb-8 max-w-2xl mx-auto px-4">
@@ -71,18 +72,18 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
       </p>
 
       {/* ==================== UNIVERSAL TABLE ==================== */}
-      <Card className="rounded-xl overflow-hidden w-full" style={{ backgroundColor: "#2D3534", border: "2px solid #CB945E" }}>
+      <Card className="rounded-xl overflow-hidden w-full" style={{ backgroundColor: BRAND.dark, border: `2px solid ${BRAND.copper}` }}>
         {/* overflow-x-auto allows horizontal scrolling on very small phones if needed */}
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse min-w-[320px]">
             <thead>
-              <tr className="border-b-2 border-[#CB945E]/30">
-                <th className="w-[40%] md:w-[45%] py-3 md:py-4 px-3 md:px-4 text-gray-300 font-semibold text-xs md:text-sm sticky top-0 bg-[#2D3534] z-10 align-bottom">
+              <tr className="border-b-2 border-brand-copper/30">
+                <th className="w-[40%] md:w-[45%] py-3 md:py-4 px-3 md:px-4 text-gray-300 font-semibold text-xs md:text-sm sticky top-0 bg-brand-dark z-10 align-bottom">
                   Benefit / Feature
                 </th>
                 {sortedTiers.map((tier) => {
                   return (
-                    <th key={tier.id} className="w-[20%] md:w-[18%] py-3 md:py-4 px-1 md:px-2 sticky top-0 bg-[#2D3534] z-10 text-center font-bold text-[10px] md:text-sm uppercase tracking-wider align-bottom">
+                    <th key={tier.id} className="w-[20%] md:w-[18%] py-3 md:py-4 px-1 md:px-2 sticky top-0 bg-brand-dark z-10 text-center font-bold text-[10px] md:text-sm uppercase tracking-wider align-bottom">
                       <span className="text-white block break-words">{tier.name}</span>
                     </th>
                   );
@@ -99,7 +100,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
                     {/* Category Header Row */}
                     <tr className="bg-white/[0.02] border-y border-white/10">
                       <td colSpan={sortedTiers.length + 1} className="py-2.5 px-3 md:px-4">
-                        <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#CB945E]">
+                        <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-brand-copper">
                           {group}
                         </span>
                       </td>
@@ -136,7 +137,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 py-3 md:py-4 px-4 border-t border-white/10 bg-[#2D3534]">
+        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 py-3 md:py-4 px-4 border-t border-white/10 bg-brand-dark">
           <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs text-gray-400">
             <IncludedIcon /> Included
           </div>
