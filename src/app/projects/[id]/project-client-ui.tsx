@@ -20,6 +20,7 @@ import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Comp
 import TierComparisonMatrix from "@/components/project/TierComparison";
 import FundingMeter from "@/components/project/FundingMeter";
 import { BRAND } from "@/lib/colors";
+import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -186,15 +187,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     }
   };
 
-  const gradientCardStyle = {
-    background: `linear-gradient(180deg, ${BRAND.teal} 0%, #000000 100%)`,
-    border: `2px solid ${BRAND.copper}`,
-  };
-
-  const regularCardStyle = {
-    backgroundColor: BRAND.teal,
-    border: `2px solid ${BRAND.copper}`,
-  };
 
   // Determine displayed stories based on state
   const displayedStories = showAllStories 
