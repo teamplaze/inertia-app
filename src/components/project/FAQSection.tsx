@@ -1,5 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DarkCard } from "@/components/ui/card-dark";
 import { HelpCircle } from "lucide-react";
 
 export default function FAQSection() {
@@ -47,7 +48,7 @@ export default function FAQSection() {
   ];
 
   return (
-    <Card className="bg-brand-dark border-brand-copper text-white mt-12">
+    <DarkCard className="mt-12">
       <CardHeader>
         <CardTitle className="text-2xl font-bold flex items-center gap-2">
           <HelpCircle className="w-6 h-6 text-brand-copper" />
@@ -68,6 +69,6 @@ export default function FAQSection() {
           ))}
         </Accordion>
       </CardContent>
-    </Card>
+    </DarkCard>
   );
 }

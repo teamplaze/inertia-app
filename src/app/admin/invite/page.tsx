@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { DarkCard } from "@/components/ui/card-dark";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Copy, Check, ShieldAlert } from "lucide-react";
@@ -82,7 +83,7 @@ export default function AdminInvitePage() {
 
   return (
     <div className="container mx-auto py-20 px-4 flex justify-center min-h-[60vh] items-center">
-      <Card className="w-full max-w-md bg-brand-dark border-brand-copper text-white">
+      <DarkCard className="w-full max-w-md">
         <CardHeader>
           <div className="flex items-center gap-2 text-brand-copper mb-2">
             <ShieldAlert className="w-5 h-5" />
@@ -166,7 +167,7 @@ export default function AdminInvitePage() {
             </div>
           )}
         </CardContent>
-      </Card>
+      </DarkCard>
     </div>
   );
 }

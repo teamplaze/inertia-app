@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { getTransactions, getAllTransactionsForExport, type TransactionData } from '@/lib/actions/dashboard';
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DarkCard } from "@/components/ui/card-dark";
 import { Download, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 interface TransactionFeedProps {
@@ -68,7 +69,7 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
   const endRow = Math.min(page * pageSize, totalCount);
 
   return (
-    <Card className="bg-brand-dark border-brand-copper text-white">
+    <DarkCard>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Contributions</CardTitle>
         <Button  
@@ -153,6 +154,6 @@ export default function TransactionFeed({ projectId }: TransactionFeedProps) {
           </>
         )}
       </CardContent>
-    </Card>
+    </DarkCard>
   );
 }

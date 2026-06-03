@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Card } from "@/components/ui/card";
 import { Check, Minus } from "lucide-react";
 import type { Tier } from "@/types";
 import { BRAND } from "@/lib/colors";
+import { DarkCard } from "@/components/ui/card-dark";
 
 // ---------- Icon Helpers for Matrix ----------
 function IncludedIcon() {
@@ -72,7 +72,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
       </p>
 
       {/* ==================== UNIVERSAL TABLE ==================== */}
-      <Card className="rounded-xl overflow-hidden w-full" style={{ backgroundColor: BRAND.dark, border: `2px solid ${BRAND.copper}` }}>
+      <DarkCard className="rounded-xl overflow-hidden w-full">
         {/* overflow-x-auto allows horizontal scrolling on very small phones if needed */}
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left border-collapse min-w-[320px]">
@@ -145,7 +145,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
             <NotIncludedIcon /> Not included
           </div>
         </div>
-      </Card>
+      </DarkCard>
     </section>
   );
 }

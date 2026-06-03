@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js'; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DarkCard } from "@/components/ui/card-dark";
 import { DollarSign, Users, Star, ExternalLink } from "lucide-react";
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -164,7 +165,7 @@ export default async function ArtistDashboardPage(props: {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 
                 {/* 1.1 Project Spotlight Card */}
-                <Card className="bg-brand-dark border-brand-copper text-white col-span-1 lg:col-span-1">
+                <DarkCard className="col-span-1 lg:col-span-1">
                     <CardHeader>
                         <CardTitle className="flex justify-between items-center text-lg">
                             Project Spotlight
@@ -191,7 +192,7 @@ export default async function ArtistDashboardPage(props: {
                             </Button>
                         </Link>
                     </CardContent>
-                </Card>
+                </DarkCard>
 
                 {/* 2.1 & 2.2 Funds & Momentum */}
                 <Card className="bg-brand-darker border-none text-white shadow-lg lg:col-span-2">
@@ -229,7 +230,7 @@ export default async function ArtistDashboardPage(props: {
 
             {/* --- SECTION 3: Tier Performance --- */}
             <div className="grid gap-6 lg:grid-cols-3">
-                <Card className="bg-brand-dark border-brand-copper text-white lg:col-span-3">
+                <DarkCard className="lg:col-span-3">
                     <CardHeader>
                         <CardTitle>Tier Performance</CardTitle>
                     </CardHeader>
@@ -264,7 +265,7 @@ export default async function ArtistDashboardPage(props: {
                             </Table>
                         </div>
                     </CardContent>
-                </Card>
+                </DarkCard>
             </div>
 
             {/* --- SECTION 4: Transaction Feed (Client Component) --- */}
