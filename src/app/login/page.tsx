@@ -87,7 +87,7 @@ function LoginForm() {
         <form onSubmit={handleLoginSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email" className="font-medium text-gray-200">Email</Label>
-            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} variant="dark" />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -96,7 +96,7 @@ function LoginForm() {
                 Forgot your password?
               </Link>
             </div>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} variant="dark" />
           </div>
           <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
             {isLoading ? 'Signing In...' : 'Sign In'}

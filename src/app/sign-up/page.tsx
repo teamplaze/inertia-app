@@ -170,15 +170,15 @@ function SignUpForm() {
         <form onSubmit={handleSignUpSubmit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="name" className="font-medium text-gray-200">Name</Label>
-            <Input id="name" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <Input id="name" placeholder="Your Name" required value={name} onChange={(e) => setName(e.target.value)} variant="dark" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="email" className="font-medium text-gray-200">Email</Label>
-            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <Input id="email" type="email" placeholder="your@email.com" required value={email} onChange={(e) => setEmail(e.target.value)} variant="dark" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password" className="font-medium text-gray-200">Password</Label>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} variant="dark" />
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox 

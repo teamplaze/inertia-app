@@ -69,7 +69,7 @@ export default function ResetPasswordPage() {
                 required 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" 
+                variant="dark" 
               />
             </div>
             <div className="grid gap-2">
@@ -80,7 +80,7 @@ export default function ResetPasswordPage() {
                 required 
                 value={confirmPassword} 
                 onChange={(e) => setConfirmPassword(e.target.value)} 
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" 
+                variant="dark" 
               />
             </div>
             <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import type { Project } from "@/types";
 import { BRAND } from "@/lib/colors";
+import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 
 export default function Component() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -66,15 +67,6 @@ export default function Component() {
     }
   };
 
-  const regularCardStyle = {
-    backgroundColor: BRAND.teal,
-    border: `2px solid ${BRAND.copper}`,
-  };
-
-  const gradientCardStyle = {
-    background: `linear-gradient(180deg, ${BRAND.teal} 0%, #000000 100%)`,
-    border: `2px solid ${BRAND.copper}`,
-  };
 
   return (
     <main className="flex-1">

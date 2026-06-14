@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
                 required 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" 
+                variant="dark" 
               />
             </div>
             <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>

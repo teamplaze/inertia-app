@@ -141,9 +141,8 @@ export default function ProfileForm({ userId }: { userId: string }) {
               }}
               placeholder="+1 (555) 123-4567"
               type="tel"
-              className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
-                errors.phone ? "border-red-500 focus-visible:ring-red-500" : "focus-visible:border-brand-copper"
-              }`}
+              variant="dark"
+              className={errors.phone ? "border-red-500 focus-visible:ring-red-500" : undefined}
             />
             {errors.phone && (
               <p className="text-xs text-red-400 flex items-center gap-1 mt-1">
@@ -164,9 +163,8 @@ export default function ProfileForm({ userId }: { userId: string }) {
                     if (errors.street) setErrors({ ...errors, street: "" });
                   }}
                   placeholder="Street Address"
-                  className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
-                    errors.street ? "border-red-400" : ""
-                  }`}
+                  variant="dark"
+                  className={errors.street ? "border-red-400" : undefined}
                 />
                 {errors.street && <p className="text-[10px] text-red-300 mt-1">{errors.street}</p>}
               </div>
@@ -180,9 +178,8 @@ export default function ProfileForm({ userId }: { userId: string }) {
                       if (errors.city) setErrors({ ...errors, city: "" });
                     }}
                     placeholder="City"
-                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
-                      errors.city ? "border-red-400" : ""
-                    }`}
+                    variant="dark"
+                    className={errors.city ? "border-red-400" : undefined}
                   />
                   {errors.city && <p className="text-[10px] text-red-300 mt-1">{errors.city}</p>}
                 </div>
@@ -190,7 +187,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                   value={address.state}
                   onChange={(e) => setAddress({ ...address, state: e.target.value })}
                   placeholder="State / Province"
-                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                  variant="dark"
                 />
               </div>
 
@@ -203,9 +200,8 @@ export default function ProfileForm({ userId }: { userId: string }) {
                       if (errors.zipCode) setErrors({ ...errors, zipCode: "" });
                     }}
                     placeholder="ZIP / Postal Code"
-                    className={`text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper ${
-                      errors.zipCode ? "border-red-400" : ""
-                    }`}
+                    variant="dark"
+                    className={errors.zipCode ? "border-red-400" : undefined}
                   />
                   {errors.zipCode && <p className="text-[10px] text-red-300 mt-1">{errors.zipCode}</p>}
                 </div>
@@ -213,7 +209,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                   value={address.country}
                   onChange={(e) => setAddress({ ...address, country: e.target.value })}
                   placeholder="Country"
-                  className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                  variant="dark"
                 />
               </div>
             </div>
@@ -239,7 +235,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.tiktok}
                 onChange={(e) => setSocials({ ...socials, tiktok: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                variant="dark"
               />
             </div>
           </div>
@@ -253,7 +249,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.instagram}
                 onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                variant="dark"
               />
             </div>
           </div>
@@ -267,7 +263,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.youtube}
                 onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
                 placeholder="channel"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                variant="dark"
               />
             </div>
           </div>
@@ -281,7 +277,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
                 value={socials.x}
                 onChange={(e) => setSocials({ ...socials, x: e.target.value })}
                 placeholder="username"
-                className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+                variant="dark"
               />
             </div>
           </div>
@@ -293,7 +289,7 @@ export default function ProfileForm({ userId }: { userId: string }) {
               value={socials.facebook}
               onChange={(e) => setSocials({ ...socials, facebook: e.target.value })}
               placeholder="facebook.com/yourprofile"
-              className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper"
+              variant="dark"
             />
           </div>
         </CardContent>
