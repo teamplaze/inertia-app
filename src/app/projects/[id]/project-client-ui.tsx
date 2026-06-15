@@ -457,20 +457,12 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
                   <ul className="space-y-2">
-                    {tier.perks.map((perk, index) => {
-                      // THIS IS THE NEW LOGIC:
-                      const displayPerk = perk.includes(':') 
-                          ? perk.substring(perk.indexOf(':') + 1).trim() 
-                          : perk;
-                          
-                      return (
-                        <li key={index} className="flex items-start gap-2">
-                          <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                          {/* Render the cleaned string here */}
-                          <span className="text-sm text-white">{displayPerk}</span>
-                        </li>
-                      );
-                    })}
+                    {tier.perks.map((perk) => (
+                      <li key={perk.id} className="flex items-start gap-2">
+                        <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
+                        <span className="text-sm text-white">{perk.label}</span>
+                      </li>
+                    ))}
                   </ul>
                   <div className="pt-4 border-t border-white/20">
                     <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>

@@ -44,14 +44,35 @@ export type ProjectMilestone = {
   budget_line_items: BudgetLineItem[];
 };
 
+export type TierPerk = {
+  id: string;
+  tier_id: string;
+  label: string;
+  category: string;
+  is_exclusive: boolean;
+  sort_order: number;
+};
+
 export type Tier = {
   id: number;
   name: string;
   price: number;
   description: string;
-  perks: string[];
+  perks: TierPerk[];
   total_slots: number;
   claimed_slots: number;
+  status: 'upcoming' | 'active' | 'closed';
+  sale_start_at: string | null;
+  sale_end_at: string | null;
+};
+
+export type WaitlistEntry = {
+  id: string;
+  project_id: string;
+  tier_id: string | null;
+  email: string;
+  user_id: string | null;
+  created_at: string;
 };
 
 export type Testimonial = {

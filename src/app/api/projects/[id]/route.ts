@@ -33,7 +33,7 @@ export async function GET(
     .from('projects')
     .select(`
       *,
-      tiers (*),
+      tiers (*, perks:tier_perks(id, tier_id, label, category, is_exclusive, sort_order)),
       testimonials (*),
       budget_categories (*, budget_line_items(*))
     `)
