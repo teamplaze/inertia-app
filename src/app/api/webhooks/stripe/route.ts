@@ -2,6 +2,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
+import { PostHog } from 'posthog-node';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-07-30.basil', // Ensure consistent API version
@@ -123,7 +124,32 @@ export async function POST(req: Request) {
                  throw contributionError;
             }
 
-            // --- 5. Update Stats ---
+            // --- 5. PostHog purchase_completed ---
+            try {
+                const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+                    host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+                });
+                const distinctId = (userId && userId !== 'guest') ? userId : session.id;
+                posthog.capture({
+                    distinctId,
+                    event: 'purchase_completed',
+                    properties: {
+                        purchase_type: is_donation === 'true' ? 'donation' : 'tier',
+                        project_id: projectId,
+                        tier_id: tierId ?? null,
+                        amount: amountTotalCents / 100,
+                        cover_fee: processingFee != null && processingFee !== '0',
+                        stripe_session_id: session.id,
+                        user_id: userId,
+                        source: 'webhook',
+                    },
+                });
+                await posthog.shutdown();
+            } catch (phErr) {
+                console.error('PostHog capture error:', phErr);
+            }
+
+            // --- 6a. Update Stats ---
             if (tierId) {
                 await supabaseAdmin.rpc('increment_tier_stats', { t_id: Number(tierId) });
             }

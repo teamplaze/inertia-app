@@ -35,7 +35,7 @@ function SignUpForm() {
     posthog.capture("signup_page_viewed", {
       via_invite: !!inviteToken,
       user_type_intent: inviteToken ? "artist" : "fan",
-      signup_source: action === "checkout" ? "checkout_intent" : "standard",
+      signup_source: action === "checkout" ? "checkout_intent" : action === "waitlist" ? "waitlist_intent" : "standard",
       project_id: projectId ? Number(projectId) : null,
       tier_id: tierId ? Number(tierId) : null,
     });
@@ -77,7 +77,7 @@ function SignUpForm() {
           posthog.capture("user_signed_up", {
           user_type: inviteToken ? "artist" : "fan",
           via_invite: !!inviteToken,
-          signup_source: action === "checkout" ? "checkout_intent" : "standard",
+          signup_source: action === "checkout" ? "checkout_intent" : action === "waitlist" ? "waitlist_intent" : "standard",
           project_id: projectId ? Number(projectId) : null,
           tier_id: tierId ? Number(tierId) : null,
         });
