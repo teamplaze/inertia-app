@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, CheckCircle, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2  } from "lucide-react";
+import { Users, Star, Quote, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2 } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -16,8 +16,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import FAQSection from '@/components/project/FAQSection'; // Import the FAQ Component
+import FAQSection from '@/components/project/FAQSection';
 import TierComparisonMatrix from "@/components/project/TierComparison";
+import { TierCard } from "@/components/project/TierCard";
 import FundingMeter from "@/components/project/FundingMeter";
 import { BRAND } from "@/lib/colors";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
@@ -33,14 +34,6 @@ interface ProjectUIProps {
   isProjectMember: boolean;
 }
 
-// Helper to get tier subtitle
-const getTierSubtitle = (name: string) => {
-  const n = name.toUpperCase();
-  if (n.includes("GA")) return "For fans who want to be part of the journey and the fun";
-  if (n.includes("PIT") || n.includes("BACKSTAGE")) return "For fans who want deeper access and real conversations";
-  if (n.includes("VIP")) return "For fans who want to leave their mark on the project";
-  return null;
-};
 
 export default function ProjectUI({ projectData, isProjectMember }: ProjectUIProps) {
   const { user } = useAuth();
@@ -166,6 +159,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const hasDonationEnabled = true;
 
   const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
+  const activeTier = tiers.find(t => t.status === 'active');
 
   // Fall back to budget_categories for projects that predate the milestones feature
   const budgetMilestones = (project.project_milestones?.length ?? 0) > 0
@@ -425,113 +419,22 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             </div>
           )}
         </div>
-        {/* Adjusted grid logic: 3 columns by default, 4 columns ONLY if donationUrl exists */}
-        <div className={`grid grid-cols-1 gap-6 items-stretch ${
-            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 1 ? 'md:grid-cols-1 max-w-md mx-auto' :
-            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' :
-            (visibleTiers.length + (hasDonationEnabled ? 1 : 0)) === 3 ? 'md:grid-cols-3' :
-            'md:grid-cols-2 lg:grid-cols-4'
-        }`}>
-            {visibleTiers.sort((a, b) => a.price - b.price).map((tier) => {
-            const isSoldOut = (tier.total_slots - tier.claimed_slots) <= 0;
-            
-            return (
-            <div key={tier.id} className="flex flex-col gap-4">
-              <Card
-                className={`flex flex-col relative transition-all duration-200 rounded-xl h-full ${
-                  selectedTier === tier.id 
-                    ? "ring-2 ring-offset-2 ring-offset-brand-teal ring-brand-copper shadow-lg"
-                    : "hover:shadow-md hover:shadow-gray-700/50"
-                }`}
-                style={regularCardStyle}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <CardTitle className="text-xl font-bold" style={{ color: BRAND.copper }}>{tier.name}</CardTitle>
-                      <p className="text-xs text-white/90 font-medium italic">{getTierSubtitle(tier.name)}</p>
-                    </div>
-                    {selectedTier === tier.id && <CheckCircle className="w-6 h-6" style={{ color: BRAND.copper }} />}
-                  </div>
-                  <div className="text-3xl font-bold text-white mt-2">${tier.price}</div>
-                </CardHeader>
-                <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                  <ul className="space-y-2">
-                    {tier.perks.map((perk) => (
-                      <li key={perk.id} className="flex items-start gap-2">
-                        <Star className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                        <span className="text-sm text-white">{perk.label}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="pt-4 border-t border-white/20">
-                    <div className="text-sm text-center text-white/80 mb-2">{tier.total_slots - tier.claimed_slots} of {tier.total_slots} left</div>
-                    
-                    {paymentsEnabled ? (
-                      isSoldOut ? (
-                        // SOLD OUT BUTTON (Shows for everyone)
-                        <Button 
-                          className="w-full text-white bg-gray-500 cursor-not-allowed hover:bg-gray-500" 
-                          disabled
-                        >
-                          Sold Out
-                        </Button>
-                      ) : user ? (
-                        <Button 
-                          onClick={() => handleTierSelect(tier.id)} 
-                          className={`w-full text-white ${selectedTier === tier.id ? "bg-brand-teal-selected hover:bg-brand-teal-selected/90" : "bg-brand-copper hover:bg-brand-copper/90"}`} 
-                        >
-                          {selectedTier === tier.id ? "Selected" : "Select Tier"}
-                        </Button>
-                      ) : (
-                        <Link href={`/sign-up?action=checkout&projectId=${project.id}&tierId=${tier.id}`}>
-                          <Button className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white h-auto whitespace-normal" >
-                            Login/Sign up to contribute
-                          </Button>
-                        </Link>
-                      )
-                    ) : (
-                      <div className="w-full bg-brand-copper text-white text-center cursor-not-allowed opacity-60 hover:bg-brand-copper rounded-md px-4 py-2 font-medium text-sm">
-                        Coming Soon
-                      </div>
-                    )}
-                    
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* INLINE CHECKOUT BOX: Visible only on MOBILE (< md) */}
-              {paymentsEnabled && showCheckout && selectedTier === tier.id && !isSoldOut && (
-                <div className="md:hidden"> 
-                    <Card className="rounded-xl animate-in fade-in slide-in-from-top-2 duration-300 border-2 border-brand-copper shadow-xl" style={gradientCardStyle}>
-                    <CardContent className="p-4">
-                        <div className="space-y-4">
-                        <div>
-                            <h3 className="text-lg font-bold text-white mb-1">Ready to support?</h3>
-                            <p className="text-sm text-gray-200 leading-snug">
-                            You've selected the <strong className="text-white">{tier.name}</strong> tier for <strong style={{ color: BRAND.copper }}>${tier.price}</strong>
-                            </p>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Button onClick={handleCheckout} className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-semibold">
-                            Continue to Checkout
-                            </Button>
-                            <Button 
-                            variant="ghost" 
-                            className="w-full text-gray-300 hover:text-white hover:bg-white/10 h-8 text-xs" 
-                            onClick={() => { setSelectedTier(null); setShowCheckout(false); }}
-                            >
-                            Change Selection
-                            </Button>
-                        </div>
-                        </div>
-                    </CardContent>
-                    </Card>
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {/* Single active tier + donate card — always 2 columns on desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
+          {activeTier && (
+            <TierCard
+              tier={activeTier}
+              project={project}
+              selectedTier={selectedTier}
+              user={user}
+              paymentsEnabled={paymentsEnabled}
+              showCheckout={showCheckout}
+              onSelectTier={handleTierSelect}
+              onCheckout={handleCheckout}
+              onCancelCheckout={() => { setSelectedTier(null); setShowCheckout(false); }}
+              onJoinWaitlist={() => console.log("TODO: open waitlist flow")}
+            />
+          )}
 
           {/* === DONATION CARD === */}
           {hasDonationEnabled && (
