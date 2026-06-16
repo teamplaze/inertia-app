@@ -432,7 +432,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               onSelectTier={handleTierSelect}
               onCheckout={handleCheckout}
               onCancelCheckout={() => { setSelectedTier(null); setShowCheckout(false); }}
-              onJoinWaitlist={() => console.log("TODO: open waitlist flow")}
             />
           )}
 

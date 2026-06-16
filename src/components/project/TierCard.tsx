@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Star, Check, Zap, Lock, Clock } from "lucide-react";
+import { Star, Check, Zap, Lock, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { BRAND } from "@/lib/colors";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
@@ -28,7 +28,6 @@ export type TierCardProps = {
   onSelectTier: (tierId: number) => void;
   onCheckout: () => void;
   onCancelCheckout: () => void;
-  onJoinWaitlist: () => void;
 };
 
 export function TierCard({
@@ -41,7 +40,6 @@ export function TierCard({
   onSelectTier,
   onCheckout,
   onCancelCheckout,
-  onJoinWaitlist,
 }: TierCardProps) {
   const saleEndDate = tier.sale_end_at ? new Date(tier.sale_end_at) : null;
 
@@ -49,6 +47,27 @@ export function TierCard({
     if (tier.status === "closed") return true;
     return saleEndDate ? saleEndDate <= new Date() : false;
   });
+
+  const [isJoining, setIsJoining] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
+
+  const handleJoinWaitlist = async () => {
+    setIsJoining(true);
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id, tierId: tier.id }),
+      });
+      if (res.ok) {
+        setHasJoined(true);
+      }
+    } catch {
+      // Silently fail — button returns to default state on next interaction
+    } finally {
+      setIsJoining(false);
+    }
+  };
 
   const isSoldOut = tier.total_slots - tier.claimed_slots <= 0;
   const isSelected = selectedTier === tier.id;
@@ -170,12 +189,29 @@ export function TierCard({
             )}
 
             {isExpired ? (
-              <Button
-                onClick={onJoinWaitlist}
-                className="w-full bg-white text-gray-900 hover:bg-white/90 font-bold"
-              >
-                Join the Waitlist
-              </Button>
+              user ? (
+                <Button
+                  onClick={handleJoinWaitlist}
+                  disabled={isJoining || hasJoined}
+                  className="w-full bg-white text-gray-900 hover:bg-white/90 font-bold disabled:opacity-70"
+                >
+                  {isJoining ? (
+                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />Joining...</>
+                  ) : hasJoined ? (
+                    "You're on the list ✓"
+                  ) : (
+                    "Join the Waitlist"
+                  )}
+                </Button>
+              ) : (
+                <Link
+                  href={`/sign-up?action=waitlist&projectId=${project.id}&tierId=${tier.id}${project.slug ? `&redirect=${encodeURIComponent(`/${project.slug}`)}` : ''}`}
+                >
+                  <Button className="w-full bg-white text-gray-900 hover:bg-white/90 font-bold">
+                    Join the Waitlist
+                  </Button>
+                </Link>
+              )
             ) : paymentsEnabled ? (
               isSoldOut ? (
                 <Button
