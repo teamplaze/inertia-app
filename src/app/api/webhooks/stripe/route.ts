@@ -125,28 +125,30 @@ export async function POST(req: Request) {
             }
 
             // --- 5. PostHog purchase_completed ---
-            try {
-                const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-                    host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-                });
-                const distinctId = (userId && userId !== 'guest') ? userId : session.id;
-                posthog.capture({
-                    distinctId,
-                    event: 'purchase_completed',
-                    properties: {
-                        purchase_type: is_donation === 'true' ? 'donation' : 'tier',
-                        project_id: projectId,
-                        tier_id: tierId ?? null,
-                        amount: amountTotalCents / 100,
-                        cover_fee: processingFee != null && processingFee !== '0',
-                        stripe_session_id: session.id,
-                        user_id: userId,
-                        source: 'webhook',
-                    },
-                });
-                await posthog.shutdown();
-            } catch (phErr) {
-                console.error('PostHog capture error:', phErr);
+            if (process.env.NODE_ENV === 'production') {
+                try {
+                    const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+                        host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+                    });
+                    const distinctId = (userId && userId !== 'guest') ? userId : session.id;
+                    posthog.capture({
+                        distinctId,
+                        event: 'purchase_completed',
+                        properties: {
+                            purchase_type: is_donation === 'true' ? 'donation' : 'tier',
+                            project_id: projectId,
+                            tier_id: tierId ?? null,
+                            amount: amountTotalCents / 100,
+                            cover_fee: processingFee != null && processingFee !== '0',
+                            stripe_session_id: session.id,
+                            user_id: userId,
+                            source: 'webhook',
+                        },
+                    });
+                    await posthog.shutdown();
+                } catch (phErr) {
+                    console.error('PostHog capture error:', phErr);
+                }
             }
 
             // --- 6a. Update Stats ---

@@ -17,7 +17,7 @@ export function PurchaseCompletedEvent({ props }: { props: Props }) {
   const posthog = usePostHog();
 
   useEffect(() => {
-    if (!posthog) return;
+    if (process.env.NODE_ENV !== 'production' || !posthog) return;
     posthog.capture('purchase_completed', {
       ...props,
       source: 'success_page',

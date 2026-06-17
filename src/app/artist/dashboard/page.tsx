@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import TransactionFeed from '@/components/dashboard/TransactionFeed';
+import { SHOW_SLOT_LIMITS } from '@/lib/featureFlags';
 
 export default async function ArtistDashboardPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -243,7 +244,7 @@ export default async function ArtistDashboardPage(props: {
                                         <TableHead className="text-gray-400">Price</TableHead>
                                         <TableHead className="text-gray-400">Seats Sold</TableHead>
                                         <TableHead className="text-gray-400">Total Raised</TableHead>
-                                        <TableHead className="text-gray-400 text-right">Availability</TableHead>
+                                        {SHOW_SLOT_LIMITS && <TableHead className="text-gray-400 text-right">Availability</TableHead>}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -253,12 +254,14 @@ export default async function ArtistDashboardPage(props: {
                                             <TableCell className="text-gray-300">${tier.price}</TableCell>
                                             <TableCell className="text-white">{tier.count}</TableCell>
                                             <TableCell className="text-brand-copper font-bold">${tier.total.toLocaleString()}</TableCell>
-                                            <TableCell className="text-right text-gray-300">
-                                                {tier.total_slots 
-                                                    ? `${Math.max(0, tier.total_slots - tier.claimed_slots)} / ${tier.total_slots} left`
-                                                    : 'Unlimited'
-                                                }
-                                            </TableCell>
+                                            {SHOW_SLOT_LIMITS && (
+                                                <TableCell className="text-right text-gray-300">
+                                                    {tier.total_slots
+                                                        ? `${Math.max(0, tier.total_slots - tier.claimed_slots)} / ${tier.total_slots} left`
+                                                        : 'Unlimited'
+                                                    }
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     ))}
                                 </TableBody>

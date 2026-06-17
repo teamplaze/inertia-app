@@ -7,6 +7,7 @@ import { Star, Check, Zap, Lock, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { BRAND } from "@/lib/colors";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
+import { SHOW_SLOT_LIMITS } from "@/lib/featureFlags";
 import type { Tier, Project } from "@/types";
 import { CountdownTimer } from "@/components/project/CountdownTimer";
 
@@ -182,7 +183,7 @@ export function TierCard({
 
           {/* Footer */}
           <div className="pt-4 border-t border-white/20 space-y-3">
-            {!isExpired && (
+            {SHOW_SLOT_LIMITS && !isExpired && (
               <div className="text-sm text-center text-white/70">
                 {tier.total_slots - tier.claimed_slots} of {tier.total_slots} left
               </div>
@@ -213,7 +214,7 @@ export function TierCard({
                 </Link>
               )
             ) : paymentsEnabled ? (
-              isSoldOut ? (
+              (SHOW_SLOT_LIMITS && isSoldOut) ? (
                 <Button
                   className="w-full text-white bg-gray-500 cursor-not-allowed hover:bg-gray-500"
                   disabled
