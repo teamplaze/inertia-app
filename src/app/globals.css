@@ -210,6 +210,14 @@
   --color-border-strong:  #000000;
   --color-border-soft:    #c3c7c7;
   --color-border-focus:   #9ecac6;
+
+  /* Interactive tokens */
+  --interactive-bg-primary:       #ffffff;
+  --interactive-bg-hover-primary: #3e958e;
+  --interactive-bg-disabled:      #a5abaa;
+  --interactive-text-primary:     #000000;
+  --interactive-text-secondary:   #ffffff;
+  --interactive-text-disabled:    #3f4948;
 }
 
 .dark {
@@ -263,6 +271,14 @@
   --color-border-strong:  #ffffff;
   --color-border-soft:    #3f4948;
   --color-border-focus:   #bfdcd9;
+
+  /* Interactive tokens */
+  --interactive-bg-primary:       #ffffff;
+  --interactive-bg-hover-primary: #3e958e;
+  --interactive-bg-disabled:      #a5abaa;
+  --interactive-text-primary:     #000000;
+  --interactive-text-secondary:   #ffffff;
+  --interactive-text-disabled:    #3f4948;
 }
 
 @utility bg-teal-spotlight-top {
