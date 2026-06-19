@@ -7,9 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Users, Star, Quote, Eye, MessageSquare, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import Image from "next/image";
-import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
@@ -162,16 +161,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
   const activeTier = tiers.find(t => t.status === 'active');
 
-  // Fall back to budget_categories for projects that predate the milestones feature
-  const budgetMilestones = (project.project_milestones?.length ?? 0) > 0
-    ? project.project_milestones!
-    : (project.budget_categories ?? []).map(cat => ({
-        id: cat.id,
-        title: cat.name,
-        sort_order: 0,
-        budget_line_items: cat.budget_line_items,
-      }));
-  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -278,9 +267,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
               </Button>
-              <Button onClick={() => scrollToSection("budget-breakdown")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <DollarSign className="w-4 h-4 mr-2" /> Budget
-              </Button>
               <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <Star className="w-4 h-4 mr-2" /> Perks
               </Button>
@@ -355,8 +341,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </div>
         </section>
       )}
-
-      <BudgetBreakdown milestones={budgetMilestones} colors={project.project_colors ?? undefined} />
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
