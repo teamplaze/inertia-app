@@ -7,9 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2 } from "lucide-react";
+import { Users, Star, Quote, Eye, MessageSquare, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import Image from "next/image";
-import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
@@ -17,11 +16,13 @@ import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
-import TierComparisonMatrix from "@/components/project/TierComparison";
 import { TierCard } from "@/components/project/TierCard";
 import FundingMeter from "@/components/project/FundingMeter";
 import { BRAND } from "@/lib/colors";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
+
+// Set to true to restore the Previews section (audio/video previews)
+const PREVIEWS_ENABLED = false;
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -158,19 +159,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   // We use the presence of the donation_link as a flag to enable the donate card
   const hasDonationEnabled = true;
 
-  const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
   const activeTier = tiers.find(t => t.status === 'active');
 
-  // Fall back to budget_categories for projects that predate the milestones feature
-  const budgetMilestones = (project.project_milestones?.length ?? 0) > 0
-    ? project.project_milestones!
-    : (project.budget_categories ?? []).map(cat => ({
-        id: cat.id,
-        title: cat.name,
-        sort_order: 0,
-        budget_line_items: cat.budget_line_items,
-      }));
-  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -269,14 +259,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <User className="w-4 h-4 mr-2" /> From Artist
               </Button>
-              <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <Eye className="w-4 h-4 mr-2" /> Previews
-              </Button>
+              {PREVIEWS_ENABLED && (
+                <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
+                  <Eye className="w-4 h-4 mr-2" /> Previews
+                </Button>
+              )}
               <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
-              </Button>
-              <Button onClick={() => scrollToSection("budget-breakdown")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <DollarSign className="w-4 h-4 mr-2" /> Budget
               </Button>
               <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <Star className="w-4 h-4 mr-2" /> Perks
@@ -301,123 +290,62 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       </section>
 
       {/* === PREVIEWS SECTION === */}
-      <section id="previews" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="rounded-xl" style={regularCardStyle}>
-            <CardContent className="p-4 space-y-2">
-              <div className="aspect-video bg-black rounded-lg">
-                {project.artist_message_video_url ? (
-                  <iframe
-                    src={project.artist_message_video_url}
-                    title="A Message from the Artist"
-                    className="w-full h-full rounded-lg"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center"><p className="text-gray-400">No video preview available.</p></div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-xl" style={regularCardStyle}>
-            <CardContent className="p-4 space-y-2">
-              <div className="bg-black/40 rounded-lg p-4">
-                {/* CONDITIONAL RENDER: Audio vs Spotify Embed */}
-                {project.audio_preview_url ? (
-                  <audio controls className="w-full">
-                    <source src={project.audio_preview_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                ) : project.spotify_artist_id ? (
-                  // Spotify Embed Fallback
-                  <iframe 
-                    style={{ borderRadius: '12px' }} 
-                    src={`https://open.spotify.com/embed/artist/${project.spotify_artist_id}?utm_source=generator&theme=0`} 
-                    width="100%" 
-                    height="152" 
-                    frameBorder="0" 
-                    allowFullScreen 
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy"
-                  ></iframe>
-                ) : (
-                  <p className="text-center text-gray-400">No audio preview available.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section id="fan-stories" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {displayedStories.map((testimonial) => (
-              <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-                <CardContent className="p-4">
-                  <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
-                  <div className="flex items-start gap-4 mb-4">
-                    {testimonial.profile_image_url && (
-                      <Image
-                        src={testimonial.profile_image_url}
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
-                      />
-                    )}
-                    <div className="flex-1">
-                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                        <p className="text-sm text-gray-300">{testimonial.location}</p>
-                    </div>
-                  </div>
-                  <p className="text-white leading-relaxed">{testimonial.story}</p>
-                </CardContent>
-              </Card>
-            ))}
+      {PREVIEWS_ENABLED && (
+        <section id="previews" className="mb-12">
+          <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="rounded-xl" style={regularCardStyle}>
+              <CardContent className="p-4 space-y-2">
+                <div className="aspect-video bg-black rounded-lg">
+                  {project.artist_message_video_url ? (
+                    <iframe
+                      src={project.artist_message_video_url}
+                      title="A Message from the Artist"
+                      className="w-full h-full rounded-lg"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center"><p className="text-gray-400">No video preview available.</p></div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="rounded-xl" style={regularCardStyle}>
+              <CardContent className="p-4 space-y-2">
+                <div className="bg-black/40 rounded-lg p-4">
+                  {/* CONDITIONAL RENDER: Audio vs Spotify Embed */}
+                  {project.audio_preview_url ? (
+                    <audio controls className="w-full">
+                      <source src={project.audio_preview_url} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  ) : project.spotify_artist_id ? (
+                    // Spotify Embed Fallback
+                    <iframe
+                      style={{ borderRadius: '12px' }}
+                      src={`https://open.spotify.com/embed/artist/${project.spotify_artist_id}?utm_source=generator&theme=0`}
+                      width="100%"
+                      height="152"
+                      frameBorder="0"
+                      allowFullScreen
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                    ></iframe>
+                  ) : (
+                    <p className="text-center text-gray-400">No audio preview available.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          
-          {project.testimonials.length > 2 && (
-            <div className="flex justify-center pt-2">
-              <Button
-                onClick={() => setShowAllStories(!showAllStories)}
-                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-              >
-                {showAllStories ? (
-                  <>
-                    Show Less <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Show More Stories <ChevronDown className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <BudgetBreakdown milestones={budgetMilestones} colors={project.project_colors ?? undefined} />
+        </section>
+      )}
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
-          {/* Scroll to Compare Perks Button */}
-          {visibleTiers.length > 1 && (
-            <div className="flex justify-center mt-6">
-              <Button 
-                onClick={() => scrollToSection("tier-comparison")}
-                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-              >
-                Compare Perks <ArrowDown className="ml-2 w-4 h-4" />
-              </Button>
-            </div>
-          )}
         </div>
         {/* Single active tier + donate card — always 2 columns on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
@@ -537,9 +465,56 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      {/* === TIER COMPARISON MATRIX === */}
-      {visibleTiers.length > 1 && (
-        <TierComparisonMatrix tiers={visibleTiers} />
+      {project.testimonials && project.testimonials.length > 0 && (
+        <section id="fan-stories" className="mb-12">
+          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {displayedStories.map((testimonial) => (
+                <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
+                  <CardContent className="p-4">
+                    <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
+                    <div className="flex items-start gap-4 mb-4">
+                      {testimonial.profile_image_url && (
+                        <Image
+                          src={testimonial.profile_image_url}
+                          alt={testimonial.name}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
+                        />
+                      )}
+                      <div className="flex-1">
+                          <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                          <p className="text-sm text-gray-300">{testimonial.location}</p>
+                      </div>
+                    </div>
+                    <p className="text-white leading-relaxed">{testimonial.story}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {project.testimonials.length > 2 && (
+              <div className="flex justify-center pt-2">
+                <Button
+                  onClick={() => setShowAllStories(!showAllStories)}
+                  className="bg-brand-copper hover:bg-brand-copper/90 text-white"
+                >
+                  {showAllStories ? (
+                    <>
+                      Show Less <ChevronUp className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      Show More Stories <ChevronDown className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
       )}
 
       <FAQSection />

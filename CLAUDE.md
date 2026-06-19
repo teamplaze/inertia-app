@@ -14,7 +14,7 @@ Next.js 14, TypeScript, Tailwind CSS v4, shadcn/ui, Supabase.
 ## Hard rules
 - Never hardcode hex values in .tsx files
 - Never use Tailwind arbitrary values [#hex] for brand colors
-- BudgetBreakdown.tsx DEFAULT_COLORS — do not touch, awaiting design decision
+- BudgetBreakdown.tsx — removed. Replaced by MilestonesList (pending).
 - Textarea does not have a variant prop — use className for overrides
 
 ## Token locations
@@ -39,4 +39,3 @@ Surfaces requiring manual update when specs arrive:
 - account/layout.tsx — sidebar nav colors (~5 lines)
 - FundingMeter.tsx — track/fill/milestone hardcoded (~8 lines)
 - Auth pages (login, sign-up, forgot, reset) — ~4 lines each
-- BudgetBreakdown.tsx — needs design decision on Recharts color array
