@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <PHProvider>
         <body style={{ backgroundColor: BRAND.dark, color: "white" }}>
           <Header />
