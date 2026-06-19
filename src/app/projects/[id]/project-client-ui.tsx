@@ -23,6 +23,9 @@ import FundingMeter from "@/components/project/FundingMeter";
 import { BRAND } from "@/lib/colors";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 
+// Set to true to restore the Previews section (audio/video previews)
+const PREVIEWS_ENABLED = false;
+
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
@@ -269,9 +272,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <User className="w-4 h-4 mr-2" /> From Artist
               </Button>
-              <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <Eye className="w-4 h-4 mr-2" /> Previews
-              </Button>
+              {PREVIEWS_ENABLED && (
+                <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
+                  <Eye className="w-4 h-4 mr-2" /> Previews
+                </Button>
+              )}
               <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                 <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
               </Button>
@@ -301,55 +306,57 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       </section>
 
       {/* === PREVIEWS SECTION === */}
-      <section id="previews" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="rounded-xl" style={regularCardStyle}>
-            <CardContent className="p-4 space-y-2">
-              <div className="aspect-video bg-black rounded-lg">
-                {project.artist_message_video_url ? (
-                  <iframe
-                    src={project.artist_message_video_url}
-                    title="A Message from the Artist"
-                    className="w-full h-full rounded-lg"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center"><p className="text-gray-400">No video preview available.</p></div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="rounded-xl" style={regularCardStyle}>
-            <CardContent className="p-4 space-y-2">
-              <div className="bg-black/40 rounded-lg p-4">
-                {/* CONDITIONAL RENDER: Audio vs Spotify Embed */}
-                {project.audio_preview_url ? (
-                  <audio controls className="w-full">
-                    <source src={project.audio_preview_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                  </audio>
-                ) : project.spotify_artist_id ? (
-                  // Spotify Embed Fallback
-                  <iframe 
-                    style={{ borderRadius: '12px' }} 
-                    src={`https://open.spotify.com/embed/artist/${project.spotify_artist_id}?utm_source=generator&theme=0`} 
-                    width="100%" 
-                    height="152" 
-                    frameBorder="0" 
-                    allowFullScreen 
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                    loading="lazy"
-                  ></iframe>
-                ) : (
-                  <p className="text-center text-gray-400">No audio preview available.</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      {PREVIEWS_ENABLED && (
+        <section id="previews" className="mb-12">
+          <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="rounded-xl" style={regularCardStyle}>
+              <CardContent className="p-4 space-y-2">
+                <div className="aspect-video bg-black rounded-lg">
+                  {project.artist_message_video_url ? (
+                    <iframe
+                      src={project.artist_message_video_url}
+                      title="A Message from the Artist"
+                      className="w-full h-full rounded-lg"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center"><p className="text-gray-400">No video preview available.</p></div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="rounded-xl" style={regularCardStyle}>
+              <CardContent className="p-4 space-y-2">
+                <div className="bg-black/40 rounded-lg p-4">
+                  {/* CONDITIONAL RENDER: Audio vs Spotify Embed */}
+                  {project.audio_preview_url ? (
+                    <audio controls className="w-full">
+                      <source src={project.audio_preview_url} type="audio/mpeg" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  ) : project.spotify_artist_id ? (
+                    // Spotify Embed Fallback
+                    <iframe
+                      style={{ borderRadius: '12px' }}
+                      src={`https://open.spotify.com/embed/artist/${project.spotify_artist_id}?utm_source=generator&theme=0`}
+                      width="100%"
+                      height="152"
+                      frameBorder="0"
+                      allowFullScreen
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                    ></iframe>
+                  ) : (
+                    <p className="text-center text-gray-400">No audio preview available.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      )}
 
       <section id="fan-stories" className="mb-12">
         <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
