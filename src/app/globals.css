@@ -228,6 +228,14 @@
   --input-text-primary:         #ffffff;
   --input-text-placeholder:     #ededed;
   --input-text-muted:           #c3c7c7;
+
+  /* Accordion tokens */
+  --accordion-bg:              #0f1111;
+  --accordion-border-default:  #3f4948;
+  --accordion-border-expanded: #ffffff;
+  --accordion-text-trigger:    #ffffff;
+  --accordion-text-content:    #ededed;
+  --accordion-radius:          12px;
 }
 
 .dark {
@@ -299,6 +307,14 @@
   --input-text-primary:         #ffffff;
   --input-text-placeholder:     #ededed;
   --input-text-muted:           #c3c7c7;
+
+  /* Accordion tokens */
+  --accordion-bg:              #0f1111;
+  --accordion-border-default:  #3f4948;
+  --accordion-border-expanded: #ffffff;
+  --accordion-text-trigger:    #ffffff;
+  --accordion-text-content:    #ededed;
+  --accordion-radius:          12px;
 }
 
 @utility bg-teal-spotlight-top {
