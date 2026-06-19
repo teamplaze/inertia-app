@@ -260,6 +260,25 @@
   --progress-text-amount:  #ffffff;
   --progress-text-goal:    #c3c7c7;
   --progress-text-stats:   #c3c7c7;
+
+  /* Carousel tokens */
+  --carousel-dot-active:          var(--color-project-accent, var(--color-bg-teal));
+  --carousel-dot-inactive-border: #ffffff;
+  --carousel-dot-size:            16px;
+  --carousel-dot-gap:             20px;
+  --carousel-arrow-border:        #ffffff;
+  --carousel-arrow-icon:          #ffffff;
+  --carousel-arrow-padding:       16px;
+  --carousel-arrow-gap:           24px;
+
+  /* Text callout tokens */
+  --callout-icon-bg:    var(--color-project-accent, var(--color-bg-teal));
+  --callout-icon-color: #000000;
+  --callout-heading:    #ffffff;
+  --callout-body:       #ededed;
+  --callout-radius:     12px;
+  --callout-padding:    20px;
+  --callout-gap:        20px;
 }
 
 .dark {
@@ -362,6 +381,25 @@
   --progress-text-amount:  #ffffff;
   --progress-text-goal:    #c3c7c7;
   --progress-text-stats:   #c3c7c7;
+
+  /* Carousel tokens */
+  --carousel-dot-active:          var(--color-project-accent, var(--color-bg-teal));
+  --carousel-dot-inactive-border: #ffffff;
+  --carousel-dot-size:            16px;
+  --carousel-dot-gap:             20px;
+  --carousel-arrow-border:        #ffffff;
+  --carousel-arrow-icon:          #ffffff;
+  --carousel-arrow-padding:       16px;
+  --carousel-arrow-gap:           24px;
+
+  /* Text callout tokens */
+  --callout-icon-bg:    var(--color-project-accent, var(--color-bg-teal));
+  --callout-icon-color: #000000;
+  --callout-heading:    #ffffff;
+  --callout-body:       #ededed;
+  --callout-radius:     12px;
+  --callout-padding:    20px;
+  --callout-gap:        20px;
 }
 
 @utility bg-teal-spotlight-top {
