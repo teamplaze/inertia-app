@@ -1,4 +1,3 @@
-import * as React from "react"
 import { cn } from "@/lib/utils"
 
 interface AlertProps {
@@ -32,11 +31,10 @@ function Alert({
       <div className="flex items-center gap-[2px]">
         {icon && (
           <span
-            className={cn("text-[--alert-icon-color]", "text-[18px] leading-[1.2]")}
+            className="material-symbols-rounded text-[18px] leading-[1.2] text-[--alert-icon-color]"
             aria-hidden="true"
           >
-            ⏱
-            {/* TODO: Replace with Material Symbols Rounded 'timer' icon once font is installed */}
+            timer
           </span>
         )}
         <span

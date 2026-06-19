@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -70,11 +69,12 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        {/* TODO: Replace ChevronDown with Material Symbols "add" icon once
-            the font is installed. Per spec: desktop shows "add" (+) for both
-            collapsed and expanded states (no rotation). Mobile should swap
-            "add" → "close" (×) when expanded. */}
-        <ChevronDownIcon className="text-[--accordion-text-trigger] pointer-events-none size-5 shrink-0" />
+        <span
+          className="material-symbols-rounded text-[24px] leading-none shrink-0"
+          aria-hidden="true"
+        >
+          add
+        </span>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )

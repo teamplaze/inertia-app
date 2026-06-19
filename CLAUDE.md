@@ -115,11 +115,9 @@ designer for completion.
 - Full spec not yet pulled — pending
 
 ### Global
-- Material Symbols Rounded not installed — used by 
-  Inputs (help, search, credit_card icons), Accordions 
-  (add, close, check icons), and likely other components.
-  Needs to be added as a dependency before icon variants 
-  can be fully implemented.
+- Material Symbols Rounded — installed via npm package 
+  material-symbols, imported in globals.css. Use class 
+  material-symbols-rounded with icon name as text content.
 - Focus/keyboard states not defined on most components — 
   needed for accessibility compliance
 - No motion/animation system defined — transitions, 

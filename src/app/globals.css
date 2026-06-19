@@ -1,3 +1,4 @@
+@import 'material-symbols/rounded';
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -243,6 +244,22 @@
   --alert-text-main:      #ffffff;
   --alert-text-secondary: #ffffff;
   --alert-icon-color:     #ededed;
+
+  /* Badge tokens */
+  --badge-border-default:   #888f8e;
+  --badge-border-highlight: #3e958e;
+  --badge-text-default:     #c3c7c7;
+  --badge-text-highlight:   #ffffff;
+  --badge-icon-highlight:   #3e958e;
+  --badge-radius:           4px;
+
+  /* Progress bar tokens */
+  --progress-track-bg:     rgba(255, 255, 255, 0.2);
+  --progress-track-height: 8px;
+  --progress-radius:       100px;
+  --progress-text-amount:  #ffffff;
+  --progress-text-goal:    #c3c7c7;
+  --progress-text-stats:   #c3c7c7;
 }
 
 .dark {
@@ -329,6 +346,22 @@
   --alert-text-main:      #ffffff;
   --alert-text-secondary: #ffffff;
   --alert-icon-color:     #ededed;
+
+  /* Badge tokens */
+  --badge-border-default:   #888f8e;
+  --badge-border-highlight: #3e958e;
+  --badge-text-default:     #c3c7c7;
+  --badge-text-highlight:   #ffffff;
+  --badge-icon-highlight:   #3e958e;
+  --badge-radius:           4px;
+
+  /* Progress bar tokens */
+  --progress-track-bg:     rgba(255, 255, 255, 0.2);
+  --progress-track-height: 8px;
+  --progress-radius:       100px;
+  --progress-text-amount:  #ffffff;
+  --progress-text-goal:    #c3c7c7;
+  --progress-text-stats:   #c3c7c7;
 }
 
 @utility bg-teal-spotlight-top {
