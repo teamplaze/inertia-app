@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { Check, Minus } from "lucide-react";
-import type { Tier } from "@/types";
+import type { Tier, TierPerk } from "@/types";
 import { BRAND } from "@/lib/colors";
 import { DarkCard } from "@/components/ui/card-dark";
 
@@ -36,28 +36,26 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
   // Sort by price to ensure logical progression (cheapest to most expensive)
   const sortedTiers = useMemo(() => [...safeTiers].sort((a, b) => a.price - b.price), [safeTiers]);
 
-  // Extract all unique perks dynamically and group them
-  const { categorizedPerks, groups } = useMemo(() => {
-    // Get all unique strings first
-    const uniquePerks = Array.from(new Set(sortedTiers.flatMap((t) => t.perks || [])));
-    
-    // Parse strings into categories based on the "Category: Perk" convention
-    const parsed = uniquePerks.map(perk => {
-      const hasCategory = perk.includes(':');
-      const category = hasCategory ? perk.split(':')[0].trim() : 'General';
-      const feature = hasCategory ? perk.substring(perk.indexOf(':') + 1).trim() : perk.trim();
-      
-      return { category, feature, original: perk };
-    });
+  // Collect unique perks across all tiers and derive sorted category groups
+  const { uniquePerks, groups } = useMemo(() => {
+    const seen = new Set<string>();
+    const deduped: TierPerk[] = [];
+    for (const t of sortedTiers) {
+      for (const p of t.perks || []) {
+        if (!seen.has(p.label)) {
+          seen.add(p.label);
+          deduped.push(p);
+        }
+      }
+    }
 
-    // Get unique categories and sort them (putting "General" at the end)
-    const uniqueGroups = Array.from(new Set(parsed.map(p => p.category))).sort((a, b) => {
+    const uniqueGroups = Array.from(new Set(deduped.map(p => p.category))).sort((a, b) => {
       if (a === 'General') return 1;
       if (b === 'General') return -1;
       return a.localeCompare(b);
     });
 
-    return { categorizedPerks: parsed, groups: uniqueGroups };
+    return { uniquePerks: deduped, groups: uniqueGroups };
   }, [sortedTiers]);
 
   if (sortedTiers.length === 0) return null;
@@ -92,7 +90,7 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
             </thead>
             <tbody className="divide-y divide-white/5">
               {groups.map((group) => {
-                const groupPerks = categorizedPerks.filter(p => p.category === group);
+                const groupPerks = uniquePerks.filter((p: TierPerk) => p.category === group);
                 if (groupPerks.length === 0) return null;
 
                 return (
@@ -105,20 +103,19 @@ export default function TierComparisonMatrix({ tiers }: { tiers: Tier[] }) {
                         </span>
                       </td>
                     </tr>
-                    
+
                     {/* Perk Rows */}
-                    {groupPerks.map((perkObj, i) => (
-                      <tr key={`${group}-${i}`} className="hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-0">
+                    {groupPerks.map((perk: TierPerk) => (
+                      <tr key={perk.id} className="hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-0">
                         <td className="py-3 md:py-3.5 px-3 md:px-4 text-[12px] md:text-sm text-gray-200 leading-snug pl-4 md:pl-6">
-                          {perkObj.feature}
+                          {perk.label}
                         </td>
                         {sortedTiers.map((tier, currentTierIndex) => {
-                          // Match against the exact original string in the database
-                          // CUMULATIVE LOGIC: Check if this tier OR ANY LOWER TIER includes the perk
+                          // CUMULATIVE LOGIC: included if this tier OR any lower tier has this perk label
                           const isIncluded = sortedTiers
                             .slice(0, currentTierIndex + 1)
-                            .some(t => Array.isArray(t.perks) && t.perks.includes(perkObj.original));
-                          
+                            .some(t => Array.isArray(t.perks) && t.perks.some(p => p.label === perk.label));
+
                           return (
                             <td key={tier.id} className="py-3 px-1 md:px-2 text-center align-middle">
                               <div className="flex justify-center">

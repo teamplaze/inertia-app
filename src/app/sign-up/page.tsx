@@ -35,7 +35,7 @@ function SignUpForm() {
     posthog.capture("signup_page_viewed", {
       via_invite: !!inviteToken,
       user_type_intent: inviteToken ? "artist" : "fan",
-      signup_source: action === "checkout" ? "checkout_intent" : "standard",
+      signup_source: action === "checkout" ? "checkout_intent" : action === "waitlist" ? "waitlist_intent" : "standard",
       project_id: projectId ? Number(projectId) : null,
       tier_id: tierId ? Number(tierId) : null,
     });
@@ -77,21 +77,21 @@ function SignUpForm() {
           posthog.capture("user_signed_up", {
           user_type: inviteToken ? "artist" : "fan",
           via_invite: !!inviteToken,
-          signup_source: action === "checkout" ? "checkout_intent" : "standard",
+          signup_source: action === "checkout" ? "checkout_intent" : action === "waitlist" ? "waitlist_intent" : "standard",
           project_id: projectId ? Number(projectId) : null,
           tier_id: tierId ? Number(tierId) : null,
         });
           // --- CHECKOUT REDIRECT LOGIC ---
           if (action === 'checkout' && projectId && tierId) {
              setMessage('Redirecting to checkout...');
-             
+
              // Initiate Checkout immediately
              const checkoutRes = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tierId: Number(tierId), projectId: Number(projectId) }),
              });
-             
+
              if (checkoutRes.ok) {
                  const { sessionId } = await checkoutRes.json();
                  const stripe = await stripePromise;
@@ -106,7 +106,24 @@ function SignUpForm() {
                  return;
              }
           }
-    
+
+          // --- WAITLIST REDIRECT LOGIC ---
+          if (action === 'waitlist' && projectId) {
+            setMessage('Adding you to the waitlist...');
+            await fetch('/api/waitlist', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                projectId: Number(projectId),
+                tierId: tierId ? Number(tierId) : null,
+              }),
+            });
+            setTimeout(() => {
+              window.location.href = redirectUrl || '/';
+            }, 1000);
+            return;
+          }
+
           // --- STANDARD REDIRECT LOGIC ---
           setTimeout(() => {
              if (redirectUrl) {

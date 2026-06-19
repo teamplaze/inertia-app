@@ -17,7 +17,7 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
       .from('projects')
       .select(`
         *,
-        tiers (*),
+        tiers (*, perks:tier_perks(id, tier_id, label, category, is_exclusive, sort_order)),
         testimonials (*),
         budget_categories (
           *,
