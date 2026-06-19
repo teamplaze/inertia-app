@@ -236,6 +236,13 @@
   --accordion-text-trigger:    #ffffff;
   --accordion-text-content:    #ededed;
   --accordion-radius:          12px;
+
+  /* Alert tokens */
+  --alert-bg:             rgba(38, 44, 43, 0.15);
+  --alert-radius:         4px;
+  --alert-text-main:      #ffffff;
+  --alert-text-secondary: #ffffff;
+  --alert-icon-color:     #ededed;
 }
 
 .dark {
@@ -315,6 +322,13 @@
   --accordion-text-trigger:    #ffffff;
   --accordion-text-content:    #ededed;
   --accordion-radius:          12px;
+
+  /* Alert tokens */
+  --alert-bg:             rgba(38, 44, 43, 0.15);
+  --alert-radius:         4px;
+  --alert-text-main:      #ffffff;
+  --alert-text-secondary: #ffffff;
+  --alert-icon-color:     #ededed;
 }
 
 @utility bg-teal-spotlight-top {

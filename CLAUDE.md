@@ -83,7 +83,18 @@ designer for completion.
   until dependency is added
 
 ### Alert
-- Full spec not yet pulled — pending
+- No severity variants defined (info/success/warning/error) — 
+  all alerts look identical regardless of meaning. Confirm 
+  whether variants are needed or if single-variant is intentional.
+- No dismiss/close button defined — confirm whether alerts 
+  are dismissible
+- Background is rgba(38,44,43,0.15) at 15% opacity — very 
+  subtle on dark backgrounds. Confirm this is intentional.
+- Icon is fixed to timer glyph with boolean show/hide only — 
+  confirm whether icon should be swappable per usage context
+- Secondary text role unclear — right-aligned and semibold, 
+  may be intended as a CTA or action link rather than 
+  descriptive text. Confirm intended use.
 
 ### Badge
 - Full spec not yet pulled — pending
