@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, ArrowDown, Loader2 } from "lucide-react";
+import { Users, Star, Quote, Eye, MessageSquare, DollarSign, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import Image from "next/image";
 import BudgetBreakdown from "@/components/project/BudgetBreakdown";
 import type { Project, Tier } from "@/types";
@@ -17,7 +17,6 @@ import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
-import TierComparisonMatrix from "@/components/project/TierComparison";
 import { TierCard } from "@/components/project/TierCard";
 import FundingMeter from "@/components/project/FundingMeter";
 import { BRAND } from "@/lib/colors";
@@ -161,7 +160,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   // We use the presence of the donation_link as a flag to enable the donate card
   const hasDonationEnabled = true;
 
-  const visibleTiers = tiers.filter(tier => tier.name.toUpperCase() !== "GA");
   const activeTier = tiers.find(t => t.status === 'active');
 
   // Fall back to budget_categories for projects that predate the milestones feature
@@ -358,73 +356,12 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      <section id="fan-stories" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {displayedStories.map((testimonial) => (
-              <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-                <CardContent className="p-4">
-                  <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
-                  <div className="flex items-start gap-4 mb-4">
-                    {testimonial.profile_image_url && (
-                      <Image
-                        src={testimonial.profile_image_url}
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
-                      />
-                    )}
-                    <div className="flex-1">
-                        <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                        <p className="text-sm text-gray-300">{testimonial.location}</p>
-                    </div>
-                  </div>
-                  <p className="text-white leading-relaxed">{testimonial.story}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          {project.testimonials.length > 2 && (
-            <div className="flex justify-center pt-2">
-              <Button
-                onClick={() => setShowAllStories(!showAllStories)}
-                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-              >
-                {showAllStories ? (
-                  <>
-                    Show Less <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    Show More Stories <ChevronDown className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-        </div>
-      </section>
-
       <BudgetBreakdown milestones={budgetMilestones} colors={project.project_colors ?? undefined} />
 
       <section id="support-levels" className="mb-12">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Choose Your Support Level</h2>
           <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
-          {/* Scroll to Compare Perks Button */}
-          {visibleTiers.length > 1 && (
-            <div className="flex justify-center mt-6">
-              <Button 
-                onClick={() => scrollToSection("tier-comparison")}
-                className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-              >
-                Compare Perks <ArrowDown className="ml-2 w-4 h-4" />
-              </Button>
-            </div>
-          )}
         </div>
         {/* Single active tier + donate card — always 2 columns on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
@@ -544,9 +481,56 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      {/* === TIER COMPARISON MATRIX === */}
-      {visibleTiers.length > 1 && (
-        <TierComparisonMatrix tiers={visibleTiers} />
+      {project.testimonials && project.testimonials.length > 0 && (
+        <section id="fan-stories" className="mb-12">
+          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {displayedStories.map((testimonial) => (
+                <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
+                  <CardContent className="p-4">
+                    <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
+                    <div className="flex items-start gap-4 mb-4">
+                      {testimonial.profile_image_url && (
+                        <Image
+                          src={testimonial.profile_image_url}
+                          alt={testimonial.name}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
+                        />
+                      )}
+                      <div className="flex-1">
+                          <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                          <p className="text-sm text-gray-300">{testimonial.location}</p>
+                      </div>
+                    </div>
+                    <p className="text-white leading-relaxed">{testimonial.story}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {project.testimonials.length > 2 && (
+              <div className="flex justify-center pt-2">
+                <Button
+                  onClick={() => setShowAllStories(!showAllStories)}
+                  className="bg-brand-copper hover:bg-brand-copper/90 text-white"
+                >
+                  {showAllStories ? (
+                    <>
+                      Show Less <ChevronUp className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      Show More Stories <ChevronDown className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </div>
+        </section>
       )}
 
       <FAQSection />
