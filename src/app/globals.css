@@ -218,6 +218,16 @@
   --interactive-text-primary:     #000000;
   --interactive-text-secondary:   #ffffff;
   --interactive-text-disabled:    #3f4948;
+
+  /* Input tokens */
+  --input-bg-default:           #0f1111;
+  --input-bg-active:            #000000;
+  --input-border-default:       #3f4948;
+  --input-border-active:        #ffffff;
+  --input-border-focus:         #bfdcd9;
+  --input-text-primary:         #ffffff;
+  --input-text-placeholder:     #ededed;
+  --input-text-muted:           #c3c7c7;
 }
 
 .dark {
@@ -279,6 +289,16 @@
   --interactive-text-primary:     #000000;
   --interactive-text-secondary:   #ffffff;
   --interactive-text-disabled:    #3f4948;
+
+  /* Input tokens */
+  --input-bg-default:           #0f1111;
+  --input-bg-active:            #000000;
+  --input-border-default:       #3f4948;
+  --input-border-active:        #ffffff;
+  --input-border-focus:         #bfdcd9;
+  --input-text-primary:         #ffffff;
+  --input-text-placeholder:     #ededed;
+  --input-text-muted:           #c3c7c7;
 }
 
 @utility bg-teal-spotlight-top {

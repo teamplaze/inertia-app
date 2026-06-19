@@ -7,7 +7,23 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        // Layout & geometry
+        "flex w-full min-w-0 rounded-none min-h-[180px] resize-y",
+        // Spacing
+        "p-[--spacing-3]",
+        // Typography
+        "font-body font-normal text-[length:--font-size-body-base] leading-[1.5] tracking-normal",
+        // Default surface
+        "bg-[--input-bg-default] border border-[--input-border-default]",
+        // Default text / placeholder
+        "text-[--input-text-placeholder] placeholder:text-[--input-text-placeholder]",
+        // Active state
+        "focus:bg-[--input-bg-active] focus:border-[--input-border-active] focus:text-[--input-text-primary]",
+        // Keyboard focus ring
+        "focus-visible:border-2 focus-visible:border-[--input-border-focus] focus-visible:outline-none focus-visible:ring-0",
+        // Misc
+        "transition-[color,border-color,background-color] duration-150",
+        "disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       {...props}
