@@ -279,6 +279,19 @@
   --callout-radius:     12px;
   --callout-padding:    20px;
   --callout-gap:        20px;
+
+  /* Card tokens */
+  --card-bg:             #0f1111;
+  --card-radius:         12px;
+  --card-border-default: #3f4948;
+  --card-border-accent:  var(--color-project-accent, var(--color-bg-teal));
+  --card-text-primary:   #ffffff;
+  --card-text-secondary: #ededed;
+  --card-text-muted:     #c3c7c7;
+  --card-icon-accent:    var(--color-project-accent, var(--color-bg-teal));
+  --card-icon-muted:     #c3c7c7;
+  --card-padding-base:   20px;
+  --card-padding-large:  32px;
 }
 
 .dark {
@@ -400,6 +413,19 @@
   --callout-radius:     12px;
   --callout-padding:    20px;
   --callout-gap:        20px;
+
+  /* Card tokens */
+  --card-bg:             #0f1111;
+  --card-radius:         12px;
+  --card-border-default: #3f4948;
+  --card-border-accent:  var(--color-project-accent, var(--color-bg-teal));
+  --card-text-primary:   #ffffff;
+  --card-text-secondary: #ededed;
+  --card-text-muted:     #c3c7c7;
+  --card-icon-accent:    var(--color-project-accent, var(--color-bg-teal));
+  --card-icon-muted:     #c3c7c7;
+  --card-padding-base:   20px;
+  --card-padding-large:  32px;
 }
 
 @utility bg-teal-spotlight-top {
