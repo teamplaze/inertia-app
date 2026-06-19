@@ -60,7 +60,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Project not found' }, { status: 404 });
       }
 
-      returnPath = project.slug ? `/${project.slug}` : `/projects/${targetProjectId}`;
+      returnPath = `/${project.slug}`;
 
       const baseAmountCents = Math.round(donationAmount * 100);
 
@@ -134,7 +134,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Project not found' }, { status: 404 });
       }
 
-      returnPath = project.slug ? `/${project.slug}` : `/projects/${targetProjectId}`;
+      returnPath = `/${project.slug}`;
 
       const tierPriceCents = Math.round(Number(tier.price) * 100);
       const grossTotal = Math.round((tierPriceCents + fixedFee) / (1 - taxRate));
