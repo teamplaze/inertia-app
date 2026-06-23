@@ -292,6 +292,19 @@
   --card-icon-muted:     #c3c7c7;
   --card-padding-base:   20px;
   --card-padding-large:  32px;
+
+  /* Milestone tokens */
+  --milestone-bg:              #0f1111;
+  --milestone-border-default:  #3f4948;
+  --milestone-border-expanded: #ffffff;
+  --milestone-border-active:   var(--color-project-accent, var(--color-bg-teal));
+  --milestone-badge-completed: var(--color-project-accent, var(--color-bg-teal));
+  --milestone-badge-active:    transparent;
+  --milestone-badge-locked:    transparent;
+  --milestone-text-active:     #ffffff;
+  --milestone-text-locked:     #c3c7c7;
+  --milestone-text-content:    #c3c7c7;
+  --milestone-separator:       #3f4948;
 }
 
 .dark {
@@ -426,6 +439,19 @@
   --card-icon-muted:     #c3c7c7;
   --card-padding-base:   20px;
   --card-padding-large:  32px;
+
+  /* Milestone tokens */
+  --milestone-bg:              #0f1111;
+  --milestone-border-default:  #3f4948;
+  --milestone-border-expanded: #ffffff;
+  --milestone-border-active:   var(--color-project-accent, var(--color-bg-teal));
+  --milestone-badge-completed: var(--color-project-accent, var(--color-bg-teal));
+  --milestone-badge-active:    transparent;
+  --milestone-badge-locked:    transparent;
+  --milestone-text-active:     #ffffff;
+  --milestone-text-locked:     #c3c7c7;
+  --milestone-text-content:    #c3c7c7;
+  --milestone-separator:       #3f4948;
 }
 
 @utility bg-teal-spotlight-top {

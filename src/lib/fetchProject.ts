@@ -14,6 +14,7 @@ const PROJECT_SELECT = `
     id,
     title,
     sort_order,
+    description,
     budget_line_items!milestone_id (
       id,
       name,

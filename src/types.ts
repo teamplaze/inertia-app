@@ -41,6 +41,7 @@ export type ProjectMilestone = {
   id: number;
   title: string;
   sort_order: number;
+  description?: string | null;
   budget_line_items: BudgetLineItem[];
 };
 
