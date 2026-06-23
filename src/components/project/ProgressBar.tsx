@@ -25,7 +25,7 @@ export function ProgressBar({
     <div
       className={cn(
         "flex flex-col w-full",
-        mobile ? "gap-[--spacing-4]" : "gap-[--spacing-5]",
+        mobile ? "gap-[--spacing-4]" : "gap-[--spacing-6]",
         className
       )}
     >
@@ -73,7 +73,7 @@ export function ProgressBar({
 
       {/* Stats row */}
       {showDetails && (
-        <div className="flex items-center gap-[--spacing-4]">
+        <div className="flex items-center justify-between w-full">
           {percentFunded !== undefined && (
             <div className="flex items-center gap-[4px]">
               <span

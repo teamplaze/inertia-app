@@ -17,8 +17,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
 import { TierCard } from "@/components/project/TierCard";
-import FundingMeter from "@/components/project/FundingMeter";
+import { MilestonesList } from '@/components/project/MilestonesList'
+import { PerksSection } from '@/components/project/PerksSection'
+import { ProgressBar } from '@/components/project/ProgressBar'
 import { BRAND } from "@/lib/colors";
+import { cn } from "@/lib/utils";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 
 // Set to true to restore the Previews section (audio/video previews)
@@ -178,7 +181,12 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     : project.testimonials.slice(0, 2);
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl">
+    <main
+      className="container mx-auto px-4 py-8 max-w-6xl"
+      style={{
+        '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
+      } as React.CSSProperties}
+    >
       {/* Project Header */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-start">
         <div className="space-y-6">
@@ -235,10 +243,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               </span>
               <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
             </div>
-            <FundingMeter 
-              currentFunds={project.current_funding} 
-              totalGoal={project.funding_goal} 
-              milestones={project.project_milestones} 
+            <ProgressBar
+              value={fundingPercentage}
+              amountRaised={`$${project.current_funding.toLocaleString()}`}
+              goal={`of $${project.funding_goal.toLocaleString()}`}
+              percentFunded={fundingPercentage}
+              backerCount={project.backer_count ?? 0}
+              showDetails={true}
             />
             <div className="flex justify-between text-sm text-gray-400">
               <span>{fundingPercentage}% funded</span>
@@ -262,6 +273,18 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               {PREVIEWS_ENABLED && (
                 <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
                   <Eye className="w-4 h-4 mr-2" /> Previews
+                </Button>
+              )}
+              {project.project_milestones && project.project_milestones.length > 0 && (
+                <Button
+                  onClick={() => scrollToSection('milestones')}
+                  size="sm"
+                  variant="ghost"
+                >
+                  <span className="material-symbols-rounded w-4 h-4 mr-2 text-[16px] leading-none">
+                    flag
+                  </span>
+                  Milestones
                 </Button>
               )}
               <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
@@ -288,6 +311,41 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </CardContent>
         </Card>
       </section>
+
+      {project.project_milestones && project.project_milestones.length > 0 && (
+        <section id="milestones" className="mb-12">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className={cn(
+                "font-heading font-medium",
+                "text-[length:--font-size-h2]",
+                "leading-[1.2] text-white"
+              )}>
+                Fundraising milestones
+              </h2>
+              <p className={cn(
+                "font-body font-normal mt-2",
+                "text-[length:--font-size-body-base]",
+                "leading-[1.5] text-[--color-text-300]"
+              )}>
+                Unlock our budget milestones by contributing to the project!
+              </p>
+            </div>
+            <Button
+              variant="border"
+              size="sm"
+              onClick={() => scrollToSection('support-levels')}
+            >
+              Support {project.artist_name}
+            </Button>
+          </div>
+
+          <MilestonesList
+            milestones={project.project_milestones}
+            currentFunding={project.current_funding}
+          />
+        </section>
+      )}
 
       {/* === PREVIEWS SECTION === */}
       {PREVIEWS_ENABLED && (
@@ -514,6 +572,16 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               </div>
             )}
           </div>
+        </section>
+      )}
+
+      {tiers && tiers.length > 0 && (
+        <section id="perks" className="mb-12">
+          <PerksSection
+            tiers={tiers}
+            artistName={project.artist_name}
+            onSupportClick={() => scrollToSection('support-levels')}
+          />
         </section>
       )}
 
