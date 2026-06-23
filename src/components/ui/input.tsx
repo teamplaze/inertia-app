@@ -7,7 +7,7 @@ const inputVariants = cva(
     // Layout & geometry
     "flex w-full min-w-0 rounded-none",
     // Spacing
-    "p-[--spacing-3]",
+    "p-[var(--spacing-3)]",
     // Typography
     "font-body font-normal text-[length:--font-size-body-base] leading-[1.5] tracking-normal",
     // Default surface

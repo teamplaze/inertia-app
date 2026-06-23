@@ -21,10 +21,10 @@ export function ArtistCard({
     <div
       className={cn(
         "relative overflow-hidden flex flex-col justify-end",
-        "rounded-[--card-radius]",
+        "rounded-[var(--card-radius)]",
         mobile ? "w-[300px] h-[300px]" : "w-[400px] h-[400px]",
-        "p-[--spacing-6]",
-        "gap-[--spacing-3]",
+        "p-[var(--spacing-6)]",
+        "gap-[var(--spacing-3)]",
         className
       )}
     >
@@ -41,7 +41,7 @@ export function ArtistCard({
         }}
       />
 
-      <div className="relative z-10 flex flex-col gap-[--spacing-3]">
+      <div className="relative z-10 flex flex-col gap-[var(--spacing-3)]">
         <span
           className={cn(
             "font-heading font-medium leading-[1.2]",

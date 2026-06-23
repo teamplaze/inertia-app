@@ -85,8 +85,8 @@ export function PerksSection({
   return (
     <section className={cn("w-full", className)}>
       {/* Section header */}
-      <div className="flex items-start justify-between mb-[--spacing-8]">
-        <div className="flex flex-col gap-[--spacing-2]">
+      <div className="flex items-start justify-between mb-[var(--spacing-8)]">
+        <div className="flex flex-col gap-[var(--spacing-2)]">
           <h2
             className={cn(
               "font-heading font-medium",
@@ -109,7 +109,7 @@ export function PerksSection({
           </p>
         </div>
 
-        <div className="flex items-center gap-[--spacing-4] shrink-0">
+        <div className="flex items-center gap-[var(--spacing-4)] shrink-0">
           <Button variant="border" size="sm">
             Read our FAQs
           </Button>
@@ -120,16 +120,16 @@ export function PerksSection({
       </div>
 
       {/* 2-column perks grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[--spacing-10]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-10)]">
         {allCategories.map((category) => {
           const config = CATEGORY_CONFIG[category]
           if (!config) return null
 
           return (
-            <div key={category} className="flex items-start gap-[--spacing-5]">
+            <div key={category} className="flex items-start gap-[var(--spacing-5)]">
               {/* Icon badge */}
               <div
-                className="shrink-0 flex items-center justify-center rounded-[100px] p-[--spacing-3]"
+                className="shrink-0 flex items-center justify-center rounded-[100px] p-[var(--spacing-3)]"
                 style={{ background: "var(--perks-icon-bg)" }}
               >
                 <span
@@ -142,7 +142,7 @@ export function PerksSection({
               </div>
 
               {/* Text */}
-              <div className="flex flex-col gap-[--spacing-2]">
+              <div className="flex flex-col gap-[var(--spacing-2)]">
                 <span
                   className={cn(
                     "font-heading font-medium",
@@ -175,7 +175,7 @@ export function PerksSection({
           "font-body font-normal",
           "text-[14px] leading-[1.5]",
           "text-[--perks-label-sub]",
-          "mt-[--spacing-8]"
+          "mt-[var(--spacing-8)]"
         )}
       >
         *Limited availability

@@ -19,15 +19,15 @@ export function TextCallout({
     <div
       className={cn(
         "flex items-start",
-        "rounded-[--callout-radius]",
-        "p-[--callout-padding]",
+        "rounded-[var(--callout-radius)]",
+        "p-[var(--callout-padding)]",
         className
       )}
       style={{ gap: "var(--callout-gap)" }}
     >
       {icon && showIcon && (
         <div
-          className="shrink-0 flex items-center justify-center rounded-[100px] p-[--spacing-3]"
+          className="shrink-0 flex items-center justify-center rounded-[100px] p-[var(--spacing-3)]"
           style={{ background: "var(--callout-icon-bg)" }}
         >
           <span

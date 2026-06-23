@@ -75,17 +75,17 @@ const buttonVariants = cva(
       size: {
         sm: [
           "text-[--font-size-btn-small]",
-          "px-[--spacing-3] py-[--spacing-2]",
+          "px-[var(--spacing-3)] py-[var(--spacing-2)]",
         ].join(" "),
 
         default: [
           "text-[--font-size-btn-base]",
-          "px-[--spacing-5] py-[--spacing-3]",
+          "px-[var(--spacing-5)] py-[var(--spacing-3)]",
         ].join(" "),
 
         lg: [
           "text-[--font-size-btn-large]",
-          "px-[--spacing-5] py-[--spacing-4]",
+          "px-[var(--spacing-5)] py-[var(--spacing-4)]",
         ].join(" "),
 
         icon: "h-9 w-9",

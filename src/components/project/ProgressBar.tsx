@@ -25,7 +25,7 @@ export function ProgressBar({
     <div
       className={cn(
         "flex flex-col w-full",
-        mobile ? "gap-[--spacing-4]" : "gap-[--spacing-6]",
+        mobile ? "gap-[var(--spacing-4)]" : "gap-[var(--spacing-6)]",
         className
       )}
     >

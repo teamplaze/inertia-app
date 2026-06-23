@@ -21,9 +21,9 @@ export function TestimonialCard({
         "flex flex-col",
         "bg-[--card-bg]",
         "border border-[--card-border-accent]",
-        "rounded-[--card-radius]",
-        "px-[--card-padding-large] py-[--spacing-12]",
-        "gap-[--spacing-8]",
+        "rounded-[var(--card-radius)]",
+        "px-[var(--card-padding-large)] py-[var(--spacing-12)]",
+        "gap-[var(--spacing-8)]",
         mobile ? "w-[350px]" : "w-[501px]",
         className
       )}
@@ -38,9 +38,9 @@ export function TestimonialCard({
         {quote}
       </p>
 
-      <div className="flex items-center gap-[--spacing-4]">
+      <div className="flex items-center gap-[var(--spacing-4)]">
         <div
-          className="shrink-0 flex items-center justify-center rounded-[100px] p-[--spacing-3]"
+          className="shrink-0 flex items-center justify-center rounded-[100px] p-[var(--spacing-3)]"
           style={{ background: "var(--card-border-accent)" }}
         >
           <span

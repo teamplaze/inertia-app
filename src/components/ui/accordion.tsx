@@ -12,7 +12,7 @@ function Accordion({
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
-      className={cn("flex flex-col gap-[--spacing-3]", className)}
+      className={cn("flex flex-col gap-[var(--spacing-3)]", className)}
       {...props}
     />
   )
@@ -28,7 +28,7 @@ function AccordionItem({
       className={cn(
         "bg-[--accordion-bg]",
         "border border-[--accordion-border-default]",
-        "rounded-[--accordion-radius]",
+        "rounded-[var(--accordion-radius)]",
         "overflow-hidden",
         "transition-colors duration-150",
         "data-[state=open]:border-[--accordion-border-expanded]",
@@ -52,13 +52,13 @@ function AccordionTrigger({
           // Layout
           "flex flex-1 items-center justify-between w-full",
           // Spacing
-          "p-[--spacing-5]",
+          "p-[var(--spacing-5)]",
           // Typography — MADE Outer Sans 500, 18px
           "font-heading font-medium text-[length:--font-size-h6] leading-[1.2] tracking-normal",
           // Color
           "text-[--accordion-text-trigger]",
           // Gap between label and icon
-          "gap-[--spacing-4]",
+          "gap-[var(--spacing-4)]",
           // States
           "hover:opacity-90",
           "transition-all outline-none",
@@ -98,7 +98,7 @@ function AccordionContent({
           // Color
           "text-[--accordion-text-content]",
           // Spacing — 32px gap from trigger top, 20px sides and bottom
-          "px-[--spacing-5] pb-[--spacing-5] pt-[--spacing-8]",
+          "px-[var(--spacing-5)] pb-[var(--spacing-5)] pt-[var(--spacing-8)]",
           className
         )}
       >

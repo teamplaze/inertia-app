@@ -21,8 +21,8 @@ function Alert({
     <div
       className={cn(
         "flex items-center justify-between",
-        "px-[--spacing-3] py-[--spacing-2]",
-        "rounded-[--alert-radius]",
+        "px-[var(--spacing-3)] py-[var(--spacing-2)]",
+        "rounded-[var(--alert-radius)]",
         "bg-[--alert-bg]",
         mobile && "flex-col items-center gap-[2px]",
         className

@@ -314,7 +314,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
       {project.project_milestones && project.project_milestones.length > 0 && (
         <section id="milestones" className="mb-12">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)] md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className={cn(
                 "font-heading font-medium",
@@ -334,12 +334,22 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             <Button
               variant="border"
               size="sm"
+              className="w-full md:w-auto"
               onClick={() => scrollToSection('support-levels')}
             >
               Support {project.artist_name}
             </Button>
           </div>
 
+          <ProgressBar
+            value={fundingPercentage}
+            amountRaised={`$${project.current_funding.toLocaleString()}`}
+            goal={`of $${project.funding_goal.toLocaleString()}`}
+            percentFunded={fundingPercentage}
+            backerCount={project.backer_count ?? 0}
+            showDetails={true}
+            className="mb-[var(--spacing-8)]"
+          />
           <MilestonesList
             milestones={project.project_milestones}
             currentFunding={project.current_funding}

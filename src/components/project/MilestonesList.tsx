@@ -38,7 +38,9 @@ function getActiveFillPercent(
   index: number,
   currentFunding: number
 ): number {
-  const prevCumulativeGoal = index > 0 ? getCumulativeGoal(milestones, index - 1) : 0
+  const prevCumulativeGoal = index > 0
+    ? getCumulativeGoal(milestones, index - 1)
+    : 0
   const milestoneGoal = getMilestoneGoal(milestones[index])
   if (milestoneGoal === 0) return 0
   const progress = currentFunding - prevCumulativeGoal
@@ -56,75 +58,58 @@ interface MilestoneBadgeProps {
 }
 
 function MilestoneBadge({ number, state, fillPercent = 0 }: MilestoneBadgeProps) {
-  const strokeWidth = 2
-  const radius = 15.9
-
-  return (
-    <div className="relative shrink-0 w-[48px] h-[48px] flex items-center justify-center">
-      <svg
-        viewBox="0 0 36 36"
-        className="absolute inset-0 w-full h-full -rotate-90"
-        aria-hidden="true"
+  if (state === "active") {
+    return (
+      <div
+        className="shrink-0 flex items-center justify-center rounded-[100px] relative w-[27px] h-[27px] md:w-[43px] md:h-[43px]"
+        style={{
+          background: `conic-gradient(var(--color-project-accent, var(--color-bg-teal)) ${fillPercent}%, var(--milestone-text-locked) ${fillPercent}%)`,
+          opacity: 1,
+        }}
       >
-        {/* Track ring */}
-        <circle
-          cx="18"
-          cy="18"
-          r={radius}
-          fill="none"
-          stroke={
-            state === "completed"
-              ? "var(--milestone-badge-completed)"
-              : state === "active"
-              ? "var(--milestone-border-active)"
-              : "var(--milestone-text-locked)"
-          }
-          strokeWidth={strokeWidth}
-          opacity={state === "locked" ? 0.4 : 1}
-        />
-
-        {/* Progress arc — active only */}
-        {state === "active" && fillPercent > 0 && (
-          <circle
-            cx="18"
-            cy="18"
-            r={radius}
-            fill="none"
-            stroke="var(--milestone-border-active)"
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${fillPercent} ${100 - fillPercent}`}
-            strokeLinecap="round"
-          />
-        )}
-
-        {/* Completed fill */}
-        {state === "completed" && (
-          <circle cx="18" cy="18" r={radius} fill="var(--milestone-badge-completed)" />
-        )}
-      </svg>
-
-      <div className="relative z-10 flex items-center justify-center">
-        {state === "completed" ? (
+        <div
+          className="absolute rounded-[100px] flex items-center justify-center"
+          style={{ width: "clamp(21px, 5vw, 37px)", height: "clamp(21px, 5vw, 37px)", background: "var(--milestone-bg)" }}
+        >
           <span
-            className="material-symbols-rounded text-[19px] leading-none"
-            style={{ color: "var(--interactive-text-primary)" }}
-            aria-hidden="true"
-          >
-            check
-          </span>
-        ) : (
-          <span
-            className={cn(
-              "font-heading font-medium text-[18px] leading-none",
-              state === "active"
-                ? "text-[--milestone-text-active]"
-                : "text-[--milestone-text-locked]"
-            )}
+            className="font-heading font-medium leading-none text-[14px] md:text-[18px] text-[--milestone-text-active]"
           >
             {number}
           </span>
-        )}
+        </div>
       </div>
+    )
+  }
+
+  return (
+    <div
+      className="shrink-0 flex items-center justify-center rounded-[100px] w-[27px] h-[27px] md:w-[43px] md:h-[43px]"
+      style={{
+        padding: "12px",
+        background: state === "completed" ? "var(--color-project-accent, var(--color-bg-teal))" : "transparent",
+        border: state === "completed" ? "none" : "2px solid var(--milestone-text-locked)",
+        opacity: state === "locked" ? 0.4 : 1,
+      }}
+    >
+      {state === "completed" ? (
+        <span
+          className="material-symbols-rounded leading-none"
+          style={{ fontSize: "clamp(14px, 3vw, 19px)", color: "var(--interactive-text-primary)" }}
+          aria-hidden="true"
+        >
+          check
+        </span>
+      ) : (
+        <span
+          className={cn(
+            "font-heading font-medium leading-none",
+            "text-[14px] md:text-[18px]",
+            "text-[--milestone-text-locked]",
+          )}
+        >
+          {number}
+        </span>
+      )}
     </div>
   )
 }
@@ -165,10 +150,8 @@ function MilestoneRow({
         "overflow-hidden",
         "transition-colors duration-150",
         isExpanded
-          ? "border-[--milestone-border-expanded]"
-          : state === "active"
-          ? "border-[--milestone-border-active]"
-          : "border-[--milestone-border-default]"
+          ? "border-[var(--milestone-border-expanded)]"
+          : "border-[var(--milestone-border-default)]"
       )}
     >
       {/* Trigger row */}
@@ -176,52 +159,60 @@ function MilestoneRow({
         onClick={onToggle}
         className={cn(
           "flex items-center justify-between",
-          "w-full p-[--spacing-5]",
-          "gap-[--spacing-8]",
+          "w-full",
+          "p-[var(--spacing-4)]",
+          "md:px-[var(--spacing-5)] md:py-[var(--spacing-5)]",
           "focus-visible:outline-none",
           "focus-visible:ring-2",
           "focus-visible:ring-[--color-border-focus]",
-          "focus-visible:ring-inset"
+          "focus-visible:ring-inset",
         )}
         aria-expanded={isExpanded}
       >
-        {/* Left: badge + text */}
-        <div className="flex items-center gap-[--spacing-4]">
+        {/* Left group: badge + title */}
+        <div className={cn(
+          "flex items-center min-w-0",
+          "gap-[var(--spacing-3)]",
+          "md:gap-[var(--spacing-4)]",
+          "flex-1",
+        )}>
           <MilestoneBadge number={number} state={state} fillPercent={fillPercent} />
-          <div className="flex flex-col gap-[4px] text-left">
+          <div className="flex flex-col gap-[4px] text-left min-w-0 flex-1">
             <span
               className={cn(
                 "font-heading font-medium",
-                "text-[length:--font-size-h6]",
+                "text-[16px] md:text-[length:--font-size-h6]",
                 "leading-[1.2]",
-                titleColor
+                titleColor,
               )}
             >
               {milestone.title}
             </span>
-            {milestone.budget_line_items.length > 0 && (
-              <span
-                className={cn(
-                  "font-body font-normal",
-                  "text-[length:--font-size-body-base]",
-                  "leading-[1.5]",
-                  "text-[--milestone-text-locked]"
-                )}
-              >
-                {milestone.budget_line_items.map((item) => item.name).join(", ")}
-              </span>
-            )}
+
+            {/* Subhead — desktop only in trigger row */}
+            <span
+              className={cn(
+                "font-body font-normal hidden md:block",
+                "text-[length:--font-size-body-base]",
+                "leading-[1.5]",
+                "text-[--milestone-text-locked]",
+              )}
+            >
+              {milestone.budget_line_items.map((item) => item.name).join(", ")}
+            </span>
           </div>
         </div>
 
-        {/* Right: amount + toggle icon */}
-        <div className="flex items-center gap-[--spacing-3] shrink-0">
+        {/* Right group: amount (desktop only) + icon */}
+        <div className="flex items-center gap-[var(--spacing-3)] shrink-0">
+          {/* Amount — hidden on mobile, visible on desktop */}
           <span
             className={cn(
-              "font-heading font-medium",
+              "font-heading font-medium hidden md:block",
               "text-[length:--font-size-h6]",
-              "leading-[1.2]",
-              amountColor
+              "leading-[1.2] text-right",
+              "w-[120px]",
+              amountColor,
             )}
           >
             ${goalAmount.toLocaleString()}
@@ -236,22 +227,58 @@ function MilestoneRow({
       </button>
 
       {/* Expanded content */}
-      {isExpanded && milestone.description && (
-        <div className={cn("px-[--spacing-5]", "pb-[--spacing-5]")}>
+      {isExpanded && (
+        <div className={cn(
+          "px-[var(--spacing-4)] pb-[var(--spacing-4)]",
+          "md:px-[var(--spacing-5)] md:pb-[var(--spacing-5)]",
+        )}>
+          {/* Mobile only: subhead + amount row */}
+          <div className={cn(
+            "flex items-center justify-between",
+            "gap-[var(--spacing-4)]",
+            "mb-[var(--spacing-3)]",
+            "md:hidden",
+          )}>
+            <span
+              className={cn(
+                "font-body font-normal flex-1",
+                "text-[16px] leading-[1.5]",
+                "text-[--milestone-text-locked]",
+              )}
+            >
+              {milestone.budget_line_items.map((item) => item.name).join(", ")}
+            </span>
+            <span
+              className={cn(
+                "font-heading font-medium shrink-0",
+                "text-[16px] leading-[1.2]",
+                "w-[100px] text-right",
+                amountColor,
+              )}
+            >
+              ${goalAmount.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Separator */}
           <div
-            className="w-full border-t mb-[--spacing-4]"
+            className="w-full border-t mb-[var(--spacing-4)]"
             style={{ borderColor: "var(--milestone-separator)" }}
           />
-          <p
-            className={cn(
-              "font-body font-normal",
-              "text-[length:--font-size-body-base]",
-              "leading-[1.5]",
-              "text-[--milestone-text-content]"
-            )}
-          >
-            {milestone.description}
-          </p>
+
+          {/* Description */}
+          {milestone.description && (
+            <p
+              className={cn(
+                "font-body font-normal",
+                "text-[14px] md:text-[length:--font-size-body-base]",
+                "leading-[1.5]",
+                "text-[--milestone-text-content]",
+              )}
+            >
+              {milestone.description}
+            </p>
+          )}
         </div>
       )}
     </div>
@@ -289,11 +316,12 @@ export function MilestonesList({
   const sorted = [...milestones].sort((a, b) => a.sort_order - b.sort_order)
 
   return (
-    <div className={cn("flex flex-col gap-[--spacing-3]", className)}>
+    <div className={cn("flex flex-col gap-[var(--spacing-3)]", className)}>
       {sorted.map((milestone, index) => {
         const state = getMilestoneState(sorted, index, currentFunding)
-        const fillPercent =
-          state === "active" ? getActiveFillPercent(sorted, index, currentFunding) : 0
+        const fillPercent = state === "active"
+          ? getActiveFillPercent(sorted, index, currentFunding)
+          : 0
         const goalAmount = getMilestoneGoal(milestone)
 
         return (

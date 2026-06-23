@@ -28,9 +28,9 @@ export function TextCard({
         "bg-[--card-bg]",
         "border",
         isInertia ? "border-[--card-border-accent]" : "border-[--card-border-default]",
-        "rounded-[--card-radius]",
-        "px-[--card-padding-base] py-[--card-padding-large]",
-        "gap-[--spacing-8]",
+        "rounded-[var(--card-radius)]",
+        "px-[var(--card-padding-base)] py-[var(--card-padding-large)]",
+        "gap-[var(--spacing-8)]",
         mobile ? "w-[350px]" : "w-[501px]",
         className
       )}
@@ -45,7 +45,7 @@ export function TextCard({
         {heading}
       </span>
 
-      <div className="flex flex-col gap-[--spacing-4]">
+      <div className="flex flex-col gap-[var(--spacing-4)]">
         <span
           className={cn(
             "font-body font-semibold leading-[1.5]",
@@ -56,9 +56,9 @@ export function TextCard({
           WHAT YOU GET
         </span>
 
-        <div className="flex flex-col gap-[--spacing-4]">
+        <div className="flex flex-col gap-[var(--spacing-4)]">
           {bullets.map((bullet, i) => (
-            <div key={i} className="flex items-start gap-[--spacing-2]">
+            <div key={i} className="flex items-start gap-[var(--spacing-2)]">
               <span
                 className="material-symbols-rounded text-[24px] leading-none shrink-0"
                 style={{
