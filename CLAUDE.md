@@ -40,6 +40,58 @@ Surfaces requiring manual update when specs arrive:
 - FundingMeter.tsx — track/fill/milestone hardcoded (~8 lines)
 - Auth pages (login, sign-up, forgot, reset) — ~4 lines each
 
+## Designer Requests — Net New Components Needed
+
+These UI patterns appear across multiple pages but have 
+no component spec in the UI kit. Each needs a Figma 
+spec before implementation.
+
+### High Priority (blocks multiple pages)
+1. AuthCard — branded container used on all auth pages
+   (login, sign-up, forgot-password, reset-password, network)
+   Current: inline BRAND.teal bg + BRAND.copper border
+   Needed: reusable wrapper component with spec
+
+2. Project Grid Card — homepage + browse surfaces
+   Shows: project image, title, artist name, 
+   funding progress bar, CTA button
+   Different from ArtistCard and TextCard
+
+3. Hero Section — homepage + project page
+   Shows: background treatment, heading, subtext, CTAs
+   Needs: desktop + mobile spec
+
+4. Form Feedback (inline error/success) — all forms
+   Current: ad hoc text-red-400 / text-green-300
+   Needed: Input error state + form-level message component
+   Note: already flagged in Designer Feedback Required
+
+### Medium Priority
+5. Stats Card — artist dashboard
+   Shows: large metric number + label, repeated 4+ times
+   Needed: desktop + mobile spec
+
+6. Status Badge — semantic variants
+   Current Badge has default + highlight only
+   Needed: success, warning, error, pending variants
+
+7. Success/Confirmation Card — /success page
+   Shows: icon + heading + body + CTA
+   Needed: spec for post-action confirmation state
+
+8. Empty State — account + dashboard surfaces
+   Shows: icon + heading + subtext + optional CTA
+   Needed: spec
+
+### Low Priority
+9. Copy Button — admin invite page
+   clipboard copy with icon swap (Copy → Check)
+   Could self-implement without spec
+
+10. Divider — artist dashboard
+    Horizontal/vertical separator rule
+    Could self-implement without spec
+
 ## Designer Feedback Required
 
 These items are missing from the UI kit and need to be 
