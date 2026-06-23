@@ -305,6 +305,14 @@
   --milestone-text-locked:     #c3c7c7;
   --milestone-text-content:    #c3c7c7;
   --milestone-separator:       #3f4948;
+
+  /* Perks tokens */
+  --perks-icon-bg:    var(--color-project-accent, var(--color-bg-teal));
+  --perks-icon-color: #000000;
+  --perks-heading:    #ffffff;
+  --perks-body:       #ededed;
+  --perks-label:      #ffffff;
+  --perks-label-sub:  #c3c7c7;
 }
 
 .dark {
@@ -452,6 +460,14 @@
   --milestone-text-locked:     #c3c7c7;
   --milestone-text-content:    #c3c7c7;
   --milestone-separator:       #3f4948;
+
+  /* Perks tokens */
+  --perks-icon-bg:    var(--color-project-accent, var(--color-bg-teal));
+  --perks-icon-color: #000000;
+  --perks-heading:    #ffffff;
+  --perks-body:       #ededed;
+  --perks-label:      #ffffff;
+  --perks-label-sub:  #c3c7c7;
 }
 
 @utility bg-teal-spotlight-top {
