@@ -313,6 +313,17 @@
   --perks-body:       #ededed;
   --perks-label:      #ffffff;
   --perks-label-sub:  #c3c7c7;
+
+  /* Hero tokens */
+  --hero-text-tag:        #ededed;
+  --hero-text-name:       #ffffff;
+  --hero-text-desc:       #ededed;
+  --hero-text-goal:       #c3c7c7;
+  --hero-text-amount:     #ffffff;
+  --hero-track-bg:        rgba(255, 255, 255, 0.2);
+  --hero-fill:            var(--color-project-accent, var(--color-bg-teal));
+  --hero-track-height:    8px;
+  --hero-track-radius:    100px;
 }
 
 .dark {
@@ -468,6 +479,17 @@
   --perks-body:       #ededed;
   --perks-label:      #ffffff;
   --perks-label-sub:  #c3c7c7;
+
+  /* Hero tokens */
+  --hero-text-tag:        #ededed;
+  --hero-text-name:       #ffffff;
+  --hero-text-desc:       #ededed;
+  --hero-text-goal:       #c3c7c7;
+  --hero-text-amount:     #ffffff;
+  --hero-track-bg:        rgba(255, 255, 255, 0.2);
+  --hero-fill:            var(--color-project-accent, var(--color-bg-teal));
+  --hero-track-height:    8px;
+  --hero-track-radius:    100px;
 }
 
 @utility bg-teal-spotlight-top {

@@ -4,22 +4,21 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, Eye, MessageSquare, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Quote, Heart, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import Image from "next/image";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
 import { TierCard } from "@/components/project/TierCard";
 import { MilestonesList } from '@/components/project/MilestonesList'
 import { PerksSection } from '@/components/project/PerksSection'
 import { ProgressBar } from '@/components/project/ProgressBar'
+import { ProjectHero } from '@/components/project/ProjectHero'
 import { BRAND } from "@/lib/colors";
 import { cn } from "@/lib/utils";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
@@ -181,123 +180,30 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     : project.testimonials.slice(0, 2);
 
   return (
-    <main
-      className="container mx-auto px-4 py-8 max-w-6xl"
-      style={{
-        '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
-      } as React.CSSProperties}
-    >
-      {/* Project Header */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-start">
-        <div className="space-y-6">
-          <Image
-            src={project.project_image_url || "/placeholder.svg"}
-            alt={project.project_title}
-            width={600}
-            height={600}
-            className="w-full max-w-md mx-auto aspect-square object-cover rounded-xl shadow-2xl border border-gray-700"
-          />
-        </div>
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between items-start">
-              <Badge
-                variant={project.status === "Completed" ? "secondary" : "default"}
-                className="mb-4 bg-gray-600 text-white"
-              >
-                {project.status}
-              </Badge>
-
-              {/* --- ARTIST DASHBOARD BUTTON (Conditional) --- */}
-              {isProjectMember && (
-                <Link href={`/artist/dashboard?projectId=${project.id}`}>
-                    <Button className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                        <LayoutDashboard className="w-4 h-4 mr-2" />
-                        Project Results
-                    </Button>
-                </Link>
-              )}
-            </div>
-
-            <h1 className="text-4xl font-bold mb-2" style={{ color: BRAND.teal }}>
-              {project.project_title}
-            </h1>
-            <div className="flex items-start gap-3 mb-6">
-              <Image
-                src={project.artist_profile_image_url || "/placeholder.svg"}
-                alt={project.artist_name}
-                width={48}
-                height={48}
-                className="w-12 h-12 rounded-xl object-cover border-2 border-gray-600 shrink-0"
-              />
-              <div>
-                <p className="font-semibold text-white">{project.artist_name}</p>
-                <p className="text-sm text-gray-400">{project.artist_bio}</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold" style={{ color: BRAND.green }}>
-                ${project.current_funding.toLocaleString()}
-              </span>
-              <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
-            </div>
-            <ProgressBar
-              value={fundingPercentage}
-              amountRaised={`$${project.current_funding.toLocaleString()}`}
-              goal={`of $${project.funding_goal.toLocaleString()}`}
-              percentFunded={fundingPercentage}
-              backerCount={project.backer_count ?? 0}
-              showDetails={true}
-            />
-            <div className="flex justify-between text-sm text-gray-400">
-              <span>{fundingPercentage}% funded</span>
-              <span className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                {project.backer_count} backers
-              </span>
-            </div>
-
-            <Button
-              onClick={() => scrollToSection("support-levels")}
-              className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white text-lg font-bold py-6 animate-pulse"
-            >
-              Buy Now <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
-              <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <User className="w-4 h-4 mr-2" /> From Artist
-              </Button>
-              {PREVIEWS_ENABLED && (
-                <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                  <Eye className="w-4 h-4 mr-2" /> Previews
-                </Button>
-              )}
-              {project.project_milestones && project.project_milestones.length > 0 && (
-                <Button
-                  onClick={() => scrollToSection('milestones')}
-                  size="sm"
-                  variant="ghost"
-                >
-                  <span className="material-symbols-rounded w-4 h-4 mr-2 text-[16px] leading-none">
-                    flag
-                  </span>
-                  Milestones
-                </Button>
-              )}
-              <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
-              </Button>
-              <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <Star className="w-4 h-4 mr-2" /> Perks
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <>
+      <ProjectHero
+        artistName={project.artist_name}
+        projectTitle={project.status}
+        description={project.project_title}
+        artistImageUrl={project.project_image_url ?? ''}
+        currentFunding={project.current_funding}
+        fundingGoal={project.funding_goal}
+        fundingPercentage={fundingPercentage}
+        percentFunded={fundingPercentage}
+        backerCount={project.backer_count ?? 0}
+        showProjectResults={isProjectMember}
+        projectResultsHref={`/artist/dashboard?projectId=${project.id}`}
+        onSupportClick={() => scrollToSection('support-levels')}
+        style={{
+          '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
+        } as React.CSSProperties}
+      />
+      <main
+        className="container mx-auto px-4 py-8 max-w-6xl"
+        style={{
+          '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
+        } as React.CSSProperties}
+      >
       {/* === FROM THE ARTIST SECTION === */}
       <section id="from-artist" className="mb-12">
         <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>From the Artist</h2>
@@ -600,5 +506,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       
 
     </main>
+    </>
   );
 }
