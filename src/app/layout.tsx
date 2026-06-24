@@ -3,11 +3,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import localFont from 'next/font/local';
 import { Albert_Sans } from 'next/font/google';
-import Header from "@/components/Header";
+import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { PHProvider } from "./providers";
-import { BRAND } from "@/lib/colors";
-
 const madeOuterSans = localFont({
   src: [
     {
@@ -56,8 +54,10 @@ export default function RootLayout({
       className={`dark ${madeOuterSans.variable} ${albertSans.variable}`}
     >
       <PHProvider>
-        <body style={{ backgroundColor: BRAND.dark, color: "white" }}>
-          <Header />
+        <body className="bg-black text-white">
+          <div className="fixed top-[var(--spacing-4)] left-1/2 -translate-x-1/2 z-50 w-[600px]">
+            <Navigation />
+          </div>
           <main className="flex-1">
             {children}
           </main>

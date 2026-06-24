@@ -31,7 +31,7 @@ Surfaces that update automatically when tokens change:
 - All 13 shadcn primitives (Button, Card, Input base, Badge, etc.)
 
 Surfaces requiring manual update when specs arrive:
-- Header.tsx — inline rgba + 5 arbitrary classes (~8 lines)
+- Navigation.tsx — updated to new design system ✅
 - Footer.tsx — inline style object (~2 lines)
 - layout.tsx — body background inline (1 line)
 - page.tsx — two style objects + 8 arbitrary classes (~15 lines)
