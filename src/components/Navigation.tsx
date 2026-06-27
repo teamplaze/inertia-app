@@ -63,8 +63,8 @@ export default function Navigation() {
       className={cn(
         "relative",
         "flex items-center justify-between",
-        "px-[var(--spacing-5)] py-[var(--spacing-4)]",
-        "rounded-[12px]",
+        "p-[var(--spacing-4)] md:px-[var(--spacing-5)] md:py-[var(--spacing-4)]",
+        "rounded-none md:rounded-[12px]",
       )}
       style={{
         background: 'linear-gradient(90deg, rgba(255,255,255,0.7) 0%, #ffffff 20%, rgba(255,255,255,0.9) 80%, rgba(255,255,255,0.7) 100%)',
@@ -75,10 +75,12 @@ export default function Navigation() {
       {/* Logo + tagline */}
       <div className="flex items-center gap-[var(--spacing-4)]">
         <Link href="/">
-          <Logo variant="default" color="black" width={144} />
+          <Logo variant="default" color="black" width={144} className="hidden md:block" />
+          <Logo variant="default" color="black" width={120} className="block md:hidden" />
         </Link>
         <span
           className={cn(
+            "hidden md:block",
             "font-heading font-medium",
             "text-[14px] leading-[1.2]",
             "tracking-normal",

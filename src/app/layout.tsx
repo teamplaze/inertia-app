@@ -43,6 +43,12 @@ export const metadata: Metadata = {
   description: "Crowdfunding for independent music",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 3,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -55,7 +61,7 @@ export default function RootLayout({
     >
       <PHProvider>
         <body className="bg-black text-white">
-          <div className="fixed top-[var(--spacing-4)] left-1/2 -translate-x-1/2 z-50 w-[600px]">
+          <div className="fixed top-0 left-0 right-0 z-50 md:top-[var(--spacing-4)] md:left-1/2 md:right-auto md:-translate-x-1/2 md:w-[600px]">
             <Navigation />
           </div>
           <main className="flex-1">
