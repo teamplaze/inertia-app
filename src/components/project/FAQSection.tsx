@@ -1,13 +1,11 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DarkCard } from "@/components/ui/card-dark";
-import { HelpCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function FAQSection() {
   const faqs = [
     {
       question: "What am I actually buying?",
-      answer: "You are backing a specific tier to support the artist's project. Think of it as buying a ticket that helps contribute to an independent artist’s next step in their music career, that also comes with perks—like exclusive access, merch, connections and experiences."
+      answer: "You are backing a specific tier to support the artist's project. Think of it as buying a ticket that helps contribute to an independent artist's next step in their music career, that also comes with perks—like exclusive access, merch, connections and experiences."
     },
     {
       question: "When will I get my perks & rewards?",
@@ -23,11 +21,11 @@ export default function FAQSection() {
     },
     {
       question: "Can I upgrade or change my tier later?",
-      answer: "Each tier has limited availability, so contributions are generally final to help artists plan their projects accurately. If you’d like to change your tier or contribution amount, please reach out to team@theinertiaproject.com and we’ll do our best to help, depending on availability."
+      answer: "Each tier has limited availability, so contributions are generally final to help artists plan their projects accurately. If you'd like to change your tier or contribution amount, please reach out to team@theinertiaproject.com and we'll do our best to help, depending on availability."
     },
     {
       question: "How do I access the \"Artist Community\"?",
-      answer: "Immediately after checkout, you'll receive a receipt and confirmation email with instructions on next steps. Once the fundraising campaign is complete, you’ll receive an email with information on how to join the artist community through the Mighty Networks app."
+      answer: "Immediately after checkout, you'll receive a receipt and confirmation email with instructions on next steps. Once the fundraising campaign is complete, you'll receive an email with information on how to join the artist community through the Mighty Networks app."
     },
     {
       question: "Does the artist keep all the money?",
@@ -48,27 +46,55 @@ export default function FAQSection() {
   ];
 
   return (
-    <DarkCard className="mt-12">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center gap-2">
-          <HelpCircle className="w-6 h-6 text-brand-copper" />
-          Frequently Asked Questions
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="w-full">
+    <section
+      className={cn(
+        "w-full flex flex-col items-center",
+        "px-[var(--spacing-5)] py-[var(--spacing-8)]",
+        "md:px-[96px] md:py-[var(--spacing-16)]",
+        "gap-[var(--spacing-5)] md:gap-[var(--spacing-6)]",
+      )}
+      style={{ background: '#000000' }}
+    >
+      {/* Content block */}
+      <div
+        className={cn(
+          "flex flex-col items-start",
+          "w-full md:w-[822px]",
+          "gap-[var(--spacing-6)] md:gap-[var(--spacing-8)]",
+        )}
+      >
+        {/* Section heading */}
+        <h2
+          className={cn(
+            "font-heading font-medium leading-[1.2]",
+            "tracking-normal text-white w-full",
+            "text-[20px] md:text-[length:--font-size-h4]",
+          )}
+        >
+          FAQ
+        </h2>
+
+        {/* Accordion */}
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full flex flex-col gap-[var(--spacing-3)]"
+        >
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border-white/15">
-              <AccordionTrigger className="text-left text-lg font-medium hover:text-brand-copper transition-colors [&>svg]:text-white">
+            <AccordionItem
+              key={index}
+              value={`item-${index}`}
+            >
+              <AccordionTrigger>
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="mb-4 text-white-200 leading-relaxed">
+              <AccordionContent>
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
-      </CardContent>
-    </DarkCard>
-  );
+      </div>
+    </section>
+  )
 }

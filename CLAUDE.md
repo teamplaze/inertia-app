@@ -176,6 +176,16 @@ designer for completion.
   durations, and easing curves not specified anywhere 
   in the UI kit
 
+## Designer Follow-ups
+
+- Fan Stories / Testimonials carousel behavior:
+  Confirm whether desktop should use a 2-column grid 
+  (per current Figma spec at node 751-5259) or a 
+  carousel (matching mobile behavior). Mobile will 
+  use the Carousel component with CarouselControls 
+  dots + arrows. Awaiting designer confirmation 
+  before implementation.
+
 ## Open Issues
 - Heading font weight needs designer confirmation — currently 
   set to --font-weight-semibold: 500 (Medium) but spec says 600 

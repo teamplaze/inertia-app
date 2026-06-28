@@ -53,6 +53,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   // New state for expandable fan stories
   const [showAllStories, setShowAllStories] = useState(false);
 
+  const [artistNoteOpen, setArtistNoteOpen] = useState(false);
+
     // --- NEW: Donation State ---
   const [donationAmount, setDonationAmount] = useState<string>("");
   const [coverFee, setCoverFee] = useState<boolean>(true); // Default to helping the artist
@@ -204,18 +206,120 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
         } as React.CSSProperties}
       >
-      {/* === FROM THE ARTIST SECTION === */}
-      <section id="from-artist" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>From the Artist</h2>
-        <Card className="rounded-xl" style={gradientCardStyle}>
-          <CardContent className="p-4">
-            <div className="prose prose-lg max-w-none prose-invert">
-                {project.from_the_artist_message && project.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
-                    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
+      <section
+        id="about"
+        className={cn(
+          "w-full flex flex-col items-center",
+          "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+          "gap-[var(--spacing-6)]",
+          "md:px-[96px] md:py-[120px]",
+          "md:gap-[var(--spacing-8)]",
+        )}
+        style={{ background: '#000000' }}
+      >
+        {/* Content block — heading + bio */}
+        <div
+          className={cn(
+            "flex flex-col items-start",
+            "w-full md:w-[822px]",
+            "gap-[var(--spacing-3)] md:gap-[var(--spacing-4)]",
+          )}
+        >
+          <h2
+            className={cn(
+              "font-heading font-medium leading-[1.2]",
+              "tracking-normal",
+              "text-white w-full",
+              "text-[20px] md:text-[length:--font-size-h4]",
+            )}
+          >
+            About
+          </h2>
+
+          {project.artist_bio && (
+            <p
+              className={cn(
+                "font-body font-normal",
+                "text-[20px] leading-[1.5]",
+                "tracking-normal",
+                "text-[--color-text-200]",
+                "w-full",
+              )}
+            >
+              {project.artist_bio}
+            </p>
+          )}
+        </div>
+
+        {/* "A note from {Artist}" accordion */}
+        {project.from_the_artist_message && (
+          <div
+            className={cn(
+              "w-full md:w-[822px]",
+              "flex flex-col items-start",
+              "rounded-[12px]",
+              "border border-[--color-border-soft]",
+              "overflow-hidden",
+            )}
+            style={{ background: 'var(--color-bg-200, #0f1111)' }}
+          >
+            <button
+              onClick={() => setArtistNoteOpen(!artistNoteOpen)}
+              className={cn(
+                "flex items-center w-full",
+                "gap-[var(--spacing-3)] md:gap-[var(--spacing-4)]",
+                "p-[var(--spacing-4)] md:p-[var(--spacing-5)]",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[--color-border-focus]",
+                "focus-visible:ring-inset",
+              )}
+              aria-expanded={artistNoteOpen}
+            >
+              <span
+                className={cn(
+                  "font-heading font-medium leading-[1.2]",
+                  "tracking-normal text-white",
+                  "flex-[1_0_0] min-w-px text-left",
+                  "text-[16px] md:text-[length:--font-size-h6]",
+                )}
+              >
+                A note from {project.artist_name}
+              </span>
+              <span
+                className="material-symbols-rounded text-[24px] leading-none text-white shrink-0"
+                aria-hidden="true"
+              >
+                {artistNoteOpen ? 'close' : 'add'}
+              </span>
+            </button>
+
+            {artistNoteOpen && (
+              <div
+                className={cn(
+                  "w-full",
+                  "px-[var(--spacing-4)] pb-[var(--spacing-4)]",
+                  "md:px-[var(--spacing-5)] md:pb-[var(--spacing-5)]",
+                )}
+              >
+                <div
+                  className="w-full border-t mb-[var(--spacing-4)]"
+                  style={{ borderColor: 'var(--color-border-soft)' }}
+                />
+                <p
+                  className={cn(
+                    "font-body font-normal",
+                    "text-[length:--font-size-body-base]",
+                    "leading-[1.5] tracking-normal",
+                    "text-[--color-text-200]",
+                  )}
+                >
+                  {project.from_the_artist_message}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {project.project_milestones && project.project_milestones.length > 0 && (
