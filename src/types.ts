@@ -115,4 +115,5 @@ export type Project = {
   spotify_artist_id?: string;
   // Per-project color palette (hex strings) — used for budget chart and future theming
   project_colors?: string[] | null;
+  has_royalties: boolean;
 };

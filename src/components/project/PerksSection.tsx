@@ -5,14 +5,19 @@ import { Button } from "@/components/ui/button"
 // Static config
 // ---------------------------------------------------------------------------
 
+const INERTIA_PERKS_DESCRIPTION_WITH_ROYALTIES =
+  "100% of your contribution goes directly to the artist, and you'll receive a share of album royalties."
+
+const INERTIA_PERKS_DESCRIPTION_WITHOUT_ROYALTIES =
+  "100% of your contribution goes directly to the artist."
+
 const CATEGORY_CONFIG: Record<string, { icon: string; description: string }> = {
   "Inertia Perks": {
     icon: "crown",
-    description:
-      "100% of your contribution goes directly to the artist, and you'll receive a share of album royalties.",
+    description: INERTIA_PERKS_DESCRIPTION_WITH_ROYALTIES,
   },
   Physical: {
-    icon: "checkroom",
+    icon: "apparel",
     description:
       "Enjoy merch discounts, a contributor-edition tour poster, and an exclusive vinyl test press.*",
   },
@@ -31,7 +36,7 @@ const CATEGORY_CONFIG: Record<string, { icon: string; description: string }> = {
     description: "Get behind-the-scenes studio footage and music video footage (pending budget).",
   },
   Recognition: {
-    icon: "workspace_premium",
+    icon: "star_shine",
     description:
       "Get your name in the album's liner notes and a personal dedication in the artist's thank you video.",
   },
@@ -59,6 +64,7 @@ interface PerksSectionProps {
   artistName: string
   onSupportClick?: () => void
   className?: string
+  hasRoyalties?: boolean
 }
 
 export function PerksSection({
@@ -66,7 +72,10 @@ export function PerksSection({
   artistName: _artistName,
   onSupportClick,
   className,
+  hasRoyalties = true,
 }: PerksSectionProps) {
+  const ALWAYS_SHOW = ['Inertia Perks']
+
   const availableCategories = new Set(
     tiers
       .flatMap((tier) => tier.perks ?? [])
@@ -74,18 +83,24 @@ export function PerksSection({
       .filter(Boolean)
   )
 
-  const categories = CATEGORY_ORDER.filter((cat) => availableCategories.has(cat))
+  const orderedCategories = CATEGORY_ORDER.filter(
+    (cat) => availableCategories.has(cat) || ALWAYS_SHOW.includes(cat)
+  )
+
   const extraCategories = Array.from(availableCategories).filter(
     (cat) => !CATEGORY_ORDER.includes(cat)
   )
-  const allCategories = [...categories, ...extraCategories]
 
-  if (allCategories.length === 0) return null
+  const allCategories = [...orderedCategories, ...extraCategories]
 
   return (
     <section className={cn("w-full", className)}>
       {/* Section header */}
-      <div className="flex items-start justify-between mb-[var(--spacing-8)]">
+      <div className={cn(
+        "flex flex-col gap-[var(--spacing-4)]",
+        "mb-[var(--spacing-8)]",
+        "md:flex-row md:items-start md:justify-between",
+      )}>
         <div className="flex flex-col gap-[var(--spacing-2)]">
           <h2
             className={cn(
@@ -110,9 +125,26 @@ export function PerksSection({
         </div>
 
         <div className="flex items-center gap-[var(--spacing-4)] shrink-0">
-          <Button variant="border" size="sm">
+          <button
+            className={cn(
+              "flex items-center justify-center",
+              "bg-transparent text-white",
+              "font-heading font-medium",
+              "text-[length:--font-size-btn-small]",
+              "leading-[1.2] tracking-normal",
+              "px-[var(--spacing-5)] py-[var(--spacing-3)]",
+              "rounded-none",
+              "border-2 border-white",
+              "transition-colors duration-150",
+              "hover:border-[var(--color-project-accent,var(--color-bg-teal))]",
+              "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
+              "focus-visible:outline-none",
+              "focus-visible:ring-2",
+              "focus-visible:ring-[--color-border-focus]",
+            )}
+          >
             Read our FAQs
-          </Button>
+          </button>
           <Button variant="link" size="sm" onClick={onSupportClick}>
             Contact us
           </Button>
@@ -125,16 +157,32 @@ export function PerksSection({
           const config = CATEGORY_CONFIG[category]
           if (!config) return null
 
+          const description =
+            category === 'Inertia Perks' && !hasRoyalties
+              ? INERTIA_PERKS_DESCRIPTION_WITHOUT_ROYALTIES
+              : config.description
+
           return (
             <div key={category} className="flex items-start gap-[var(--spacing-5)]">
               {/* Icon badge */}
               <div
                 className="shrink-0 flex items-center justify-center rounded-[100px] p-[var(--spacing-3)]"
-                style={{ background: "var(--perks-icon-bg)" }}
+                style={{
+                  background: category === 'Inertia Perks'
+                    ? 'var(--color-project-accent, var(--color-bg-teal))'
+                    : 'transparent',
+                  border: category === 'Inertia Perks'
+                    ? 'none'
+                    : '2px solid var(--color-project-accent, var(--color-bg-teal))',
+                }}
               >
                 <span
                   className="material-symbols-rounded text-[24px] leading-none"
-                  style={{ color: "var(--perks-icon-color)" }}
+                  style={{
+                    color: category === 'Inertia Perks'
+                      ? 'var(--perks-icon-color)'
+                      : 'var(--color-project-accent, var(--color-bg-teal))',
+                  }}
                   aria-hidden="true"
                 >
                   {config.icon}
@@ -161,7 +209,7 @@ export function PerksSection({
                     "text-[--perks-body]"
                   )}
                 >
-                  {config.description}
+                  {description}
                 </p>
               </div>
             </div>

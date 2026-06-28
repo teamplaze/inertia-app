@@ -237,14 +237,28 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 Unlock our budget milestones by contributing to the project!
               </p>
             </div>
-            <Button
-              variant="border"
-              size="sm"
-              className="w-full md:w-auto"
+            <button
               onClick={() => scrollToSection('support-levels')}
+              className={cn(
+                "flex items-center justify-center",
+                "bg-transparent text-white",
+                "font-heading font-medium",
+                "text-[length:--font-size-btn-small]",
+                "leading-[1.2] tracking-normal",
+                "px-[var(--spacing-5)] py-[var(--spacing-3)]",
+                "rounded-none",
+                "border-2 border-white",
+                "w-full md:w-auto",
+                "transition-colors duration-150",
+                "hover:border-[var(--color-project-accent,var(--color-bg-teal))]",
+                "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[--color-border-focus]",
+              )}
             >
               Support {project.artist_name}
-            </Button>
+            </button>
           </div>
 
           <ProgressBar
@@ -497,6 +511,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             tiers={tiers}
             artistName={project.artist_name}
             onSupportClick={() => scrollToSection('support-levels')}
+            hasRoyalties={project.has_royalties}
           />
         </section>
       )}
