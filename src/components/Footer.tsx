@@ -8,7 +8,7 @@ export default function Footer() {
     <footer
       className="w-full flex flex-col items-center justify-end"
       style={{
-        background: 'radial-gradient(ellipse at 50% 100%, rgba(62,149,142,1) 0%, rgba(47,112,107,1) 13.28%, rgba(31,75,71,1) 26.56%, rgba(23,56,53,1) 33.21%, rgba(16,37,36,1) 39.85%, rgba(8,19,18,1) 46.49%, rgba(4,9,9,1) 49.81%, #000 53.13%)',
+        background: 'radial-gradient(ellipse at 50% 100%, var(--color-project-accent, rgba(62,149,142,1)) 0%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 75%, #000) 13.28%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 50%, #000) 26.56%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 37%, #000) 33.21%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 25%, #000) 39.85%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 12%, #000) 46.49%, color-mix(in srgb, var(--color-project-accent, rgba(62,149,142,1)) 6%, #000) 49.81%, #000 53.13%)',
         paddingTop: '64px',
         paddingBottom: '64px',
         paddingLeft: '96px',
