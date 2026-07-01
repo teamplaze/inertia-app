@@ -4,7 +4,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Quote, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -14,6 +13,8 @@ import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
 import { WaveCard } from '@/components/project/WaveCard'
 import { DonateCard } from '@/components/project/DonateCard';
+import { TestimonialCard } from '@/components/ui/cards/testimonial-card'
+import { CarouselControls } from '@/components/ui/carousel-controls'
 import { MilestonesList } from '@/components/project/MilestonesList'
 import { PerksSection } from '@/components/project/PerksSection'
 import { ProgressBar } from '@/components/project/ProgressBar'
@@ -46,12 +47,19 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const [tiers, setTiers] = useState<Tier[]>(projectData.tiers);
   const [project, setProject] = useState<Project>(projectData);
   
-  // New state for expandable fan stories
-  const [showAllStories, setShowAllStories] = useState(false);
+  const [fanStoriesIndex, setFanStoriesIndex] = useState(0);
 
   const [artistNoteOpen, setArtistNoteOpen] = useState(false);
 
   const supabase = createClient();
+
+  useEffect(() => {
+    const accent = project.project_colors?.[0] ?? '#e18d46'
+    document.documentElement.style.setProperty('--color-project-accent', accent)
+    return () => {
+      document.documentElement.style.removeProperty('--color-project-accent')
+    }
+  }, [project.project_colors])
 
   useEffect(() => {
     // Listen for changes to the 'tiers' table for this project
@@ -130,11 +138,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
     }
   };
 
-
-  // Determine displayed stories based on state
-  const displayedStories = showAllStories 
-    ? project.testimonials 
-    : project.testimonials.slice(0, 2);
 
   return (
     <>
@@ -398,7 +401,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         return (
           <section
             id="support-levels"
-            className="flex flex-col items-center px-[20px] py-[96px] md:px-[96px] md:py-[96px] gap-[var(--spacing-10)]"
+            className="flex flex-col items-center px-[var(--spacing-5)] py-[var(--spacing-8)] md:px-[96px] md:py-[var(--spacing-16)] gap-[var(--spacing-10)]"
             style={{ background: '#000000' }}
           >
             {/* Section header */}
@@ -436,58 +439,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         )
       })()}
 
-      {project.testimonials && project.testimonials.length > 0 && (
-        <section id="fan-stories" className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {displayedStories.map((testimonial) => (
-                <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-                  <CardContent className="p-4">
-                    <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
-                    <div className="flex items-start gap-4 mb-4">
-                      {testimonial.profile_image_url && (
-                        <Image
-                          src={testimonial.profile_image_url}
-                          alt={testimonial.name}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
-                        />
-                      )}
-                      <div className="flex-1">
-                          <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                          <p className="text-sm text-gray-300">{testimonial.location}</p>
-                      </div>
-                    </div>
-                    <p className="text-white leading-relaxed">{testimonial.story}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {project.testimonials.length > 2 && (
-              <div className="flex justify-center pt-2">
-                <Button
-                  onClick={() => setShowAllStories(!showAllStories)}
-                  className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-                >
-                  {showAllStories ? (
-                    <>
-                      Show Less <ChevronUp className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      Show More Stories <ChevronDown className="w-4 h-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       {tiers && tiers.length > 0 && (
         <section id="perks" className="mb-12">
           <PerksSection
@@ -496,6 +447,89 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             onSupportClick={() => scrollToSection('support-levels')}
             hasRoyalties={project.has_royalties}
           />
+        </section>
+      )}
+
+      {project.testimonials && project.testimonials.length > 0 && (
+        <section
+          id="fan-stories"
+          className={cn(
+            "w-full flex flex-col items-center justify-center",
+            "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+            "md:px-[96px] md:py-[96px]",
+            "gap-[var(--spacing-10)] md:gap-[var(--spacing-12)]",
+            "overflow-hidden md:overflow-visible",
+          )}
+          style={{ background: '#000000' }}
+        >
+          {/* Section heading */}
+          <h2
+            className={cn(
+              "font-heading font-medium leading-[1.2]",
+              "tracking-normal text-white text-center",
+              "w-full max-w-[822px]",
+              "text-[24px] md:text-[length:--font-size-h3]",
+            )}
+          >
+            Join {project.artist_name}&apos;s fans
+          </h2>
+
+          {/* Carousel + controls */}
+          <div className="flex flex-col gap-[var(--spacing-8)] w-full">
+            {/* Cards track */}
+            <div className="w-full">
+
+              {/* MOBILE — single card, full width, percentage-based slide */}
+              <div className="block md:hidden w-full overflow-hidden">
+                <div
+                  className="flex transition-transform duration-300"
+                  style={{ transform: `translateX(-${fanStoriesIndex * 100}%)` }}
+                >
+                  {project.testimonials.map((testimonial) => (
+                    <div key={testimonial.id} style={{ minWidth: '100%' }}>
+                      <TestimonialCard
+                        quote={testimonial.story}
+                        name={testimonial.name}
+                        location={testimonial.location ?? ''}
+                        className="w-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* DESKTOP — multiple cards visible, pixel-based slide with overflow clip */}
+              <div className="hidden md:block w-full overflow-hidden">
+                <div
+                  className="flex transition-transform duration-300"
+                  style={{
+                    gap: '32px',
+                    transform: `translateX(calc(-${fanStoriesIndex * 394}px - ${fanStoriesIndex * 32}px))`,
+                  }}
+                >
+                  {project.testimonials.map((testimonial) => (
+                    <div key={testimonial.id} className="shrink-0">
+                      <TestimonialCard
+                        quote={testimonial.story}
+                        name={testimonial.name}
+                        location={testimonial.location ?? ''}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Carousel controls */}
+            <CarouselControls
+              count={project.testimonials.length}
+              activeIndex={fanStoriesIndex}
+              onDotClick={(i) => setFanStoriesIndex(i)}
+              onPrev={() => setFanStoriesIndex(Math.max(0, fanStoriesIndex - 1))}
+              onNext={() => setFanStoriesIndex(Math.min(project.testimonials.length - 1, fanStoriesIndex + 1))}
+            />
+          </div>
         </section>
       )}
 

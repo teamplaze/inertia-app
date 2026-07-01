@@ -41,7 +41,7 @@ export function CarouselControls({
               height: "var(--carousel-dot-size)",
               background:
                 i === activeIndex
-                  ? "var(--carousel-dot-active)"
+                  ? "var(--color-project-accent, var(--color-bg-teal))"
                   : "transparent",
               border:
                 i === activeIndex
