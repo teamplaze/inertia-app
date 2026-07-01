@@ -3,10 +3,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Quote, Heart, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Quote, ChevronDown, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -14,7 +12,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
-import { TierCard } from "@/components/project/TierCard";
+import { WaveCard } from '@/components/project/WaveCard'
+import { DonateCard } from '@/components/project/DonateCard';
 import { MilestonesList } from '@/components/project/MilestonesList'
 import { PerksSection } from '@/components/project/PerksSection'
 import { ProgressBar } from '@/components/project/ProgressBar'
@@ -55,11 +54,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
   const [artistNoteOpen, setArtistNoteOpen] = useState(false);
 
-    // --- NEW: Donation State ---
-  const [donationAmount, setDonationAmount] = useState<string>("");
-  const [coverFee, setCoverFee] = useState<boolean>(true); // Default to helping the artist
-  const [isDonating, setIsDonating] = useState<boolean>(false);
-
   const supabase = createClient();
 
   useEffect(() => {
@@ -87,45 +81,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
   const fundingPercentage = Math.round((project.current_funding / project.funding_goal) * 100);
   const selectedTierData = tiers.find((tier) => tier.id === selectedTier);
-
-  // --- PATH A: Custom Donation Handler ---
-  const handleDonationCheckout = async () => {
-    const amount = parseFloat(donationAmount);
-    if (isNaN(amount) || amount <= 0) return;
-
-    setIsDonating(true);
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          projectId: project.id, 
-          donationAmount: amount,
-          coverFee 
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to create checkout session.');
-
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-      
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) console.error('Stripe redirect error:', error);
-      }
-    } catch (error) {
-      console.error('Checkout failed:', error);
-    } finally {
-      setIsDonating(false);
-    }
-  };
-
-  // --- PATH B: Standard Tier Handler ---
-  const handleTierSelect = (tierId: number) => {
-    setSelectedTier(tierId);
-    setShowCheckout(true);
-  };
 
   const handleCheckout = async () => {
     if (!selectedTierData) {
@@ -159,11 +114,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       console.error('Checkout failed:', error);
     }
   };
-
-  // We use the presence of the donation_link as a flag to enable the donate card
-  const hasDonationEnabled = true;
-
-  const activeTier = tiers.find(t => t.status === 'active');
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -434,128 +384,55 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      <section id="support-levels" className="mb-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Choose Your Support Level</h2>
-          <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
-        </div>
-        {/* Single active tier + donate card — always 2 columns on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
-          {activeTier && (
-            <TierCard
-              tier={activeTier}
-              project={project}
-              selectedTier={selectedTier}
-              user={user}
-              paymentsEnabled={paymentsEnabled}
-              showCheckout={showCheckout}
-              onSelectTier={handleTierSelect}
-              onCheckout={handleCheckout}
-              onCancelCheckout={() => { setSelectedTier(null); setShowCheckout(false); }}
-            />
-          )}
+      {(() => {
+        const waveCard = tiers.find(
+          t => t.status === 'active' || t.status === 'closed'
+        )
+        if (!waveCard) return null
 
-          {/* === DONATION CARD === */}
-          {hasDonationEnabled && (
-            <div className="flex flex-col gap-4">
-               <Card
-                  className="flex flex-col relative transition-all duration-200 rounded-xl h-full hover:shadow-md hover:shadow-gray-700/50"
-                  style={regularCardStyle}
-                >
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <CardTitle className="text-xl font-bold" style={{ color: BRAND.copper }}>Donate</CardTitle>
-                        <p className="text-xs text-white/90 font-medium italic">Support the project directly without the perks</p>
-                      </div>
-                    </div>
-                    <div className="text-3xl font-bold text-white mt-2">Any Amount</div>
-                  </CardHeader>
-                  <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                    <ul className="space-y-2">
-                       <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                         <span className="text-sm text-white">Help us reach our goal faster</span>
-                       </li>
-                       <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                         <span className="text-sm text-white">Every bit counts</span>
-                       </li>
-                    </ul>
-                    <div className="pt-4 border-t border-white/20">
-                       {paymentsEnabled ? (
-                         <div className="space-y-4">
-                           <div className="space-y-3">
-                             <div className="relative">
-                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white font-bold">$</span>
-                               <Input
-                                 type="number"
-                                 min="1"
-                                 step="1"
-                                 placeholder="50"
-                                 value={donationAmount}
-                                 onChange={(e) => setDonationAmount(e.target.value)}
-                                 className="pl-8 bg-black/20 border-brand-copper/50 text-white placeholder:text-gray-300 focus-visible:ring-brand-copper"
-                               />
-                             </div>
-                             <div className="flex items-start space-x-2">
-                               <Checkbox 
-                                 id="cover-fee" 
-                                 checked={coverFee} 
-                                 onCheckedChange={(checked) => setCoverFee(checked as boolean)}
-                                 className="mt-0.5 border-gray-300 data-[state=checked]:bg-brand-copper data-[state=checked]:border-brand-copper"
-                               />
-                               <label
-                                 htmlFor="cover-fee"
-                                 className="text-xs text-gray-200 leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                               >
-                                 Cover processing fee so the artist gets 100% of your donation
-                               </label>
-                             </div>
-                           </div>
-                           
-                           <Button 
-                             onClick={handleDonationCheckout} 
-                             disabled={isDonating || !donationAmount || parseFloat(donationAmount) <= 0}
-                             className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-bold transition-all"
-                           >
-                             {isDonating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                             {isDonating ? "Processing..." : "Donate Now"}
-                           </Button>
-                         </div>
-                       ) : (
-                         <div className="w-full bg-brand-copper text-white text-center cursor-not-allowed opacity-60 hover:bg-brand-copper rounded-md px-4 py-2 font-medium text-sm">
-                           Coming Soon
-                         </div>
-                       )}
-                    </div>
-                  </CardContent>
-               </Card>
+        return (
+          <section
+            id="support-levels"
+            className="flex flex-col items-center px-[20px] py-[96px] md:px-[96px] md:py-[96px] gap-[var(--spacing-10)]"
+            style={{ background: '#000000' }}
+          >
+            {/* Section header */}
+            <div className="flex flex-col items-center gap-[var(--spacing-3)] text-center">
+              <h4
+                className="font-heading font-medium leading-[1.2] text-white"
+                style={{ fontSize: 'var(--font-size-h4)' }}
+              >
+                Support {project.artist_name}
+              </h4>
+              <p className="font-body font-normal text-[20px] leading-[1.5] text-[--wave-text-muted]">
+                100% of your contributions go to the artist&apos;s project.
+              </p>
             </div>
-          )}
 
-        </div>
-      </section>
-
-      {/* DESKTOP CHECKOUT BOX: Visible only on DESKTOP (>= md) */}
-      {paymentsEnabled && showCheckout && selectedTierData && (
-        <section className="mb-12 hidden md:block"> {/* Only show on desktop */}
-          <Card className="rounded-xl" style={gradientCardStyle}>
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Ready to support {project.artist_name}?</h3>
-                  <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: BRAND.copper }}>${selectedTierData.price}</strong></p>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="border-gray-400 text-gray-200 bg-transparent hover:bg-black/30 hover:text-gray-200" onClick={() => { setSelectedTier(null); setShowCheckout(false); }}>Change Selection</Button>
-                  <Button onClick={handleCheckout} className="bg-brand-copper hover:bg-brand-copper/90 text-white">Continue to Checkout</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-      )}
+            {/* Cards */}
+            <div
+              className={cn(
+                'grid grid-cols-1 md:grid-cols-2',
+                'gap-[var(--spacing-6)]',
+                'items-stretch',
+                'w-full max-w-[1034px]',
+              )}
+            >
+              <WaveCard
+                tier={waveCard}
+                project={project}
+                user={user}
+                paymentsEnabled={paymentsEnabled}
+                onSelectTier={(tierId) => {
+                  setSelectedTier(tierId)
+                  setShowCheckout(true)
+                }}
+              />
+              <DonateCard project={project} />
+            </div>
+          </section>
+        )
+      })()}
 
       {project.testimonials && project.testimonials.length > 0 && (
         <section id="fan-stories" className="mb-12">

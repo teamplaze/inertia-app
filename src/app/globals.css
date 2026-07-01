@@ -314,6 +314,16 @@
   --perks-label:      #ffffff;
   --perks-label-sub:  #c3c7c7;
 
+  /* Wave / Donate card tokens */
+  --wave-bg:              #0f1111;
+  --wave-border-active:   var(--color-project-accent, var(--color-bg-teal));
+  --wave-border-closed:   #3f4948;
+  --wave-text-muted:      #c3c7c7;
+  --wave-alert-bg:        rgba(62, 149, 142, 0.15);
+  --donate-bg:            #0f1111;
+  --donate-border:        #3f4948;
+  --donate-amount-border: #3f4948;
+
   /* Hero tokens */
   --hero-text-tag:        #ededed;
   --hero-text-name:       #ffffff;
@@ -479,6 +489,16 @@
   --perks-body:       #ededed;
   --perks-label:      #ffffff;
   --perks-label-sub:  #c3c7c7;
+
+  /* Wave / Donate card tokens */
+  --wave-bg:              #0f1111;
+  --wave-border-active:   var(--color-project-accent, var(--color-bg-teal));
+  --wave-border-closed:   #3f4948;
+  --wave-text-muted:      #c3c7c7;
+  --wave-alert-bg:        rgba(62, 149, 142, 0.15);
+  --donate-bg:            #0f1111;
+  --donate-border:        #3f4948;
+  --donate-amount-border: #3f4948;
 
   /* Hero tokens */
   --hero-text-tag:        #ededed;
