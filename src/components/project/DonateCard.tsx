@@ -6,28 +6,23 @@ import type { Project } from '@/types'
 
 interface DonateCardProps {
   project: Project
+  onDonate: (amount: number, coverFee: boolean) => Promise<void>
 }
 
-export function DonateCard({ project }: DonateCardProps) {
-  const [amount, setAmount] = useState('')
+export function DonateCard({ project, onDonate }: DonateCardProps) {
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(null)
+  const [customAmount, setCustomAmount] = useState('')
+  const [coverFee, setCoverFee] = useState(true)
   const [isDonating, setIsDonating] = useState(false)
 
   const handleDonate = async () => {
-    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) return
+    const finalAmount = selectedPreset !== null
+      ? selectedPreset
+      : Number(customAmount)
+    if (!finalAmount || isNaN(finalAmount) || finalAmount <= 0) return
     setIsDonating(true)
     try {
-      const res = await fetch('/api/donate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectId: project.id,
-          amount: Number(amount),
-        }),
-      })
-      const data = await res.json()
-      if (data.url) window.location.href = data.url
-    } catch {
-      // silent fail for now
+      await onDonate(finalAmount, coverFee)
     } finally {
       setIsDonating(false)
     }
@@ -87,21 +82,23 @@ export function DonateCard({ project }: DonateCardProps) {
       <div className="flex flex-col gap-[var(--spacing-3)]">
         {/* Preset buttons */}
         <div className="flex flex-col gap-[var(--spacing-4)] w-full">
-          {(['10', '25', '50', '100'] as const).map(preset => (
+          {[10, 25, 50, 100].map(preset => (
             <button
               key={preset}
-              onClick={() => setAmount(preset)}
+              onClick={() => {
+                setSelectedPreset(preset)
+                setCustomAmount('')
+              }}
               className={cn(
-                'w-full flex items-center justify-center',
-                'py-[var(--spacing-3)]',
-                'border',
-                'font-heading font-medium text-[18px] leading-[1.2]',
-                'transition-colors duration-150',
-                'bg-transparent',
-                amount === preset ? 'text-white' : 'text-[--wave-text-muted]',
+                'w-full px-[var(--spacing-3)] py-[var(--spacing-3)]',
+                'border text-center',
+                'font-body font-normal text-[18px] leading-[1.5]',
+                'rounded-none transition-colors duration-150',
+                selectedPreset === preset ? 'text-white' : 'text-[--color-text-200]',
               )}
               style={{
-                borderColor: amount === preset
+                background: 'var(--wave-bg)',
+                borderColor: selectedPreset === preset
                   ? 'var(--color-project-accent, var(--color-bg-teal))'
                   : 'var(--donate-amount-border)',
               }}
@@ -116,14 +113,13 @@ export function DonateCard({ project }: DonateCardProps) {
           className={cn(
             'flex items-center gap-[var(--spacing-3)]',
             'px-[var(--spacing-3)] py-[var(--spacing-3)]',
-            'border',
-            'w-full',
+            'border w-full',
           )}
           style={{
-            borderColor: amount && !['10', '25', '50', '100'].includes(amount)
+            background: 'var(--wave-bg)',
+            borderColor: customAmount
               ? 'var(--color-project-accent, var(--color-bg-teal))'
               : 'var(--donate-amount-border)',
-            background: 'var(--wave-bg)',
           }}
         >
           <span
@@ -136,23 +132,51 @@ export function DonateCard({ project }: DonateCardProps) {
             type="number"
             min="1"
             placeholder="Custom amount"
-            value={['10', '25', '50', '100'].includes(amount) ? '' : amount}
-            onChange={e => setAmount(e.target.value)}
+            value={customAmount}
+            onFocus={() => setSelectedPreset(null)}
+            onChange={e => {
+              setCustomAmount(e.target.value)
+              setSelectedPreset(null)
+            }}
             className={cn(
-              'flex-1 bg-transparent',
+              'flex-1 bg-transparent text-center',
               'font-body font-normal text-[18px] leading-[1.5]',
               'text-[--color-text-200]',
-              'placeholder:text-[--wave-text-muted]',
+              'placeholder:text-[--wave-text-muted] placeholder:text-center',
               'focus:outline-none',
+              '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
             )}
           />
         </div>
       </div>
 
+      {/* Fee checkbox */}
+      <label
+        className={cn(
+          'flex items-center gap-[var(--spacing-3)]',
+          'cursor-pointer',
+        )}
+      >
+        <input
+          type="checkbox"
+          checked={coverFee}
+          onChange={e => setCoverFee(e.target.checked)}
+          className="w-4 h-4 accent-[var(--color-project-accent,var(--color-bg-teal))] cursor-pointer"
+        />
+        <span
+          className={cn(
+            'font-body font-normal text-[14px] leading-[1.5]',
+            'text-[--color-text-200]',
+          )}
+        >
+          Cover processing fee so the artist gets 100% of your donation
+        </span>
+      </label>
+
       {/* Donate button */}
       <button
         onClick={handleDonate}
-        disabled={isDonating}
+        disabled={isDonating || (selectedPreset === null && (!customAmount || Number(customAmount) <= 0))}
         className={cn(
           'w-full flex items-center justify-center',
           'bg-transparent text-white',
@@ -163,7 +187,7 @@ export function DonateCard({ project }: DonateCardProps) {
           'transition-colors duration-150',
           'hover:border-[var(--color-project-accent,var(--color-bg-teal))]',
           'hover:text-[var(--color-project-accent,var(--color-bg-teal))]',
-          'disabled:cursor-not-allowed',
+          'disabled:opacity-70 disabled:cursor-not-allowed',
         )}
         style={{
           padding: '16px 20px',

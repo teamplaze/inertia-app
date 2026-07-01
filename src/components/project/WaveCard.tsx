@@ -9,7 +9,7 @@ interface WaveCardProps {
   project: Project
   user: { id: string } | null
   paymentsEnabled: boolean
-  onSelectTier: (tierId: number) => void
+  onPurchase: (tierId: number) => Promise<void>
 }
 
 export function WaveCard({
@@ -17,9 +17,10 @@ export function WaveCard({
   project,
   user,
   paymentsEnabled,
-  onSelectTier,
+  onPurchase,
 }: WaveCardProps) {
   const [isJoining, setIsJoining] = useState(false)
+  const [isPurchasing, setIsPurchasing] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
   const [timeLeft, setTimeLeft] = useState<string | null>(null)
 
@@ -48,8 +49,12 @@ export function WaveCard({
     return () => clearInterval(interval)
   }, [tier.sale_end_at])
 
-  const isActive = tier.status === 'active'
-  const isClosed = tier.status === 'closed'
+  const now = new Date()
+  const saleEnded = tier.sale_end_at ? new Date(tier.sale_end_at) < now : false
+  const saleStarted = tier.sale_start_at ? new Date(tier.sale_start_at) <= now : true
+
+  const isActive = tier.status === 'active' && !saleEnded && saleStarted
+  const isClosed = tier.status === 'closed' || (tier.status === 'active' && saleEnded)
 
   const waveNumber = tier.name.match(/\d+/)?.[0] ?? '1'
 
@@ -79,7 +84,7 @@ export function WaveCard({
   return (
     <div
       className={cn(
-        'flex flex-col',
+        'flex flex-col justify-between',
         'rounded-[12px] overflow-hidden',
         'border',
         'px-[var(--spacing-5)] py-[var(--spacing-8)]',
@@ -156,7 +161,7 @@ export function WaveCard({
       </div>
 
       {/* Section 2 — Alert bar */}
-      {isActive && tier.sale_end_at && (
+      {isActive && tier.sale_end_at && timeLeft && !saleEnded && (
         <div
           className={cn(
             'flex items-center justify-between',
@@ -286,7 +291,16 @@ export function WaveCard({
       <div className="flex flex-col gap-[var(--spacing-3)]">
         {isActive && paymentsEnabled && (
           <button
-            onClick={() => onSelectTier(tier.id)}
+            onClick={async () => {
+              if (isPurchasing) return
+              setIsPurchasing(true)
+              try {
+                await onPurchase(tier.id)
+              } finally {
+                setIsPurchasing(false)
+              }
+            }}
+            disabled={isPurchasing}
             className={cn(
               'w-full flex items-center justify-center',
               'bg-white text-black',
@@ -298,9 +312,10 @@ export function WaveCard({
               'transition-colors duration-150',
               'hover:bg-[var(--color-project-accent,var(--color-bg-teal))]',
               'hover:text-white',
+              'disabled:opacity-70 disabled:cursor-not-allowed',
             )}
           >
-            Claim your spot
+            {isPurchasing ? 'Processing...' : 'Claim your spot'}
           </button>
         )}
 

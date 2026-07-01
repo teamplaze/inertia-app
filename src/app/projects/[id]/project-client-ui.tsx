@@ -46,9 +46,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const [tiers, setTiers] = useState<Tier[]>(projectData.tiers);
   const [project, setProject] = useState<Project>(projectData);
   
-  const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [showCheckout, setShowCheckout] = useState(false);
-
   // New state for expandable fan stories
   const [showAllStories, setShowAllStories] = useState(false);
 
@@ -80,38 +77,46 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
 
   const fundingPercentage = Math.round((project.current_funding / project.funding_goal) * 100);
-  const selectedTierData = tiers.find((tier) => tier.id === selectedTier);
 
-  const handleCheckout = async () => {
-    if (!selectedTierData) {
-      alert("Please select a tier first.");
-      return;
-    }
-
+  const handleDonate = async (amount: number, coverFee: boolean) => {
     try {
-      const response = await fetch('/api/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tierId: selectedTierData.id, projectId: project.id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session.');
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: project.id,
+          donationAmount: amount,
+          coverFee,
+        }),
+      })
+      const { sessionId } = await res.json()
+      const stripe = await stripePromise
+      if (stripe && sessionId) {
+        await stripe.redirectToCheckout({ sessionId })
       }
+    } catch (err) {
+      console.error('Donation error:', err)
+    }
+  };
 
-      const { sessionId } = await response.json();
-
-      const stripe = await stripePromise;
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          console.error('Stripe redirect error:', error);
-        }
+  const handlePurchase = async (tierId: number) => {
+    if (!stripePromise) return
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tierId,
+          projectId: project.id,
+        }),
+      })
+      const { sessionId } = await res.json()
+      const stripe = await stripePromise
+      if (stripe && sessionId) {
+        await stripe.redirectToCheckout({ sessionId })
       }
-    } catch (error) {
-      console.error('Checkout failed:', error);
+    } catch (err) {
+      console.error('Checkout error:', err)
     }
   };
 
@@ -423,12 +428,9 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 project={project}
                 user={user}
                 paymentsEnabled={paymentsEnabled}
-                onSelectTier={(tierId) => {
-                  setSelectedTier(tierId)
-                  setShowCheckout(true)
-                }}
+                onPurchase={handlePurchase}
               />
-              <DonateCard project={project} />
+              <DonateCard project={project} onDonate={handleDonate} />
             </div>
           </section>
         )
