@@ -1,0 +1,233 @@
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+
+// ---------------------------------------------------------------------------
+// Static config
+// ---------------------------------------------------------------------------
+
+const INERTIA_PERKS_DESCRIPTION_WITH_ROYALTIES =
+  "100% of your contribution goes directly to the artist, and you'll receive a share of album royalties."
+
+const INERTIA_PERKS_DESCRIPTION_WITHOUT_ROYALTIES =
+  "100% of your contribution goes directly to the artist."
+
+const CATEGORY_CONFIG: Record<string, { icon: string; description: string }> = {
+  "Inertia Perks": {
+    icon: "crown",
+    description: INERTIA_PERKS_DESCRIPTION_WITH_ROYALTIES,
+  },
+  Physical: {
+    icon: "apparel",
+    description:
+      "Enjoy merch discounts, a contributor-edition tour poster, and an exclusive vinyl test press.*",
+  },
+  "Events & Livestreams": {
+    icon: "confirmation_number",
+    description:
+      "Get guest list access to a future show, join an in-person meetup,* and watch exclusive rehearsal livestreams.",
+  },
+  Community: {
+    icon: "group",
+    description:
+      "Join the group chat, get added to close friends on IG, and help shape decisions through interactive fan polls.",
+  },
+  "Exclusive Content": {
+    icon: "star",
+    description: "Get behind-the-scenes studio footage and music video footage (pending budget).",
+  },
+  Recognition: {
+    icon: "star_shine",
+    description:
+      "Get your name in the album's liner notes and a personal dedication in the artist's thank you video.",
+  },
+}
+
+const CATEGORY_ORDER = [
+  "Inertia Perks",
+  "Physical",
+  "Events & Livestreams",
+  "Community",
+  "Exclusive Content",
+  "Recognition",
+]
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+interface PerksSectionProps {
+  tiers: Array<{
+    perks?: Array<{
+      category: string
+    }>
+  }>
+  artistName: string
+  onSupportClick?: () => void
+  className?: string
+  hasRoyalties?: boolean
+}
+
+export function PerksSection({
+  tiers,
+  artistName: _artistName,
+  onSupportClick,
+  className,
+  hasRoyalties = true,
+}: PerksSectionProps) {
+  const ALWAYS_SHOW = ['Inertia Perks']
+
+  const availableCategories = new Set(
+    tiers
+      .flatMap((tier) => tier.perks ?? [])
+      .map((perk) => perk.category)
+      .filter(Boolean)
+  )
+
+  const orderedCategories = CATEGORY_ORDER.filter(
+    (cat) => availableCategories.has(cat) || ALWAYS_SHOW.includes(cat)
+  )
+
+  const extraCategories = Array.from(availableCategories).filter(
+    (cat) => !CATEGORY_ORDER.includes(cat)
+  )
+
+  const allCategories = [...orderedCategories, ...extraCategories]
+
+  return (
+    <section className={cn("w-full", className)}>
+      {/* Section header */}
+      <div className={cn(
+        "flex flex-col gap-[var(--spacing-4)]",
+        "mb-[var(--spacing-8)]",
+        "md:flex-row md:items-start md:justify-between",
+      )}>
+        <div className="flex flex-col gap-[var(--spacing-2)]">
+          <h2
+            className={cn(
+              "font-heading font-medium",
+              "text-[length:--font-size-h2]",
+              "leading-[1.2]",
+              "text-[--perks-heading]"
+            )}
+          >
+            Perks
+          </h2>
+          <p
+            className={cn(
+              "font-body font-normal",
+              "text-[length:--font-size-body-base]",
+              "leading-[1.5]",
+              "text-[--perks-label-sub]"
+            )}
+          >
+            Fuel the music. Join the inner circle.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-[var(--spacing-4)] shrink-0">
+          <button
+            className={cn(
+              "flex items-center justify-center",
+              "bg-transparent text-white",
+              "font-heading font-medium",
+              "text-[length:--font-size-btn-small]",
+              "leading-[1.2] tracking-normal",
+              "px-[var(--spacing-5)] py-[var(--spacing-3)]",
+              "rounded-none",
+              "border-2 border-white",
+              "transition-colors duration-150",
+              "hover:border-[var(--color-project-accent,var(--color-bg-teal))]",
+              "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
+              "focus-visible:outline-none",
+              "focus-visible:ring-2",
+              "focus-visible:ring-[--color-border-focus]",
+            )}
+          >
+            Read our FAQs
+          </button>
+          <Button variant="link" size="sm" onClick={onSupportClick}>
+            Contact us
+          </Button>
+        </div>
+      </div>
+
+      {/* 2-column perks grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-10)]">
+        {allCategories.map((category) => {
+          const config = CATEGORY_CONFIG[category]
+          if (!config) return null
+
+          const description =
+            category === 'Inertia Perks' && !hasRoyalties
+              ? INERTIA_PERKS_DESCRIPTION_WITHOUT_ROYALTIES
+              : config.description
+
+          return (
+            <div key={category} className="flex items-start gap-[var(--spacing-5)]">
+              {/* Icon badge */}
+              <div
+                className="shrink-0 flex items-center justify-center rounded-[100px] p-[var(--spacing-3)]"
+                style={{
+                  background: category === 'Inertia Perks'
+                    ? 'var(--color-project-accent, var(--color-bg-teal))'
+                    : 'transparent',
+                  border: category === 'Inertia Perks'
+                    ? 'none'
+                    : '2px solid var(--color-project-accent, var(--color-bg-teal))',
+                }}
+              >
+                <span
+                  className="material-symbols-rounded text-[24px] leading-none"
+                  style={{
+                    color: category === 'Inertia Perks'
+                      ? 'var(--perks-icon-color)'
+                      : 'var(--color-project-accent, var(--color-bg-teal))',
+                  }}
+                  aria-hidden="true"
+                >
+                  {config.icon}
+                </span>
+              </div>
+
+              {/* Text */}
+              <div className="flex flex-col gap-[var(--spacing-2)]">
+                <span
+                  className={cn(
+                    "font-heading font-medium",
+                    "text-[length:--font-size-h6]",
+                    "leading-[1.2]",
+                    "text-[--perks-label]"
+                  )}
+                >
+                  {category}
+                </span>
+                <p
+                  className={cn(
+                    "font-body font-normal",
+                    "text-[length:--font-size-body-base]",
+                    "leading-[1.5]",
+                    "text-[--perks-body]"
+                  )}
+                >
+                  {description}
+                </p>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Footer note */}
+      <p
+        className={cn(
+          "font-body font-normal",
+          "text-[14px] leading-[1.5]",
+          "text-[--perks-label-sub]",
+          "mt-[var(--spacing-8)]"
+        )}
+      >
+        *Limited availability
+      </p>
+    </section>
+  )
+}
