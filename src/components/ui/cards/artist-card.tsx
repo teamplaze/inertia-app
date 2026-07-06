@@ -55,7 +55,7 @@ export function ArtistCard({
           className={cn(
             "font-body font-normal leading-[1.5]",
             "text-[--card-text-secondary]",
-            "text-[length:--font-size-body-base]"
+            "text-[18px]"
           )}
         >
           {tag}

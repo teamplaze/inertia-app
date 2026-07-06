@@ -13,7 +13,7 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">User Profile</h1>
+        <h1 className="text-3xl font-medium text-white mb-2">User Profile</h1>
         <p className="text-gray-400">Manage your shipping address and social handles.</p>
       </div>
       

@@ -94,7 +94,7 @@ export function PerksSection({
   const allCategories = [...orderedCategories, ...extraCategories]
 
   return (
-    <section className={cn("w-full", className)}>
+    <section className={cn("w-full", "py-[var(--spacing-12)] md:py-[120px]", className)}>
       {/* Section header */}
       <div className={cn(
         "flex flex-col gap-[var(--spacing-4)]",
@@ -105,7 +105,7 @@ export function PerksSection({
           <h2
             className={cn(
               "font-heading font-medium",
-              "text-[length:--font-size-h2]",
+              "text-[20px] md:text-[32px]",
               "leading-[1.2]",
               "text-[--perks-heading]"
             )}
@@ -115,7 +115,7 @@ export function PerksSection({
           <p
             className={cn(
               "font-body font-normal",
-              "text-[length:--font-size-body-base]",
+              "text-[18px]",
               "leading-[1.5]",
               "text-[--perks-label-sub]"
             )}
@@ -130,7 +130,7 @@ export function PerksSection({
               "flex items-center justify-center",
               "bg-transparent text-white",
               "font-heading font-medium",
-              "text-[length:--font-size-btn-small]",
+              "text-[14px]",
               "leading-[1.2] tracking-normal",
               "px-[var(--spacing-5)] py-[var(--spacing-3)]",
               "rounded-none",
@@ -194,7 +194,7 @@ export function PerksSection({
                 <span
                   className={cn(
                     "font-heading font-medium",
-                    "text-[length:--font-size-h6]",
+                    "text-[18px]",
                     "leading-[1.2]",
                     "text-[--perks-label]"
                   )}
@@ -204,7 +204,7 @@ export function PerksSection({
                 <p
                   className={cn(
                     "font-body font-normal",
-                    "text-[length:--font-size-body-base]",
+                    "text-[18px]",
                     "leading-[1.5]",
                     "text-[--perks-body]"
                   )}

@@ -75,7 +75,7 @@ export default function Component() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid max-w-[1300px] mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-2 md:gap-16">
             <div className="flex flex-col items-start space-y-4">
-              <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-white">
+              <h1 className="lg:leading-tighter text-3xl font-medium tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-white">
                 Invest in the Future of Independent Music
               </h1>
               <p className="mx-auto max-w-[700px] text-white/80 md:text-xl">
@@ -97,7 +97,7 @@ export default function Component() {
       {/* Featured Projects section */}
       <section id="featured-projects" className="w-full py-12 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
+          <h2 className="text-3xl font-medium tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
             Featured Projects
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -143,7 +143,7 @@ export default function Component() {
       {/* How It Works section */}
       <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: BRAND.teal }}>
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
+          <h2 className="text-3xl font-medium tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
             How It Works
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -175,27 +175,27 @@ export default function Component() {
       {/* Why Inertia section */}
       <section className="w-full py-12 md:py-24 lg:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
+          <h2 className="text-3xl font-medium tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
             Why Inertia?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">🚫 No Labels, No Debt</h3>
+                <h3 className="text-xl font-medium text-white mb-2">🚫 No Labels, No Debt</h3>
                 <p className="text-white/70">Artists stay independent.</p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">🎁 Experiential Perks</h3>
+                <h3 className="text-xl font-medium text-white mb-2">🎁 Experiential Perks</h3>
                 <p className="text-white/70">Real-life fan rewards.</p>
               </div>
             </div>
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">🤝 Be Part of the Story</h3>
+                <h3 className="text-xl font-medium text-white mb-2">🤝 Be Part of the Story</h3>
                 <p className="text-white/70">More than listening. You’re involved.</p>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">🔒 Transparent, Secure Platform</h3>
+                <h3 className="text-xl font-medium text-white mb-2">🔒 Transparent, Secure Platform</h3>
                 <p className="text-white/70">Built with trust and transparency in mind.</p>
               </div>
             </div>

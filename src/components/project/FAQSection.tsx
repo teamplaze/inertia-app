@@ -49,8 +49,8 @@ export default function FAQSection() {
     <section
       className={cn(
         "w-full flex flex-col items-center",
-        "px-[var(--spacing-5)] py-[var(--spacing-8)]",
-        "md:px-[96px] md:py-[var(--spacing-16)]",
+        "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+        "md:px-[96px] md:py-[120px]",
         "gap-[var(--spacing-5)] md:gap-[var(--spacing-6)]",
       )}
       style={{ background: '#000000' }}
@@ -68,7 +68,7 @@ export default function FAQSection() {
           className={cn(
             "font-heading font-medium leading-[1.2]",
             "tracking-normal text-white w-full",
-            "text-[20px] md:text-[length:--font-size-h4]",
+            "text-[20px] md:text-[32px]",
           )}
         >
           FAQ

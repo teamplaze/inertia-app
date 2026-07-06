@@ -67,39 +67,13 @@ export function ProjectHero({
         )}
         style={{ background: textPanelGradient }}
       >
-        {showProjectResults && projectResultsHref && (
-          <div className="absolute top-[var(--spacing-4)] right-[var(--spacing-4)]">
-            <Link href={projectResultsHref}>
-              <button
-                className={cn(
-                  "flex items-center justify-center",
-                  "bg-white text-black",
-                  "font-heading font-medium",
-                  "text-[length:--font-size-btn-base]",
-                  "leading-[1.2]",
-                  "px-[var(--spacing-5)] py-[var(--spacing-4)]",
-                  "rounded-none",
-                  "transition-colors duration-150",
-                  "hover:bg-[var(--color-project-accent,var(--color-bg-teal))]",
-                  "hover:text-white",
-                  "focus-visible:outline-none",
-                  "focus-visible:ring-2",
-                  "focus-visible:ring-[--color-border-focus]",
-                )}
-              >
-                Project Results
-              </button>
-            </Link>
-          </div>
-        )}
-
         {/* Intro block */}
         <div className="flex flex-col gap-[var(--spacing-2)] w-full">
           {projectTitle && (
             <span
               className={cn(
                 "font-body font-normal leading-[1.2]",
-                "text-[16px] md:text-[length:--font-size-body-base]",
+                "text-[16px] md:text-[18px]",
                 "text-[--hero-text-tag]",
               )}
             >
@@ -139,27 +113,52 @@ export function ProjectHero({
           className="w-full"
         />
 
-        {/* CTA Button */}
-        <button
-          onClick={onSupportClick}
-          className={cn(
-            "w-full", "flex items-center justify-center",
-            "bg-white text-black",
-            "font-heading font-medium",
-            "text-[length:--font-size-btn-large]",
-            "leading-[1.2]",
-            "px-[var(--spacing-5)] py-[var(--spacing-4)]",
-            "rounded-none",
-            "transition-colors duration-150",
-            "hover:bg-[var(--color-project-accent,var(--color-bg-teal))]",
-            "hover:text-white",
-            "focus-visible:outline-none",
-            "focus-visible:ring-2",
-            "focus-visible:ring-[--color-border-focus]",
+        {/* CTA buttons */}
+        <div className="flex flex-col items-center gap-[var(--spacing-8)] w-full">
+          <button
+            onClick={onSupportClick}
+            className={cn(
+              "w-full", "flex items-center justify-center",
+              "bg-white text-black",
+              "font-heading font-medium",
+              "text-[18px]",
+              "leading-[1.2]",
+              "px-[var(--spacing-5)] py-[var(--spacing-4)]",
+              "rounded-none",
+              "transition-colors duration-150",
+              "hover:bg-[var(--color-project-accent,var(--color-bg-teal))]",
+              "hover:text-white",
+              "focus-visible:outline-none",
+              "focus-visible:ring-2",
+              "focus-visible:ring-[--color-border-focus]",
+            )}
+          >
+            Support {artistName}
+          </button>
+
+          {showProjectResults && projectResultsHref && (
+            <Link
+              href={projectResultsHref}
+              className={cn(
+                "shrink-0 flex flex-col items-center",
+                "gap-[4px]",
+                "font-heading font-medium",
+                "text-[12px] md:text-[14px]",
+                "leading-[1.2] tracking-normal",
+                "text-white",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[--color-border-focus]",
+              )}
+            >
+              <span>View project results</span>
+              <span
+                className="w-full block"
+                style={{ height: '2px', background: 'white' }}
+              />
+            </Link>
           )}
-        >
-          Support {artistName}
-        </button>
+        </div>
 
       </div>
 

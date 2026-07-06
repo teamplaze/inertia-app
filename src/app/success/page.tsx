@@ -59,7 +59,7 @@ export default async function SuccessPage({
     <main className="flex-1 flex flex-col items-center justify-center text-center py-20">
       {eventProps && <PurchaseCompletedEvent props={eventProps} />}
       <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-      <h1 className="text-4xl font-bold text-white mb-2">Contribution Successful!</h1>
+      <h1 className="text-4xl font-medium text-white mb-2">Contribution Successful!</h1>
       <p className="text-lg text-gray-300 mb-8">
         {projectTitle
           ? `Thank you for supporting ${projectTitle}. Your contribution will help bring it to life.`

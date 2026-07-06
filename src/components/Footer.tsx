@@ -36,7 +36,7 @@ export default function Footer() {
             href="/network"
             className={cn(
               "font-heading font-medium",
-              "text-[18px] md:text-[length:--font-size-btn-large]",
+              "text-[18px] md:text-[18px]",
               "leading-[1.2] tracking-normal",
               "text-white hover:opacity-70",
               "transition-opacity duration-150",

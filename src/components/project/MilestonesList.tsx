@@ -181,7 +181,7 @@ function MilestoneRow({
             <span
               className={cn(
                 "font-heading font-medium",
-                "text-[16px] md:text-[length:--font-size-h6]",
+                "text-[16px] md:text-[18px]",
                 "leading-[1.2]",
                 titleColor,
               )}
@@ -193,7 +193,7 @@ function MilestoneRow({
             <span
               className={cn(
                 "font-body font-normal hidden md:block",
-                "text-[length:--font-size-body-base]",
+                "text-[18px]",
                 "leading-[1.5]",
                 "text-[--milestone-text-locked]",
               )}
@@ -209,7 +209,7 @@ function MilestoneRow({
           <span
             className={cn(
               "font-heading font-medium hidden md:block",
-              "text-[length:--font-size-h6]",
+              "text-[18px]",
               "leading-[1.2] text-right",
               "w-[120px]",
               amountColor,
@@ -271,7 +271,7 @@ function MilestoneRow({
             <p
               className={cn(
                 "font-body font-normal",
-                "text-[14px] md:text-[length:--font-size-body-base]",
+                "text-[14px] md:text-[18px]",
                 "leading-[1.5]",
                 "text-[--milestone-text-content]",
               )}

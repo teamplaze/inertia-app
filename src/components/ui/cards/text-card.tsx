@@ -50,7 +50,7 @@ export function TextCard({
           className={cn(
             "font-body font-semibold leading-[1.5]",
             "text-[--card-text-secondary]",
-            "text-[length:--font-size-body-base]"
+            "text-[18px]"
           )}
         >
           WHAT YOU GET

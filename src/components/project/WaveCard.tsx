@@ -128,7 +128,7 @@ export function WaveCard({
           <span
             className={cn(
               'font-body font-semibold',
-              'text-[length:--font-size-body-base]',
+              'text-[18px]',
               'leading-[1.2]',
               isActive ? 'text-white' : 'text-[--wave-text-muted]',
             )}
@@ -219,7 +219,7 @@ export function WaveCard({
         <span
           className={cn(
             'font-body font-semibold',
-            'text-[length:--font-size-body-base]',
+            'text-[18px]',
             'text-[--wave-text-muted]',
           )}
         >
@@ -305,7 +305,7 @@ export function WaveCard({
               'w-full flex items-center justify-center',
               'bg-white text-black',
               'font-heading font-medium',
-              'text-[length:--font-size-btn-large]',
+              'text-[18px]',
               'leading-[1.2] tracking-normal',
               'px-[var(--spacing-5)] py-[var(--spacing-4)]',
               'rounded-none',
@@ -329,7 +329,7 @@ export function WaveCard({
                   'w-full flex items-center justify-center',
                   'bg-white text-black',
                   'font-heading font-medium',
-                  'text-[length:--font-size-btn-large]',
+                  'text-[18px]',
                   'leading-[1.2] tracking-normal',
                   'px-[var(--spacing-5)] py-[var(--spacing-4)]',
                   'rounded-none',
@@ -352,7 +352,7 @@ export function WaveCard({
                   'w-full flex items-center justify-center',
                   'bg-white text-black',
                   'font-heading font-medium',
-                  'text-[length:--font-size-btn-large]',
+                  'text-[18px]',
                   'leading-[1.2] tracking-normal',
                   'px-[var(--spacing-5)] py-[var(--spacing-4)]',
                   'rounded-none',

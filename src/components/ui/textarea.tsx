@@ -12,7 +12,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
         // Spacing
         "p-[var(--spacing-3)]",
         // Typography
-        "font-body font-normal text-[length:--font-size-body-base] leading-[1.5] tracking-normal",
+        "font-body font-normal text-[18px] leading-[1.5] tracking-normal",
         // Default surface
         "bg-[--input-bg-default] border border-[--input-border-default]",
         // Default text / placeholder

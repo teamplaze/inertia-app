@@ -10,7 +10,7 @@ const badgeVariants = cva(
     "rounded-[var(--badge-radius)]",
     "bg-transparent",
     "font-body font-semibold",
-    "text-[length:--font-size-body-base]",
+    "text-[18px]",
     "leading-[1.5] tracking-normal",
     "border",
   ].join(" "),

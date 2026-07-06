@@ -18,7 +18,7 @@ export default function AccountLayout({
         {/* Left Sidebar Navigation */}
         <aside className="md:col-span-1">
           <div className="p-4 rounded-xl border-2 border-brand-copper" style={{ backgroundColor: BRAND.dark }}>
-            <h2 className="text-xl font-bold text-white mb-6 pl-2">My Account</h2>
+            <h2 className="text-xl font-medium text-white mb-6 pl-2">My Account</h2>
             <nav className="space-y-2">
               <Link
                 href="/account"

@@ -62,7 +62,7 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
           >
             paid
           </span>
-          <span className="font-body font-semibold text-[length:--font-size-body-base] leading-[1.2] text-white">
+          <span className="font-body font-semibold text-[18px] leading-[1.2] text-white">
             DONATE
           </span>
         </div>
@@ -181,12 +181,14 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
           'w-full flex items-center justify-center',
           'bg-transparent text-white',
           'font-heading font-medium',
-          'text-[length:--font-size-btn-large]',
+          'text-[18px]',
           'leading-[1.2] tracking-normal',
           'rounded-none',
           'transition-colors duration-150',
           'hover:border-[var(--color-project-accent,var(--color-bg-teal))]',
           'hover:text-[var(--color-project-accent,var(--color-bg-teal))]',
+          'disabled:hover:border-white',
+          'disabled:hover:text-white',
           'disabled:opacity-70 disabled:cursor-not-allowed',
         )}
         style={{

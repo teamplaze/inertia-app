@@ -69,7 +69,7 @@ export function TestimonialCard({
           <span
             className={cn(
               "font-heading font-medium leading-[1.2]",
-              "text-[16px] md:text-[length:--font-size-h6]",
+              "text-[16px] md:text-[18px]",
               "text-white",
             )}
           >
@@ -78,7 +78,7 @@ export function TestimonialCard({
           <span
             className={cn(
               "font-body font-normal leading-[1.5]",
-              "text-[16px] md:text-[length:--font-size-body-base]",
+              "text-[16px] md:text-[18px]",
               "text-white",
             )}
           >

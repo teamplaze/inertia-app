@@ -1,7 +1,7 @@
 // File: src/app/projects/[id]/project-client-ui.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
@@ -50,6 +50,12 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const [fanStoriesIndex, setFanStoriesIndex] = useState(0);
 
   const [artistNoteOpen, setArtistNoteOpen] = useState(false);
+
+  const displayedTestimonials = useMemo(() => {
+    if (!project.testimonials?.length) return []
+    const shuffled = [...project.testimonials].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, 6)
+  }, [project.testimonials])
 
   const supabase = createClient();
 
@@ -188,7 +194,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               "font-heading font-medium leading-[1.2]",
               "tracking-normal",
               "text-white w-full",
-              "text-[20px] md:text-[length:--font-size-h4]",
+              "text-[20px] md:text-[32px]",
             )}
           >
             About
@@ -239,7 +245,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                   "font-heading font-medium leading-[1.2]",
                   "tracking-normal text-white",
                   "flex-[1_0_0] min-w-px text-left",
-                  "text-[16px] md:text-[length:--font-size-h6]",
+                  "text-[16px] md:text-[18px]",
                 )}
               >
                 A note from {project.artist_name}
@@ -267,7 +273,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 <p
                   className={cn(
                     "font-body font-normal",
-                    "text-[length:--font-size-body-base]",
+                    "text-[18px]",
                     "leading-[1.5] tracking-normal",
                     "text-[--color-text-200]",
                   )}
@@ -281,19 +287,19 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       </section>
 
       {project.project_milestones && project.project_milestones.length > 0 && (
-        <section id="milestones" className="mb-12">
+        <section id="milestones" className="py-[var(--spacing-12)] md:py-[120px]">
           <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)] md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className={cn(
                 "font-heading font-medium",
-                "text-[length:--font-size-h2]",
+                "text-[20px] md:text-[32px]",
                 "leading-[1.2] text-white"
               )}>
                 Fundraising milestones
               </h2>
               <p className={cn(
                 "font-body font-normal mt-2",
-                "text-[length:--font-size-body-base]",
+                "text-[18px]",
                 "leading-[1.5] text-[--color-text-300]"
               )}>
                 Unlock our budget milestones by contributing to the project!
@@ -305,7 +311,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 "flex items-center justify-center",
                 "bg-transparent text-white",
                 "font-heading font-medium",
-                "text-[length:--font-size-btn-small]",
+                "text-[14px]",
                 "leading-[1.2] tracking-normal",
                 "px-[var(--spacing-5)] py-[var(--spacing-3)]",
                 "rounded-none",
@@ -342,7 +348,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       {/* === PREVIEWS SECTION === */}
       {PREVIEWS_ENABLED && (
         <section id="previews" className="mb-12">
-          <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
+          <h2 className="text-3xl font-medium mb-6" style={{ color: BRAND.teal }}>Previews</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="rounded-xl" style={regularCardStyle}>
               <CardContent className="p-4 space-y-2">
@@ -401,7 +407,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         return (
           <section
             id="support-levels"
-            className="flex flex-col items-center px-[var(--spacing-5)] py-[var(--spacing-8)] md:px-[96px] md:py-[var(--spacing-16)] gap-[var(--spacing-10)]"
+            className="flex flex-col items-center px-[var(--spacing-5)] py-[var(--spacing-12)] md:px-[96px] md:py-[120px] gap-[var(--spacing-10)]"
             style={{ background: '#000000' }}
           >
             {/* Section header */}
@@ -440,7 +446,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       })()}
 
       {tiers && tiers.length > 0 && (
-        <section id="perks" className="mb-12">
+        <section id="perks">
           <PerksSection
             tiers={tiers}
             artistName={project.artist_name}
@@ -450,13 +456,13 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      {project.testimonials && project.testimonials.length > 0 && (
+      {displayedTestimonials.length > 0 && (
         <section
           id="fan-stories"
           className={cn(
             "w-full flex flex-col items-center justify-center",
             "px-[var(--spacing-5)] py-[var(--spacing-12)]",
-            "md:px-[96px] md:py-[96px]",
+            "md:px-[96px] md:py-[120px]",
             "gap-[var(--spacing-10)] md:gap-[var(--spacing-12)]",
             "overflow-hidden md:overflow-visible",
           )}
@@ -468,7 +474,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               "font-heading font-medium leading-[1.2]",
               "tracking-normal text-white text-center",
               "w-full max-w-[822px]",
-              "text-[24px] md:text-[length:--font-size-h3]",
+              "text-[20px] md:text-[32px]",
             )}
           >
             Join {project.artist_name}&apos;s fans
@@ -485,7 +491,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                   className="flex transition-transform duration-300"
                   style={{ transform: `translateX(-${fanStoriesIndex * 100}%)` }}
                 >
-                  {project.testimonials.map((testimonial) => (
+                  {displayedTestimonials.map((testimonial) => (
                     <div key={testimonial.id} style={{ minWidth: '100%' }}>
                       <TestimonialCard
                         quote={testimonial.story}
@@ -498,37 +504,54 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 </div>
               </div>
 
-              {/* DESKTOP — multiple cards visible, pixel-based slide with overflow clip */}
-              <div className="hidden md:block w-full overflow-hidden">
-                <div
-                  className="flex transition-transform duration-300"
-                  style={{
-                    gap: '32px',
-                    transform: `translateX(calc(-${fanStoriesIndex * 394}px - ${fanStoriesIndex * 32}px))`,
-                  }}
-                >
-                  {project.testimonials.map((testimonial) => (
-                    <div key={testimonial.id} className="shrink-0">
+              {/* DESKTOP */}
+              <div className="hidden md:block w-full">
+                {displayedTestimonials.length >= 4 ? (
+                  <div className="overflow-hidden">
+                    <div
+                      className="flex transition-transform duration-300"
+                      style={{
+                        gap: '32px',
+                        transform: `translateX(calc(-${fanStoriesIndex * 394}px - ${fanStoriesIndex * 32}px))`,
+                      }}
+                    >
+                      {displayedTestimonials.map((testimonial) => (
+                        <div key={testimonial.id} className="shrink-0">
+                          <TestimonialCard
+                            quote={testimonial.story}
+                            name={testimonial.name}
+                            location={testimonial.location ?? ''}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-row flex-wrap justify-center" style={{ gap: '32px' }}>
+                    {displayedTestimonials.map((testimonial) => (
                       <TestimonialCard
+                        key={testimonial.id}
                         quote={testimonial.story}
                         name={testimonial.name}
                         location={testimonial.location ?? ''}
                       />
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
             </div>
 
             {/* Carousel controls */}
-            <CarouselControls
-              count={project.testimonials.length}
-              activeIndex={fanStoriesIndex}
-              onDotClick={(i) => setFanStoriesIndex(i)}
-              onPrev={() => setFanStoriesIndex(Math.max(0, fanStoriesIndex - 1))}
-              onNext={() => setFanStoriesIndex(Math.min(project.testimonials.length - 1, fanStoriesIndex + 1))}
-            />
+            <div className={cn(displayedTestimonials.length < 4 ? "md:hidden" : "")}>
+              <CarouselControls
+                count={displayedTestimonials.length}
+                activeIndex={fanStoriesIndex}
+                onDotClick={(i) => setFanStoriesIndex(i)}
+                onPrev={() => setFanStoriesIndex(Math.max(0, fanStoriesIndex - 1))}
+                onNext={() => setFanStoriesIndex(Math.min(displayedTestimonials.length - 1, fanStoriesIndex + 1))}
+              />
+            </div>
           </div>
         </section>
       )}

@@ -97,7 +97,7 @@ export default async function ArtistDashboardPage(props: {
     if (!activeProject) {
         return (
             <div className="space-y-8">
-                <h1 className="text-3xl font-bold text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
+                <h1 className="text-3xl font-medium text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
                 <div className="rounded-lg border border-dashed border-gray-600 p-12 text-center bg-black/20">
                     <h3 className="text-lg font-semibold text-white">Your dashboard is ready</h3>
                     <p className="mt-2 text-gray-400 max-w-md mx-auto">
@@ -157,7 +157,7 @@ export default async function ArtistDashboardPage(props: {
         <div className="space-y-8">
             <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
+                    <h1 className="text-3xl font-medium text-white">Welcome, {profile?.full_name || 'Artist'}</h1>
                     <p className="text-gray-400 mt-1">Here is the latest on <span className="text-brand-copper font-semibold">{activeProject.project_title}</span>.</p>
                 </div>
             </div>

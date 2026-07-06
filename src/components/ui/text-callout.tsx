@@ -47,7 +47,7 @@ export function TextCallout({
         <span
           className={cn(
             "font-heading font-medium",
-            "text-[length:--font-size-h6]",
+            "text-[18px]",
             "leading-[1.2] tracking-normal",
             "text-[--callout-heading]",
             "w-full"
@@ -59,7 +59,7 @@ export function TextCallout({
         <span
           className={cn(
             "font-body font-normal",
-            "text-[length:--font-size-body-base]",
+            "text-[18px]",
             "leading-[1.5] tracking-normal",
             "text-[--callout-body]",
             "w-full"

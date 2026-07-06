@@ -54,7 +54,7 @@ function AccordionTrigger({
           // Spacing
           "p-[var(--spacing-5)]",
           // Typography — MADE Outer Sans 500, 18px
-          "font-heading font-medium text-[length:--font-size-h6] leading-[1.2] tracking-normal",
+          "font-heading font-medium text-[18px] leading-[1.2] tracking-normal",
           // Color
           "text-[--accordion-text-trigger]",
           // Gap between label and icon
@@ -94,7 +94,7 @@ function AccordionContent({
       <div
         className={cn(
           // Typography — Albert Sans 400, 20px
-          "font-body font-normal text-[length:--font-size-body-large] leading-[1.5] tracking-normal",
+          "font-body font-normal text-[20px] leading-[1.5] tracking-normal",
           // Color
           "text-[--accordion-text-content]",
           // Spacing — 32px gap from trigger top, 20px sides and bottom

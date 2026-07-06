@@ -40,7 +40,7 @@ function Alert({
         <span
           className={cn(
             "font-body font-normal",
-            "text-[length:--font-size-body-base]",
+            "text-[18px]",
             "leading-[1.5] tracking-normal",
             "text-[--alert-text-main]"
           )}
@@ -52,7 +52,7 @@ function Alert({
         <span
           className={cn(
             "font-body font-semibold",
-            "text-[length:--font-size-body-base]",
+            "text-[18px]",
             "leading-[1.5] tracking-normal",
             "text-[--alert-text-secondary]"
           )}

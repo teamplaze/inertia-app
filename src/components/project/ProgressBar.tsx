@@ -35,7 +35,7 @@ export function ProgressBar({
           className={cn(
             "font-heading font-medium leading-[1.2]",
             "text-[--progress-text-amount]",
-            mobile ? "text-[length:--font-size-h5]" : "text-[24px]"
+            mobile ? "text-[20px]" : "text-[24px]"
           )}
         >
           {amountRaised}
@@ -45,7 +45,7 @@ export function ProgressBar({
           className={cn(
             "font-body font-normal leading-[1.5]",
             "text-[--progress-text-goal]",
-            mobile ? "text-[16px]" : "text-[length:--font-size-body-base]"
+            mobile ? "text-[16px]" : "text-[18px]"
           )}
         >
           {goal}
@@ -90,7 +90,7 @@ export function ProgressBar({
                 className={cn(
                   "font-body font-normal leading-[1.5]",
                   "text-[--progress-text-stats]",
-                  mobile ? "text-[14px]" : "text-[length:--font-size-body-base]"
+                  mobile ? "text-[14px]" : "text-[18px]"
                 )}
               >
                 {percentFunded}% funded
@@ -114,7 +114,7 @@ export function ProgressBar({
                 className={cn(
                   "font-body font-normal leading-[1.5]",
                   "text-[--progress-text-stats]",
-                  mobile ? "text-[14px]" : "text-[length:--font-size-body-base]"
+                  mobile ? "text-[14px]" : "text-[18px]"
                 )}
               >
                 {backerCount} backers

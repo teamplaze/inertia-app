@@ -260,7 +260,7 @@ export function TierCard({
             <CardContent className="p-4">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-1">Ready to support?</h3>
+                  <h3 className="text-lg font-medium text-white mb-1">Ready to support?</h3>
                   <p className="text-sm text-gray-200 leading-snug">
                     You&apos;ve selected the{" "}
                     <strong className="text-white">{tier.name}</strong> tier for{" "}

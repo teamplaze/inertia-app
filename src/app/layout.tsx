@@ -9,22 +9,22 @@ import { PHProvider } from "./providers";
 const madeOuterSans = localFont({
   src: [
     {
-      path: '../../public/fonts/MADE Outer Sans Regular PERSONAL USE.otf',
+      path: '../../public/fonts/MADE Outer Sans Regular.otf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/MADE Outer Sans Medium PERSONAL USE.otf',
+      path: '../../public/fonts/MADE Outer Sans Medium.otf',
       weight: '500',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/MADE Outer Sans Bold PERSONAL USE.otf',
+      path: '../../public/fonts/MADE Outer Sans Bold.otf',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/MADE Outer Sans Black PERSONAL USE.otf',
+      path: '../../public/fonts/MADE Outer Sans Black.otf',
       weight: '700',
       style: 'normal',
     },

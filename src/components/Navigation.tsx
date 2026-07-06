@@ -126,7 +126,7 @@ export default function Navigation() {
                   "flex items-center justify-center",
                   "bg-black text-white",
                   "font-heading font-medium",
-                  "text-[length:--font-size-btn-base]",
+                  "text-[16px]",
                   "leading-[1.2] tracking-normal",
                   "px-[var(--spacing-5)] py-[var(--spacing-3)]",
                   "rounded-none",
