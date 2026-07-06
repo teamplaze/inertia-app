@@ -29,7 +29,7 @@ const buttonVariants = cva(
         ].join(" "),
 
         border: [
-          "bg-transparent text-[var(--interactive-text-secondary)]",
+          "bg-transparent text-white",
           "border-2 border-[var(--interactive-bg-primary)]",
           "hover:border-[var(--interactive-bg-hover-primary)]",
           "focus-visible:border-[var(--interactive-bg-hover-primary)]",
@@ -40,7 +40,7 @@ const buttonVariants = cva(
         ].join(" "),
 
         link: [
-          "bg-transparent text-[var(--interactive-text-secondary)]",
+          "bg-transparent text-white",
           "border-0",
           "underline underline-offset-4 decoration-2",
           "decoration-[var(--interactive-bg-primary)]",
@@ -74,17 +74,17 @@ const buttonVariants = cva(
       },
       size: {
         sm: [
-          "text-[var(--font-size-btn-small)]",
+          "text-[14px]",
           "px-[var(--spacing-3)] py-[var(--spacing-2)]",
         ].join(" "),
 
         default: [
-          "text-[var(--font-size-btn-base)]",
+          "text-[16px]",
           "px-[var(--spacing-5)] py-[var(--spacing-3)]",
         ].join(" "),
 
         lg: [
-          "text-[var(--font-size-btn-large)]",
+          "text-[18px]",
           "px-[var(--spacing-5)] py-[var(--spacing-4)]",
         ].join(" "),
 
