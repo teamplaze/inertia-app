@@ -72,7 +72,7 @@ function MilestoneBadge({ number, state, fillPercent = 0 }: MilestoneBadgeProps)
           style={{ width: "clamp(21px, 5vw, 37px)", height: "clamp(21px, 5vw, 37px)", background: "var(--milestone-bg)" }}
         >
           <span
-            className="font-heading font-medium leading-none text-[14px] md:text-[18px] text-[--milestone-text-active]"
+            className="font-heading font-medium leading-none text-[14px] md:text-[18px] text-[var(--milestone-text-active)]"
           >
             {number}
           </span>
@@ -104,7 +104,7 @@ function MilestoneBadge({ number, state, fillPercent = 0 }: MilestoneBadgeProps)
           className={cn(
             "font-heading font-medium leading-none",
             "text-[14px] md:text-[18px]",
-            "text-[--milestone-text-locked]",
+            "text-[var(--milestone-text-locked)]",
           )}
         >
           {number}
@@ -138,14 +138,14 @@ function MilestoneRow({
   onToggle,
 }: MilestoneRowProps) {
   const isLocked = state === "locked"
-  const titleColor = isLocked ? "text-[--milestone-text-locked]" : "text-[--milestone-text-active]"
-  const amountColor = isLocked ? "text-[--milestone-text-locked]" : "text-[--milestone-text-active]"
+  const titleColor = isLocked ? "text-[var(--milestone-text-locked)]" : "text-[var(--milestone-text-active)]"
+  const amountColor = isLocked ? "text-[var(--milestone-text-locked)]" : "text-[var(--milestone-text-active)]"
 
   return (
     <div
       className={cn(
         "flex flex-col",
-        "bg-[--milestone-bg]",
+        "bg-[var(--milestone-bg)]",
         "border rounded-[12px]",
         "overflow-hidden",
         "transition-colors duration-150",
@@ -164,7 +164,7 @@ function MilestoneRow({
           "md:px-[var(--spacing-5)] md:py-[var(--spacing-5)]",
           "focus-visible:outline-none",
           "focus-visible:ring-2",
-          "focus-visible:ring-[--color-border-focus]",
+          "focus-visible:ring-[var(--color-border-focus)]",
           "focus-visible:ring-inset",
         )}
         aria-expanded={isExpanded}
@@ -195,7 +195,7 @@ function MilestoneRow({
                 "font-body font-normal hidden md:block",
                 "text-[18px]",
                 "leading-[1.5]",
-                "text-[--milestone-text-locked]",
+                "text-[var(--milestone-text-locked)]",
               )}
             >
               {milestone.budget_line_items.map((item) => item.name).join(", ")}
@@ -218,7 +218,7 @@ function MilestoneRow({
             ${goalAmount.toLocaleString()}
           </span>
           <span
-            className="material-symbols-rounded text-[24px] leading-none text-[--milestone-text-active]"
+            className="material-symbols-rounded text-[24px] leading-none text-[var(--milestone-text-active)]"
             aria-hidden="true"
           >
             {isExpanded ? "close" : "add"}
@@ -243,7 +243,7 @@ function MilestoneRow({
               className={cn(
                 "font-body font-normal flex-1",
                 "text-[16px] leading-[1.5]",
-                "text-[--milestone-text-locked]",
+                "text-[var(--milestone-text-locked)]",
               )}
             >
               {milestone.budget_line_items.map((item) => item.name).join(", ")}
@@ -273,7 +273,7 @@ function MilestoneRow({
                 "font-body font-normal",
                 "text-[14px] md:text-[18px]",
                 "leading-[1.5]",
-                "text-[--milestone-text-content]",
+                "text-[var(--milestone-text-content)]",
               )}
             >
               {milestone.description}

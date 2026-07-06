@@ -45,7 +45,7 @@ export function ArtistCard({
         <span
           className={cn(
             "font-heading font-medium leading-[1.2]",
-            "text-[--card-text-primary]",
+            "text-[var(--card-text-primary)]",
             "text-[32px]"
           )}
         >
@@ -54,7 +54,7 @@ export function ArtistCard({
         <span
           className={cn(
             "font-body font-normal leading-[1.5]",
-            "text-[--card-text-secondary]",
+            "text-[var(--card-text-secondary)]",
             "text-[18px]"
           )}
         >

@@ -74,7 +74,7 @@ export function ProjectHero({
               className={cn(
                 "font-body font-normal leading-[1.2]",
                 "text-[16px] md:text-[18px]",
-                "text-[--hero-text-tag]",
+                "text-[var(--hero-text-tag)]",
               )}
             >
               {projectTitle}
@@ -85,7 +85,7 @@ export function ProjectHero({
             className={cn(
               "font-heading font-medium leading-[1.2]",
               "text-[32px] md:text-[60px]",
-              "text-[--hero-text-name]",
+              "text-[var(--hero-text-name)]",
             )}
           >
             {artistName}
@@ -95,7 +95,7 @@ export function ProjectHero({
             className={cn(
               "font-body font-normal leading-[1.5]",
               "text-[18px] md:text-[20px]",
-              "text-[--hero-text-desc]",
+              "text-[var(--hero-text-desc)]",
             )}
           >
             {description}
@@ -130,7 +130,7 @@ export function ProjectHero({
               "hover:text-white",
               "focus-visible:outline-none",
               "focus-visible:ring-2",
-              "focus-visible:ring-[--color-border-focus]",
+              "focus-visible:ring-[var(--color-border-focus)]",
             )}
           >
             Support {artistName}
@@ -148,7 +148,7 @@ export function ProjectHero({
                 "text-white",
                 "focus-visible:outline-none",
                 "focus-visible:ring-2",
-                "focus-visible:ring-[--color-border-focus]",
+                "focus-visible:ring-[var(--color-border-focus)]",
               )}
             >
               <span>View project results</span>

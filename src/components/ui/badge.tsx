@@ -18,19 +18,19 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: [
-          "border-[--badge-border-default]",
-          "text-[--badge-text-default]",
+          "border-[var(--badge-border-default)]",
+          "text-[var(--badge-text-default)]",
         ].join(" "),
 
         highlight: [
-          "border-[--badge-border-highlight]",
-          "text-[--badge-text-highlight]",
-          "[&_.badge-icon]:text-[--badge-icon-highlight]",
+          "border-[var(--badge-border-highlight)]",
+          "text-[var(--badge-text-highlight)]",
+          "[&_.badge-icon]:text-[var(--badge-icon-highlight)]",
         ].join(" "),
 
         secondary: [
-          "border-[--badge-border-default]",
-          "text-[--badge-text-default]",
+          "border-[var(--badge-border-default)]",
+          "text-[var(--badge-text-default)]",
         ].join(" "),
 
         destructive: [

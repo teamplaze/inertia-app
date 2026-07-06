@@ -130,7 +130,7 @@ export function WaveCard({
               'font-body font-semibold',
               'text-[18px]',
               'leading-[1.2]',
-              isActive ? 'text-white' : 'text-[--wave-text-muted]',
+              isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
             )}
           >
             WAVE {waveNumber} &bull; {isActive ? 'Live' : 'Closed'}
@@ -143,7 +143,7 @@ export function WaveCard({
             className={cn(
               'font-heading font-medium',
               'text-[32px] leading-[1.2]',
-              isActive ? 'text-white' : 'text-[--wave-text-muted]',
+              isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
             )}
           >
             ${tier.price}
@@ -152,7 +152,7 @@ export function WaveCard({
             className={cn(
               'font-body font-normal',
               'text-[20px] leading-[1.5]',
-              'text-[--wave-text-muted]',
+              'text-[var(--wave-text-muted)]',
             )}
           >
             {tier.description}
@@ -203,7 +203,7 @@ export function WaveCard({
           style={{ background: '#262c2b' }}
         >
           <span
-            className="material-symbols-rounded text-[18px] leading-none text-[--wave-text-muted]"
+            className="material-symbols-rounded text-[18px] leading-none text-[var(--wave-text-muted)]"
             aria-hidden="true"
           >
             timer
@@ -220,7 +220,7 @@ export function WaveCard({
           className={cn(
             'font-body font-semibold',
             'text-[18px]',
-            'text-[--wave-text-muted]',
+            'text-[var(--wave-text-muted)]',
           )}
         >
           WHAT YOU GET
@@ -246,7 +246,7 @@ export function WaveCard({
               <span
                 className={cn(
                   'font-body font-normal text-[18px] leading-[1.5]',
-                  isActive ? 'text-white' : 'text-[--wave-text-muted]',
+                  isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
                 )}
               >
                 {perk.label}
@@ -271,7 +271,7 @@ export function WaveCard({
               <span
                 className={cn(
                   'font-body font-normal text-[18px] leading-[1.5]',
-                  isActive ? 'text-white' : 'text-[--wave-text-muted]',
+                  isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
                 )}
               >
                 {perk.label}
@@ -281,7 +281,7 @@ export function WaveCard({
         </div>
 
         {exclusivePerks.length > 0 && (
-          <span className="font-body font-normal text-[18px] text-[--wave-text-muted]">
+          <span className="font-body font-normal text-[18px] text-[var(--wave-text-muted)]">
             *exclusive
           </span>
         )}
@@ -365,7 +365,7 @@ export function WaveCard({
               </a>
             )}
 
-            <p className="font-body font-normal text-[14px] leading-[1.5] text-[--wave-text-muted] text-center">
+            <p className="font-body font-normal text-[14px] leading-[1.5] text-[var(--wave-text-muted)] text-center">
               *Additional Waves may become available, but are not guaranteed.
             </p>
           </>

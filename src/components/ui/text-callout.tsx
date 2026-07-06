@@ -49,7 +49,7 @@ export function TextCallout({
             "font-heading font-medium",
             "text-[18px]",
             "leading-[1.2] tracking-normal",
-            "text-[--callout-heading]",
+            "text-[var(--callout-heading)]",
             "w-full"
           )}
         >
@@ -61,7 +61,7 @@ export function TextCallout({
             "font-body font-normal",
             "text-[18px]",
             "leading-[1.5] tracking-normal",
-            "text-[--callout-body]",
+            "text-[var(--callout-body)]",
             "w-full"
           )}
         >

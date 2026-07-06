@@ -72,7 +72,7 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
           <span className="font-heading font-medium text-[24px] leading-[1.2] text-white">
             Support {project.artist_name}
           </span>
-          <span className="font-body font-normal text-[20px] leading-[1.5] text-[--wave-text-muted]">
+          <span className="font-body font-normal text-[20px] leading-[1.5] text-[var(--wave-text-muted)]">
             100% will go to support {project.artist_name}. No extra fees.
           </span>
         </div>
@@ -94,7 +94,7 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
                 'border text-center',
                 'font-body font-normal text-[18px] leading-[1.5]',
                 'rounded-none transition-colors duration-150',
-                selectedPreset === preset ? 'text-white' : 'text-[--color-text-200]',
+                selectedPreset === preset ? 'text-white' : 'text-[var(--color-text-200)]',
               )}
               style={{
                 background: 'var(--wave-bg)',
@@ -123,7 +123,7 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
           }}
         >
           <span
-            className="material-symbols-rounded text-[24px] leading-none text-[--wave-text-muted]"
+            className="material-symbols-rounded text-[24px] leading-none text-[var(--wave-text-muted)]"
             aria-hidden="true"
           >
             attach_money
@@ -141,8 +141,8 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
             className={cn(
               'flex-1 bg-transparent text-center',
               'font-body font-normal text-[18px] leading-[1.5]',
-              'text-[--color-text-200]',
-              'placeholder:text-[--wave-text-muted] placeholder:text-center',
+              'text-[var(--color-text-200)]',
+              'placeholder:text-[var(--wave-text-muted)] placeholder:text-center',
               'focus:outline-none',
               '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
             )}
@@ -166,7 +166,7 @@ export function DonateCard({ project, onDonate }: DonateCardProps) {
         <span
           className={cn(
             'font-body font-normal text-[14px] leading-[1.5]',
-            'text-[--color-text-200]',
+            'text-[var(--color-text-200)]',
           )}
         >
           Cover processing fee so the artist gets 100% of your donation

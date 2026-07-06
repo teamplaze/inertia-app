@@ -34,7 +34,7 @@ export function ProgressBar({
         <span
           className={cn(
             "font-heading font-medium leading-[1.2]",
-            "text-[--progress-text-amount]",
+            "text-[var(--progress-text-amount)]",
             mobile ? "text-[20px]" : "text-[24px]"
           )}
         >
@@ -44,7 +44,7 @@ export function ProgressBar({
         <span
           className={cn(
             "font-body font-normal leading-[1.5]",
-            "text-[--progress-text-goal]",
+            "text-[var(--progress-text-goal)]",
             mobile ? "text-[16px]" : "text-[18px]"
           )}
         >
@@ -79,7 +79,7 @@ export function ProgressBar({
               <span
                 className={cn(
                   "material-symbols-rounded leading-none",
-                  "text-[--progress-text-amount]",
+                  "text-[var(--progress-text-amount)]",
                   mobile ? "text-[18px]" : "text-[24px]"
                 )}
                 aria-hidden="true"
@@ -89,7 +89,7 @@ export function ProgressBar({
               <span
                 className={cn(
                   "font-body font-normal leading-[1.5]",
-                  "text-[--progress-text-stats]",
+                  "text-[var(--progress-text-stats)]",
                   mobile ? "text-[14px]" : "text-[18px]"
                 )}
               >
@@ -103,7 +103,7 @@ export function ProgressBar({
               <span
                 className={cn(
                   "material-symbols-rounded leading-none",
-                  "text-[--progress-text-amount]",
+                  "text-[var(--progress-text-amount)]",
                   mobile ? "text-[18px]" : "text-[24px]"
                 )}
                 aria-hidden="true"
@@ -113,7 +113,7 @@ export function ProgressBar({
               <span
                 className={cn(
                   "font-body font-normal leading-[1.5]",
-                  "text-[--progress-text-stats]",
+                  "text-[var(--progress-text-stats)]",
                   mobile ? "text-[14px]" : "text-[18px]"
                 )}
               >

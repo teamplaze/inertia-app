@@ -105,7 +105,7 @@ export default function Navigation() {
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white text-black border-[--color-border-default]">
+              <DropdownMenuContent className="bg-white text-black border-[var(--color-border-default)]">
                 <DropdownMenuLabel className="text-black">My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -135,7 +135,7 @@ export default function Navigation() {
                   "hover:bg-[var(--color-bg-teal)] hover:text-white",
                   "focus-visible:outline-none",
                   "focus-visible:ring-2",
-                  "focus-visible:ring-[--color-border-focus]",
+                  "focus-visible:ring-[var(--color-border-focus)]",
                 )}
               >
                 Log in

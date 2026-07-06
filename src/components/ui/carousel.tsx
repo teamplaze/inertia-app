@@ -90,11 +90,11 @@ function CarouselPrevious({
       className={cn(
         "flex items-center justify-center",
         "bg-transparent",
-        "border-2 border-[--carousel-arrow-border]",
+        "border-2 border-[var(--carousel-arrow-border)]",
         "rounded-none",
         "transition-colors duration-150",
         "focus-visible:outline-none",
-        "focus-visible:ring-2 focus-visible:ring-[--color-border-focus]",
+        "focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]",
         "focus-visible:ring-offset-2",
         className
       )}
@@ -129,11 +129,11 @@ function CarouselNext({
       className={cn(
         "flex items-center justify-center",
         "bg-transparent",
-        "border-2 border-[--carousel-arrow-border]",
+        "border-2 border-[var(--carousel-arrow-border)]",
         "rounded-none",
         "transition-colors duration-150",
         "focus-visible:outline-none",
-        "focus-visible:ring-2 focus-visible:ring-[--color-border-focus]",
+        "focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]",
         "focus-visible:ring-offset-2",
         className
       )}

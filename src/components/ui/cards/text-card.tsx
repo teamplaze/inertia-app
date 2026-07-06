@@ -25,9 +25,9 @@ export function TextCard({
     <div
       className={cn(
         "flex flex-col",
-        "bg-[--card-bg]",
+        "bg-[var(--card-bg)]",
         "border",
-        isInertia ? "border-[--card-border-accent]" : "border-[--card-border-default]",
+        isInertia ? "border-[var(--card-border-accent)]" : "border-[var(--card-border-default)]",
         "rounded-[var(--card-radius)]",
         "px-[var(--card-padding-base)] py-[var(--card-padding-large)]",
         "gap-[var(--spacing-8)]",
@@ -38,7 +38,7 @@ export function TextCard({
       <span
         className={cn(
           "font-heading font-medium leading-[1.2]",
-          "text-[--card-text-primary]",
+          "text-[var(--card-text-primary)]",
           "text-[32px]"
         )}
       >
@@ -49,7 +49,7 @@ export function TextCard({
         <span
           className={cn(
             "font-body font-semibold leading-[1.5]",
-            "text-[--card-text-secondary]",
+            "text-[var(--card-text-secondary)]",
             "text-[18px]"
           )}
         >
@@ -73,7 +73,7 @@ export function TextCard({
               <span
                 className={cn(
                   "font-body font-normal leading-[1.5]",
-                  "text-[--card-text-primary]",
+                  "text-[var(--card-text-primary)]",
                   "text-[20px]"
                 )}
               >

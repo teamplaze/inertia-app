@@ -107,7 +107,7 @@ export function PerksSection({
               "font-heading font-medium",
               "text-[20px] md:text-[32px]",
               "leading-[1.2]",
-              "text-[--perks-heading]"
+              "text-[var(--perks-heading)]"
             )}
           >
             Perks
@@ -117,7 +117,7 @@ export function PerksSection({
               "font-body font-normal",
               "text-[18px]",
               "leading-[1.5]",
-              "text-[--perks-label-sub]"
+              "text-[var(--perks-label-sub)]"
             )}
           >
             Fuel the music. Join the inner circle.
@@ -140,7 +140,7 @@ export function PerksSection({
               "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
               "focus-visible:outline-none",
               "focus-visible:ring-2",
-              "focus-visible:ring-[--color-border-focus]",
+              "focus-visible:ring-[var(--color-border-focus)]",
             )}
           >
             Read our FAQs
@@ -196,7 +196,7 @@ export function PerksSection({
                     "font-heading font-medium",
                     "text-[18px]",
                     "leading-[1.2]",
-                    "text-[--perks-label]"
+                    "text-[var(--perks-label)]"
                   )}
                 >
                   {category}
@@ -206,7 +206,7 @@ export function PerksSection({
                     "font-body font-normal",
                     "text-[18px]",
                     "leading-[1.5]",
-                    "text-[--perks-body]"
+                    "text-[var(--perks-body)]"
                   )}
                 >
                   {description}
@@ -222,7 +222,7 @@ export function PerksSection({
         className={cn(
           "font-body font-normal",
           "text-[14px] leading-[1.5]",
-          "text-[--perks-label-sub]",
+          "text-[var(--perks-label-sub)]",
           "mt-[var(--spacing-8)]"
         )}
       >

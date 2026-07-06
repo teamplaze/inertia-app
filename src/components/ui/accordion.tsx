@@ -26,12 +26,12 @@ function AccordionItem({
     <AccordionPrimitive.Item
       data-slot="accordion-item"
       className={cn(
-        "bg-[--accordion-bg]",
-        "border border-[--accordion-border-default]",
+        "bg-[var(--accordion-bg)]",
+        "border border-[var(--accordion-border-default)]",
         "rounded-[var(--accordion-radius)]",
         "overflow-hidden",
         "transition-colors duration-150",
-        "data-[state=open]:border-[--accordion-border-expanded]",
+        "data-[state=open]:border-[var(--accordion-border-expanded)]",
         className
       )}
       {...props}
@@ -56,7 +56,7 @@ function AccordionTrigger({
           // Typography — MADE Outer Sans 500, 18px
           "font-heading font-medium text-[18px] leading-[1.2] tracking-normal",
           // Color
-          "text-[--accordion-text-trigger]",
+          "text-[var(--accordion-text-trigger)]",
           // Gap between label and icon
           "gap-[var(--spacing-4)]",
           // States
@@ -96,7 +96,7 @@ function AccordionContent({
           // Typography — Albert Sans 400, 20px
           "font-body font-normal text-[20px] leading-[1.5] tracking-normal",
           // Color
-          "text-[--accordion-text-content]",
+          "text-[var(--accordion-text-content)]",
           // Spacing — 32px gap from trigger top, 20px sides and bottom
           "px-[var(--spacing-5)] pb-[var(--spacing-5)] pt-[var(--spacing-8)]",
           className

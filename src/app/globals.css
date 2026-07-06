@@ -229,6 +229,9 @@
   --input-text-primary:         #ffffff;
   --input-text-placeholder:     #ededed;
   --input-text-muted:           #c3c7c7;
+  --input-border-error:         #cc1515;
+  --input-text-error:           #ff8383;
+  --input-bg-error:             #000000;
 
   /* Accordion tokens */
   --accordion-bg:              #0f1111;
@@ -407,6 +410,9 @@
   --input-text-primary:         #ffffff;
   --input-text-placeholder:     #ededed;
   --input-text-muted:           #c3c7c7;
+  --input-border-error:         #cc1515;
+  --input-text-error:           #ff8383;
+  --input-bg-error:             #000000;
 
   /* Accordion tokens */
   --accordion-bg:              #0f1111;

@@ -206,7 +206,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 "font-body font-normal",
                 "text-[20px] leading-[1.5]",
                 "tracking-normal",
-                "text-[--color-text-200]",
+                "text-[var(--color-text-200)]",
                 "w-full",
               )}
             >
@@ -222,7 +222,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               "w-full md:w-[822px]",
               "flex flex-col items-start",
               "rounded-[12px]",
-              "border border-[--color-border-soft]",
+              "border border-[var(--color-border-soft)]",
               "overflow-hidden",
             )}
             style={{ background: 'var(--color-bg-200, #0f1111)' }}
@@ -235,7 +235,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 "p-[var(--spacing-4)] md:p-[var(--spacing-5)]",
                 "focus-visible:outline-none",
                 "focus-visible:ring-2",
-                "focus-visible:ring-[--color-border-focus]",
+                "focus-visible:ring-[var(--color-border-focus)]",
                 "focus-visible:ring-inset",
               )}
               aria-expanded={artistNoteOpen}
@@ -275,7 +275,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                     "font-body font-normal",
                     "text-[18px]",
                     "leading-[1.5] tracking-normal",
-                    "text-[--color-text-200]",
+                    "text-[var(--color-text-200)]",
                   )}
                 >
                   {project.from_the_artist_message}
@@ -300,7 +300,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               <p className={cn(
                 "font-body font-normal mt-2",
                 "text-[18px]",
-                "leading-[1.5] text-[--color-text-300]"
+                "leading-[1.5] text-[var(--color-text-300)]"
               )}>
                 Unlock our budget milestones by contributing to the project!
               </p>
@@ -322,7 +322,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                 "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
                 "focus-visible:outline-none",
                 "focus-visible:ring-2",
-                "focus-visible:ring-[--color-border-focus]",
+                "focus-visible:ring-[var(--color-border-focus)]",
               )}
             >
               Support {project.artist_name}
@@ -418,7 +418,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
               >
                 Support {project.artist_name}
               </h4>
-              <p className="font-body font-normal text-[20px] leading-[1.5] text-[--wave-text-muted]">
+              <p className="font-body font-normal text-[20px] leading-[1.5] text-[var(--wave-text-muted)]">
                 100% of your contributions go to the artist&apos;s project.
               </p>
             </div>

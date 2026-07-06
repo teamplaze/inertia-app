@@ -23,7 +23,7 @@ function Alert({
         "flex items-center justify-between",
         "px-[var(--spacing-3)] py-[var(--spacing-2)]",
         "rounded-[var(--alert-radius)]",
-        "bg-[--alert-bg]",
+        "bg-[var(--alert-bg)]",
         mobile && "flex-col items-center gap-[2px]",
         className
       )}
@@ -31,7 +31,7 @@ function Alert({
       <div className="flex items-center gap-[2px]">
         {icon && (
           <span
-            className="material-symbols-rounded text-[18px] leading-[1.2] text-[--alert-icon-color]"
+            className="material-symbols-rounded text-[18px] leading-[1.2] text-[var(--alert-icon-color)]"
             aria-hidden="true"
           >
             timer
@@ -42,7 +42,7 @@ function Alert({
             "font-body font-normal",
             "text-[18px]",
             "leading-[1.5] tracking-normal",
-            "text-[--alert-text-main]"
+            "text-[var(--alert-text-main)]"
           )}
         >
           {mainText}
@@ -54,7 +54,7 @@ function Alert({
             "font-body font-semibold",
             "text-[18px]",
             "leading-[1.5] tracking-normal",
-            "text-[--alert-text-secondary]"
+            "text-[var(--alert-text-secondary)]"
           )}
         >
           {secondaryText}
