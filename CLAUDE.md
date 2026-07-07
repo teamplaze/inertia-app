@@ -24,21 +24,198 @@ Next.js 14, TypeScript, Tailwind CSS v4, shadcn/ui, Supabase.
 - src/components/ui/input.tsx — Input CVA variants including "dark"
 - src/lib/cardStyles.ts — regularCardStyle, gradientCardStyle
 
-## Reskin status
-Pre-reskin refactor complete. Design specs incoming from Figma.
+## Reskin Status
 
-Surfaces that update automatically when tokens change:
-- All 13 shadcn primitives (Button, Card, Input base, Badge, etc.)
+### Completed ✅
+- Navigation.tsx — floating pill, white gradient,
+  STAY. INDIE. tagline, person icon/avatar auth
+- Footer.tsx — teal radial gradient, full-width
+  wordmark, nav links + copyright
+- /projects/[id] — full project page:
+  - ProjectHero (gradient, ProgressBar, Support btn,
+    View project results link)
+  - About section (bio + A note from artist accordion)
+  - MilestonesList (active/locked/completed states)
+  - Support Levels (WaveCard + DonateCard)
+  - PerksSection (Inertia Perks always first,
+    has_royalties flag, accent icon colors)
+  - Fan Stories (carousel 4+ cards, static grid 1-3,
+    max 6 randomized, TestimonialCard)
+  - FAQSection (accordion, 10 hardcoded Q&A)
+- / (homepage) — hero, featured projects carousel,
+  text+image section, comparison cards
+- /sign-up — AuthCard, field errors, validate(),
+  password toggle, Terms dialog restyled
+- /login — AuthCard, field errors, password toggle
+- /forgot-password — AuthCard, success state
+- /reset-password — AuthCard, dual password toggle,
+  success state + 3s redirect
+- /network — AuthCard (max-w-768px), 10 fields,
+  Select + Textarea restyled, validate()
+- /account — in-app hub layout, sidebar nav,
+  ContributionsTable (sort controls, contribution
+  cards, empty first-run state)
+- /account/profile — ProfileForm (card sections,
+  labels, inputs, aria-invalid error states,
+  success indicator, save button)
 
-Surfaces requiring manual update when specs arrive:
-- Navigation.tsx — updated to new design system ✅
-- Footer.tsx — inline style object (~2 lines)
-- layout.tsx — body background inline (1 line)
-- page.tsx — two style objects + 8 arbitrary classes (~15 lines)
-- project-client-ui.tsx — largest offender (~25 lines)
-- account/layout.tsx — sidebar nav colors (~5 lines)
-- FundingMeter.tsx — track/fill/milestone hardcoded (~8 lines)
-- Auth pages (login, sign-up, forgot, reset) — ~4 lines each
+### Remaining ⬜
+- /artist/dashboard
+- /success
+
+## Key Patterns — Reskin Conventions
+
+### AuthCard pattern (all auth + form pages)
+Component: src/components/ui/auth-card.tsx
+- Black full-screen bg, centered card
+- Card: #0f1111 bg, 1px solid #3f4948 border,
+  rounded-[12px], p-[var(--spacing-8)]
+- max-w-[560px] default, overridable via className
+- Top padding: pt-[96px] mobile / pt-[120px] desktop
+  to clear fixed navigation
+- No logo (navigation handles branding)
+
+### Form pattern (all forms)
+- noValidate on all <form> elements
+- errors state object with per-field keys
+- validate() function runs on submit before API call
+- aria-invalid={!!errors.fieldName} on all inputs
+- Error text: text-[#ff8383] hardcoded (not token —
+  Tailwind v4 cannot infer color from CSS var)
+- Success: teal alert box replaces form
+- General API errors → errors.general
+
+### Tailwind v4 known bugs — critical
+1. text-[var(--font-size-*)] generates color: not
+   font-size: — use hardcoded px instead:
+   text-[32px] not text-[var(--font-size-h4)]
+2. bg-[--token] without var() generates empty rule —
+   always use bg-[var(--token)]
+3. text-[--token] without var() generates empty rule —
+   always use text-[var(--token)]
+4. md:text-[var(--*)] responsive variants with CSS
+   vars don't generate — use hardcoded px for all
+   responsive font sizes
+
+### Typography — heading sizes (hardcoded px)
+All responsive heading sizes use hardcoded px:
+- H2: text-[48px]
+- H3: text-[40px]
+- H4: text-[32px] desktop / text-[20px] mobile
+- H5: text-[20px]
+- H6: text-[18px] desktop / text-[16px] mobile
+Section headings: text-[20px] md:text-[32px]
+
+### Section spacing (project page)
+All sections: py-[var(--spacing-12)] md:py-[120px]
+Horizontal: px-[var(--spacing-5)] md:px-[96px]
+
+### Accent color cascade
+Project accent set on <main> as inline style:
+  style={{ '--color-project-accent': project.project_colors?.[0] }}
+All child components reference directly:
+  var(--color-project-accent, var(--color-bg-teal))
+Never use intermediary tokens — they can't inherit
+inline style cascade.
+
+### Button component (src/components/ui/button.tsx)
+Variants: primary, border, link, ghost, outline
+Sizes: sm (14px), default (16px), lg (18px)
+Primary: bg-[var(--interactive-bg-primary)] text-black
+  hover: bg-[var(--interactive-bg-hover-primary)]
+Border: border-2 border-white text-white
+  hover: border teal text teal
+All font sizes hardcoded px (not token)
+
+### Input component (src/components/ui/input.tsx)
+Dark surface: bg-[var(--input-bg-default)] #0f1111
+Border: var(--input-border-default) #3f4948
+Active: bg black, border white
+Focus: border-2 #bfdcd9
+Error: aria-invalid → red border + red text
+
+### Select component (src/components/ui/select.tsx)
+Fully restyled to dark design system
+Chevron: Material Symbol keyboard_arrow_down 24px
+18px Albert Sans, rounded-none
+SelectContent: #0f1111 bg, dark border
+
+### Textarea component (src/components/ui/textarea.tsx)
+Dark surface matching Input
+resize-none, min-h-[180px]
+aria-invalid error state
+
+### Commercial font
+MADE Outer Sans commercial files in public/fonts/
+4 weights: Regular(400), Medium(500),
+  Bold(600), Black(700)
+Loaded via localFont() in layout.tsx
+CSS var: --font-made-outer-sans → --font-heading
+
+### has_royalties flag
+Column on projects table, default true
+Gold Steps (id=2) and Twist It (id=4) = false
+Controls Inertia Perks description in PerksSection:
+  false → omits royalties mention
+
+### Fan Stories carousel rules
+- 1-3 cards: static centered grid, no controls
+- 4+ cards: carousel with CarouselControls
+- Max 6 cards, randomized order via useMemo
+- Mobile: single card full width, % translateX
+- Desktop: fixed 394px cards, pixel translateX
+
+### Homepage project cards
+- 1-3 projects: static flex-row, flex-1 cards
+- 4+ projects: carousel, 400px fixed cards
+- Sort order: Fundraising → Coming Soon → Completed
+- API: /api/projects/featured (no limit)
+
+### In-app hub pattern (/account)
+Not an AuthCard surface. Sidebar + content grid:
+  container mx-auto px-4 py-12 max-w-7xl
+  grid grid-cols-1 md:grid-cols-4 gap-8
+Sidebar: col-span-1, #0f1111 bg, #3f4948 border,
+  rounded-[12px], font-heading text-[20px] heading
+Content: col-span-3, children
+
+## Self-directed Design Decisions
+
+These were made without a designer spec and are
+deliberate choices — do not revert mistaking them
+for placeholders.
+
+### /account hub (2026-07-07)
+- **Sidebar active state**: bg-white/10 — neutral
+  on-dark tint; teal is reserved for actionable and
+  success states, not nav selection highlights
+- **Sort buttons**: variant="primary" active /
+  variant="border" inactive — reuses existing button
+  states, introduces no new patterns
+- **Contribution amount color**: text-white — amount
+  is factual display data; green/teal reserved for
+  action confirmation, not financial values
+- **Empty state (no contributions)**: icon + heading
+  + subtext + CTA to /#featured-projects, inline in
+  ContributionsTable; not extracted — two items too
+  small to justify a shared component
+- **Sidebar nav**: inline in layout.tsx — two links
+  too few to justify a shared component
+- **Profile card sections**: inline #0f1111 / #3f4948
+  style, not DarkCard — DarkCard update deferred to
+  dashboard reskin to avoid touching unreskinned
+  dashboard surfaces prematurely
+- **Nav-clearance coupling**: pt-[96px] md:pt-[120px]
+  is currently baked into AuthCard, so every AuthCard
+  page gets it automatically. /account is the first
+  non-AuthCard authenticated page to need clearance;
+  /artist/dashboard and /success will hit the same
+  issue. Decision: apply locally per layout for now
+  (pt-[96px] md:pt-[120px] on the outer container in
+  account/layout.tsx). Revisit hoisting to a shared
+  authenticated shell when /artist/dashboard is
+  reskinned and we can see all consumers — same
+  deferral logic as DarkCard.
 
 ## Designer Requests — Net New Components Needed
 
@@ -79,9 +256,11 @@ spec before implementation.
    Shows: icon + heading + body + CTA
    Needed: spec for post-action confirmation state
 
-8. Empty State — account + dashboard surfaces
+8. Empty State — artist/dashboard surfaces
    Shows: icon + heading + subtext + optional CTA
-   Needed: spec
+   /account implemented self-directed (see Self-directed
+   Design Decisions). Dashboard still needs spec or
+   a matching self-directed decision.
 
 ### Low Priority
 9. Copy Button — admin invite page
@@ -176,23 +355,35 @@ designer for completion.
   durations, and easing curves not specified anywhere 
   in the UI kit
 
-## Designer Follow-ups
+## Designer Follow-ups (open)
+- Fan Stories desktop: carousel vs 2-column grid
+  (node 751-5259 shows grid, mobile uses carousel,
+  awaiting confirmation)
+- Heading font weight: 500 vs 600 (currently 500,
+  spec says 600, visual check favors 500)
+- Textarea font: spec shows Inter fallback but
+  Albert Sans used — confirm intended font
+- Textarea font size: spec 16px, impl 18px —
+  confirm intended size
+- Focus ring color: #bfdcd9 dark, #9ecac6 light —
+  confirm light mode value if shipped
+- Accordion hover/focus/disabled states not defined
+- Alert severity variants not defined
+- Badge full spec not pulled
 
-- Fan Stories / Testimonials carousel behavior:
-  Confirm whether desktop should use a 2-column grid 
-  (per current Figma spec at node 751-5259) or a 
-  carousel (matching mobile behavior). Mobile will 
-  use the Carousel component with CarouselControls 
-  dots + arrows. Awaiting designer confirmation 
-  before implementation.
+## Pending Designer Specs (blocking)
+- Stats Card (artist dashboard)
+- Status Badge variants (success/warning/error/pending)
+- Success/Confirmation Card (/success page)
+- Empty State (artist/dashboard only — /account done)
 
 ## Open Issues
-- Heading font weight needs designer confirmation — currently 
-  set to --font-weight-semibold: 500 (Medium) but spec says 600 
-  (Bold). Visual check shows Medium is closer to mock. 
-  Confirm with designer before launch.
-  
-  Focus ring color --color-border-focus is #9ecac6 in :root 
-  (light mode) and #bfdcd9 in .dark. Figma spec uses #bfdcd9. 
-  If light mode ships, align :root value to match or define 
-  a separate light mode focus color intentionally.
+- WaveCard: closed state doesn't auto-update when
+  sale_end_at passes without page reload
+  SQL to manually close: UPDATE tiers SET status='closed'
+  WHERE sale_end_at < NOW() AND status='active'
+- Focus ring color :root vs .dark mismatch
+- Navigation mobile: further review may be needed
+- text-[--color-text-*] classes without var() may
+  generate empty rules — use text-[var(--color-text-*)]
+  or hardcoded hex values

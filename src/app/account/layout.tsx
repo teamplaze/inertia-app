@@ -1,9 +1,8 @@
-"use client"; // Needs to be a client component to check the active route
+"use client";
 
 import { User, Library } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BRAND } from "@/lib/colors";
 
 export default function AccountLayout({
   children,
@@ -13,34 +12,39 @@ export default function AccountLayout({
   const pathname = usePathname();
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-7xl">
+    <div className="container mx-auto px-4 pt-[96px] pb-12 md:pt-[120px] max-w-7xl">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Left Sidebar Navigation */}
         <aside className="md:col-span-1">
-          <div className="p-4 rounded-xl border-2 border-brand-copper" style={{ backgroundColor: BRAND.dark }}>
-            <h2 className="text-xl font-medium text-white mb-6 pl-2">My Account</h2>
-            <nav className="space-y-2">
+          <div
+            className="p-[var(--spacing-4)] rounded-[12px]"
+            style={{ background: '#0f1111', border: '1px solid #3f4948' }}
+          >
+            <h2 className="font-heading font-medium text-[20px] text-white mb-[var(--spacing-5)] pl-2">
+              My Account
+            </h2>
+            <nav className="space-y-1">
               <Link
                 href="/account"
                 className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  pathname === '/account' 
-                    ? 'bg-brand-teal text-white font-medium' 
-                    : 'text-gray-300 hover:bg-brand-teal/50 hover:text-white'
+                  pathname === '/account'
+                    ? 'bg-white/10 text-white font-medium'
+                    : 'text-[var(--color-text-200)] hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <Library className="w-5 h-5" />
-                <span>My Projects</span>
+                <Library className="w-5 h-5 shrink-0" />
+                <span className="font-body text-[16px]">My Projects</span>
               </Link>
               <Link
                 href="/account/profile"
                 className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  pathname === '/account/profile' 
-                    ? 'bg-brand-teal text-white font-medium' 
-                    : 'text-gray-300 hover:bg-brand-teal/50 hover:text-white'
+                  pathname === '/account/profile'
+                    ? 'bg-white/10 text-white font-medium'
+                    : 'text-[var(--color-text-200)] hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <User className="w-5 h-5" />
-                <span>User Profile</span>
+                <User className="w-5 h-5 shrink-0" />
+                <span className="font-body text-[16px]">User Profile</span>
               </Link>
             </nav>
           </div>
