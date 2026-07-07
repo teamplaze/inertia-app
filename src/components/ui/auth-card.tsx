@@ -12,9 +12,11 @@ export function AuthCard({ children, className }: AuthCardProps) {
     <main
       className={cn(
         "min-h-screen w-full",
-        "flex items-center justify-center",
+        "flex items-start md:items-center justify-center",
         "bg-black",
-        "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+        "px-[var(--spacing-5)]",
+        "pt-[96px] pb-[var(--spacing-8)]",
+        "md:pt-[120px] md:pb-[var(--spacing-12)]",
       )}
     >
       <div
