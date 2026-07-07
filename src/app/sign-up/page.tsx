@@ -202,6 +202,7 @@ function SignUpForm() {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
+        noValidate
         className="flex flex-col gap-[var(--spacing-5)]"
       >
         {/* Name field */}
@@ -229,7 +230,7 @@ function SignUpForm() {
             required
           />
           {errors.name && (
-            <p className="font-body font-normal text-[14px] text-[var(--input-text-error)]">
+            <p className="font-body font-normal text-[14px] text-[#ff8383]">
               {errors.name}
             </p>
           )}
@@ -260,7 +261,7 @@ function SignUpForm() {
             required
           />
           {errors.email && (
-            <p className="font-body font-normal text-[14px] text-[var(--input-text-error)]">
+            <p className="font-body font-normal text-[14px] text-[#ff8383]">
               {errors.email}
             </p>
           )}
@@ -313,7 +314,7 @@ function SignUpForm() {
             </button>
           </div>
           {errors.password && (
-            <p className="font-body font-normal text-[14px] text-[var(--input-text-error)]">
+            <p className="font-body font-normal text-[14px] text-[#ff8383]">
               {errors.password}
             </p>
           )}
@@ -352,7 +353,7 @@ function SignUpForm() {
             </label>
           </div>
           {errors.terms && (
-            <p className="font-body font-normal text-[14px] text-[var(--input-text-error)]">
+            <p className="font-body font-normal text-[14px] text-[#ff8383]">
               {errors.terms}
             </p>
           )}
@@ -360,7 +361,7 @@ function SignUpForm() {
 
         {/* General error */}
         {errors.general && (
-          <p className="font-body font-normal text-[14px] text-[var(--input-text-error)] text-center">
+          <p className="font-body font-normal text-[14px] text-[#ff8383] text-center">
             {errors.general}
           </p>
         )}
@@ -402,12 +403,38 @@ function SignUpForm() {
 
       {/* Terms dialog */}
       <Dialog open={showTerms} onOpenChange={setShowTerms}>
-        <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col bg-brand-dark text-white border-brand-teal">
-          <DialogHeader>
-            <DialogTitle>Terms &amp; Conditions</DialogTitle>
-            <DialogDescription>Please scroll to the bottom to agree.</DialogDescription>
+        <DialogContent
+          className="sm:max-w-[600px] h-[80vh] flex flex-col text-white rounded-[12px] border-0 p-0 gap-0"
+          style={{
+            background: '#0f1111',
+            border: '1px solid #3f4948',
+          }}
+        >
+          <DialogHeader
+            className="px-[var(--spacing-8)] pt-[var(--spacing-8)] pb-[var(--spacing-4)] border-b"
+            style={{ borderColor: '#3f4948' }}
+          >
+            <DialogTitle className="font-heading font-medium text-[32px] leading-[1.2] text-white">
+              Terms &amp; Conditions
+            </DialogTitle>
+            <DialogDescription className="font-body font-normal text-[14px] leading-[1.5] text-[--color-text-200]">
+              Please scroll to the bottom to agree.
+            </DialogDescription>
           </DialogHeader>
-          <div onScroll={handleTermsScroll} className="overflow-y-auto p-4 flex-1">
+          <div
+            onScroll={handleTermsScroll}
+            className={cn(
+              "overflow-y-auto flex-1",
+              "px-[var(--spacing-8)] py-[var(--spacing-6)]",
+              "font-body font-normal",
+              "text-[18px] leading-[1.5]",
+              "text-[--color-text-200]",
+              "[&::-webkit-scrollbar]:w-[4px]",
+              "[&::-webkit-scrollbar-track]:bg-transparent",
+              "[&::-webkit-scrollbar-thumb]:bg-[#3f4948]",
+              "[&::-webkit-scrollbar-thumb]:rounded-full",
+            )}
+          >
             <p>
               This Website (together with any successor Website(s) and all Services (as defined below), the &ldquo;Website&rdquo;) is operated by The Inertia Project, Inc. (&ldquo;Inertia,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;). We provide Website users with access to content and services related to us and our artists, including music, images, forums, text, data and other content (collectively, the &ldquo;Services&rdquo;). Your use of the Website is governed by these Terms of Use (this &ldquo;Agreement&rdquo;), without regard to how you access the website (Internet, Wireless Access Protocol, mobile network, or otherwise). This Agreement is between you and us.
             </p>
@@ -584,9 +611,14 @@ function SignUpForm() {
               <strong>This is the final paragraph.</strong> By scrolling to this point, you enable the checkbox to agree to these terms.
             </p>
           </div>
-          <DialogFooter>
+          <DialogFooter
+            className="px-[var(--spacing-8)] pb-[var(--spacing-8)] pt-[var(--spacing-4)] border-t"
+            style={{ borderColor: '#3f4948' }}
+          >
             <DialogClose asChild>
-              <Button type="button" className="bg-brand-copper hover:bg-brand-copper/90">Close</Button>
+              <Button type="button" variant="border" size="lg">
+                Close
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
