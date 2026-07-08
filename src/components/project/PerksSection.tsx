@@ -19,7 +19,7 @@ const CATEGORY_CONFIG: Record<string, { icon: string; description: string }> = {
   Physical: {
     icon: "apparel",
     description:
-      "Collect limited merch and memorabilia, including signed posters, handwritten notes, vinyl, postcards, laminates, and other project keepsakes.*",
+      "Collect limited merch and memorabilia, including signed posters, handwritten notes, postcards, laminates, and other project keepsakes.*",
   },
   "Events & Livestreams": {
     icon: "confirmation_number",

@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { Tier, Project } from '@/types'
+import { CountdownTimer } from './CountdownTimer'
 
 interface WaveCardProps {
   tier: Tier
@@ -22,32 +23,6 @@ export function WaveCard({
   const [isJoining, setIsJoining] = useState(false)
   const [isPurchasing, setIsPurchasing] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
-  const [timeLeft, setTimeLeft] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!tier.sale_end_at) return
-    const getTimeLeft = () => {
-      const end = new Date(tier.sale_end_at!).getTime()
-      const now = Date.now()
-      const diff = Math.max(0, Math.floor((end - now) / 1000))
-      if (diff <= 0) return null
-      const days = Math.floor(diff / 86400)
-      const hours = Math.floor((diff % 86400) / 3600)
-      const mins = Math.floor((diff % 3600) / 60)
-      const secs = diff % 60
-      if (days > 0) {
-        return `${days}d ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
-      }
-      return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
-    }
-    setTimeLeft(getTimeLeft())
-    const interval = setInterval(() => {
-      const t = getTimeLeft()
-      setTimeLeft(t)
-      if (t === null) clearInterval(interval)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [tier.sale_end_at])
 
   const now = new Date()
   const saleEnded = tier.sale_end_at ? new Date(tier.sale_end_at) < now : false
@@ -161,36 +136,11 @@ export function WaveCard({
       </div>
 
       {/* Section 2 — Alert bar */}
-      {isActive && tier.sale_end_at && timeLeft && !saleEnded && (
-        <div
-          className={cn(
-            'flex items-center justify-between',
-            'px-[var(--spacing-3)] py-[var(--spacing-2)]',
-            'rounded-[4px]',
-          )}
-          style={{ background: 'color-mix(in srgb, var(--color-project-accent, var(--color-bg-teal)) 15%, transparent)' }}
-        >
-          <div className="flex items-center gap-[2px]">
-            <span
-              className="material-symbols-rounded text-[18px] leading-none"
-              style={{
-                color: 'var(--color-project-accent, var(--color-bg-teal))',
-              }}
-              aria-hidden="true"
-            >
-              timer
-            </span>
-            <span className="font-body font-normal text-[18px] text-white">
-              Wave {waveNumber} closes in{' '}
-            </span>
-            <span className="font-body font-semibold text-[18px] text-white">
-              {timeLeft}
-            </span>
-          </div>
-          <span className="font-body font-semibold text-[18px] text-white">
-            Don&apos;t miss out
-          </span>
-        </div>
+      {isActive && tier.sale_end_at && (
+        <CountdownTimer
+          endDate={tier.sale_end_at}
+          label={`Wave ${waveNumber} closes in`}
+        />
       )}
 
       {isClosed && (
