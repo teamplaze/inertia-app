@@ -19,26 +19,27 @@ const CATEGORY_CONFIG: Record<string, { icon: string; description: string }> = {
   Physical: {
     icon: "apparel",
     description:
-      "Enjoy merch discounts, a contributor-edition tour poster, and an exclusive vinyl test press.*",
+      "Collect limited merch and memorabilia, including signed posters, handwritten notes, vinyl, postcards, laminates, and other project keepsakes.*",
   },
   "Events & Livestreams": {
     icon: "confirmation_number",
     description:
-      "Get guest list access to a future show, join an in-person meetup,* and watch exclusive rehearsal livestreams.",
+      "Go beyond the feed with private livestreams, AMAs, soundchecks, studio hangs, watch parties, and project-only moments.",
   },
   Community: {
     icon: "group",
     description:
-      "Join the group chat, get added to close friends on IG, and help shape decisions through interactive fan polls.",
+      "Step into the inner circle with private chats, polls, playlists, Q&As, and chances to help shape parts of the project.",
   },
   "Exclusive Content": {
     icon: "star",
-    description: "Get behind-the-scenes studio footage and music video footage (pending budget).",
+    description:
+      "Behind-the-scenes videos, tour diaries, sneak peeks, demos, photos, and updates made just for contributors.",
   },
   Recognition: {
     icon: "star_shine",
     description:
-      "Get your name in the album's liner notes and a personal dedication in the artist's thank you video.",
+      "Get your name, story, or support recognized through shoutouts, thank-you reels, liner notes, stage moments, or other special acknowledgments.",
   },
 }
 
