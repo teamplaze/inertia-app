@@ -26,6 +26,20 @@ import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 // Set to true to restore the Previews section (audio/video previews)
 const PREVIEWS_ENABLED = false;
 
+// Deterministic PRNG seeded on a numeric value (mulberry32).
+// Produces the same sequence for a given seed, so server and client
+// compute the same shuffle order — eliminates the hydration mismatch
+// that occurs when Math.random() is used inside useMemo.
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s + 0x6D2B79F5) | 0
+    let t = Math.imul(s ^ (s >>> 15), 1 | s)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
   if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview') return true;
@@ -53,9 +67,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
   const displayedTestimonials = useMemo(() => {
     if (!project.testimonials?.length) return []
-    const shuffled = [...project.testimonials].sort(() => Math.random() - 0.5)
+    const rand = seededRandom(project.id)
+    const shuffled = [...project.testimonials]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
     return shuffled.slice(0, 6)
-  }, [project.testimonials])
+  }, [project.testimonials, project.id])
 
   const supabase = createClient();
 
