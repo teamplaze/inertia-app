@@ -16,7 +16,7 @@ export function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex flex-col items-start justify-center",
+        "flex flex-col items-start justify-between",
         "rounded-[12px]",
         "p-[var(--spacing-6)] md:p-[var(--spacing-8)]",
         "gap-[var(--spacing-6)] md:gap-[var(--spacing-8)]",
