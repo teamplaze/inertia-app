@@ -559,14 +559,16 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-row flex-wrap justify-center" style={{ gap: '32px' }}>
+                  <div className="flex flex-row items-stretch justify-center w-full" style={{ gap: '32px' }}>
                     {displayedTestimonials.map((testimonial) => (
-                      <TestimonialCard
-                        key={testimonial.id}
-                        quote={testimonial.story}
-                        name={testimonial.name}
-                        location={testimonial.location ?? ''}
-                      />
+                      <div key={testimonial.id} className="shrink-0">
+                        <TestimonialCard
+                          quote={testimonial.story}
+                          name={testimonial.name}
+                          location={testimonial.location ?? ''}
+                          className="h-full"
+                        />
+                      </div>
                     ))}
                   </div>
                 )}
