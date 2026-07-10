@@ -58,6 +58,8 @@ const CATEGORY_ORDER = [
 
 interface PerksSectionProps {
   tiers: Array<{
+    id?: number
+    name?: string
     perks?: Array<{
       category: string
     }>
@@ -75,24 +77,31 @@ export function PerksSection({
   className,
   hasRoyalties = true,
 }: PerksSectionProps) {
-  const ALWAYS_SHOW = ['Inertia Perks']
+  // Warn in development if any tier_perks row carries a category outside
+  // CATEGORY_ORDER — those tiles have no CATEGORY_CONFIG entry and cannot
+  // render. This is a data-authoring error, not a runtime concern.
+  if (process.env.NODE_ENV !== 'production') {
+    const unknown: Record<string, Array<string | number>> = {}
+    for (const tier of tiers) {
+      for (const perk of tier.perks ?? []) {
+        if (perk.category && !CATEGORY_ORDER.includes(perk.category)) {
+          if (!unknown[perk.category]) unknown[perk.category] = []
+          const label = tier.name ?? tier.id
+          if (label != null && !unknown[perk.category].includes(label)) {
+            unknown[perk.category].push(label)
+          }
+        }
+      }
+    }
+    for (const [cat, tNames] of Object.entries(unknown)) {
+      console.warn(
+        `[PerksSection] Unknown perk category "${cat}" in tier(s): ${tNames.join(', ')}. ` +
+        `Add it to CATEGORY_ORDER and CATEGORY_CONFIG, or fix the tier_perks data.`
+      )
+    }
+  }
 
-  const availableCategories = new Set(
-    tiers
-      .flatMap((tier) => tier.perks ?? [])
-      .map((perk) => perk.category)
-      .filter(Boolean)
-  )
-
-  const orderedCategories = CATEGORY_ORDER.filter(
-    (cat) => availableCategories.has(cat) || ALWAYS_SHOW.includes(cat)
-  )
-
-  const extraCategories = Array.from(availableCategories).filter(
-    (cat) => !CATEGORY_ORDER.includes(cat)
-  )
-
-  const allCategories = [...orderedCategories, ...extraCategories]
+  const allCategories = CATEGORY_ORDER
 
   return (
     <section className={cn("w-full", "py-[var(--spacing-12)] md:py-[120px]", className)}>

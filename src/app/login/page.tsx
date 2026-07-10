@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input'
 import { AuthCard } from '@/components/ui/auth-card'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { loadStripe } from '@stripe/stripe-js'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 function LoginForm() {
   const searchParams = useSearchParams()
@@ -57,7 +60,29 @@ function LoginForm() {
     if (response.ok) {
       if (redirectUrl) {
         window.location.href = redirectUrl
-      } else if (action === 'checkout' && projectId) {
+      } else if (action === 'checkout' && projectId && tierId) {
+        // Attempt direct checkout after login
+        try {
+          const checkoutRes = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tierId: Number(tierId),
+              projectId: Number(projectId),
+            }),
+          })
+          if (checkoutRes.ok) {
+            const { sessionId } = await checkoutRes.json()
+            const stripe = await stripePromise
+            if (stripe && sessionId) {
+              await stripe.redirectToCheckout({ sessionId })
+              return
+            }
+          }
+        } catch (err) {
+          console.error('Post-login checkout error:', err)
+        }
+        // Fallback to project page if checkout fails
         window.location.href = `/projects/${projectId}`
       } else {
         window.location.href = data.redirectTo || '/'

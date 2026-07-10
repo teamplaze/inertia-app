@@ -143,6 +143,19 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           projectId: project.id,
         }),
       })
+
+      // Unauthenticated — redirect to sign-up with checkout params
+      // so the flow resumes automatically after account creation
+      if (res.status === 401) {
+        const params = new URLSearchParams({
+          action: 'checkout',
+          projectId: String(project.id),
+          tierId: String(tierId),
+        })
+        window.location.href = `/sign-up?${params.toString()}`
+        return
+      }
+
       const { sessionId } = await res.json()
       const stripe = await stripePromise
       if (stripe && sessionId) {

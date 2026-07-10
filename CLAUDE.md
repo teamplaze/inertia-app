@@ -217,6 +217,23 @@ for placeholders.
   reskinned and we can see all consumers — same
   deferral logic as DarkCard.
 
+### PerksSection (2026-07-09)
+- **All six categories render unconditionally**: removed the
+  `availableCategories.has(cat)` filter so CATEGORY_ORDER always
+  renders in full regardless of which categories appear in tier_perks.
+  Reasoning: the section is a platform-level explainer of what Inertia
+  perk categories can include; per-project specifics live in the tier
+  cards below. Consistent six-category layout also resolves the
+  sparse-whitespace issue on projects with few perk categories, since
+  md:py-[120px] was calibrated for three grid rows.
+- **ALWAYS_SHOW removed**: was redundant once all six render
+  unconditionally; "Inertia Perks" stays first by position in
+  CATEGORY_ORDER.
+- **Unknown-category warn**: tier_perks rows with a category outside
+  CATEGORY_ORDER emit a console.warn in development naming the category
+  and the tier(s) it came from. Silently skipped in production (no
+  broken tile rendered).
+
 ## Designer Requests — Net New Components Needed
 
 These UI patterns appear across multiple pages but have 
