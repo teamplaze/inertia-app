@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import {
+  type CampaignStatus,
   getArtistForProject,
   splitFullName,
   safeLoopsContact,
@@ -22,7 +23,7 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   const formData = await request.json();
-  const { email, password, name, inviteToken } = formData;
+  const { email, password, name, inviteToken, projectId, tierId, action } = formData;
   
   const normalizedEmail = email.toLowerCase().trim();
   const cookieStore = await cookies();
@@ -110,12 +111,28 @@ export async function POST(request: Request) {
 
     if (updateError) console.error('DB Profile Error:', updateError);
 
-    // Email marketing sync (non-blocking). KIT only fires when the sign-up
-    // is tied to an artist project (invite flow) — a generic fan sign-up
-    // with no project context skips KIT and only syncs to Loops.
-    const artist = getArtistForProject(linkedProjectId);
+    // Email marketing sync (non-blocking). KIT syncs when the sign-up is
+    // tied to an artist project — either via invite (linkedProjectId) or
+    // via the projectId passed through from a CTA-driven sign-up (Claim
+    // your spot / waitlist) when there's no invite.
+    const artist = getArtistForProject(linkedProjectId ?? projectId);
+    // action=checkout means the user bounced from checkout into sign-up —
+    // treat them as a cart-abandon, not a bare prospect. The waitlist path
+    // is handled separately by the waitlist sync when that API call fires,
+    // so it (and no-action) still starts as 'prospect' here.
+    const campaignStatus: CampaignStatus = action === 'checkout' ? 'cart_abandon' : 'prospect';
+    const { first_name: firstName } = splitFullName(name);
     const syncPromises: Promise<unknown>[] = [
-      safeLoopsContact(normalizedEmail, { campaignStatus: 'prospect' }, userId),
+      safeLoopsContact(
+        normalizedEmail,
+        {
+          campaignStatus,
+          createdAt: new Date().toISOString(),
+          ...(firstName && { firstName }),
+          ...(artist && { artistInterest: artist }),
+        },
+        userId
+      ),
       safeLoopsEvent(normalizedEmail, 'accountCreated'),
     ];
     if (artist) {
@@ -124,13 +141,13 @@ export async function POST(request: Request) {
           const subscriberId = await safeKitUpsert(
             artist,
             normalizedEmail,
-            { campaign_status: 'prospect', ...splitFullName(name) },
+            { campaign_status: campaignStatus, ...splitFullName(name) },
             userId
           );
           if (subscriberId != null) {
             await Promise.all([
               safeKitApplyTag(artist, subscriberId, 'interest'),
-              safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', userId),
+              safeKitUpdateCustomField(artist, subscriberId, normalizedEmail, 'inertia_user_id', userId),
             ]);
           }
         })()

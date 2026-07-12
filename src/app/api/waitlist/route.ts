@@ -2,6 +2,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import {
+  type CampaignStatus,
   getArtistForProject,
   safeLoopsContact,
   safeLoopsEvent,
@@ -63,10 +64,11 @@ export async function POST(request: Request) {
   // Email marketing sync (non-blocking). KIT only fires for projects mapped
   // to a known artist account.
   const artist = getArtistForProject(projectId);
+  const campaignStatus: CampaignStatus = 'waitlist';
   const syncPromises: Promise<unknown>[] = [
     safeLoopsContact(
       email,
-      { campaignStatus: 'waitlist' },
+      { campaignStatus },
       userId ?? undefined
     ),
     safeLoopsEvent(email, 'waitlistJoined'),
@@ -78,8 +80,8 @@ export async function POST(request: Request) {
         if (subscriberId != null) {
           await Promise.all([
             safeKitApplyTag(artist, subscriberId, 'waitlist'),
-            safeKitUpdateCustomField(artist, subscriberId, 'campaign_status', 'waitlist'),
-            ...(userId ? [safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', userId)] : []),
+            safeKitUpdateCustomField(artist, subscriberId, email, 'campaign_status', campaignStatus),
+            ...(userId ? [safeKitUpdateCustomField(artist, subscriberId, email, 'inertia_user_id', userId)] : []),
           ]);
         }
       })()

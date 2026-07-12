@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { PostHog } from 'posthog-node';
 import {
+  type CampaignStatus,
   getArtistForProject,
   resolveWaveLabel,
   safeLoopsContact,
@@ -205,10 +206,15 @@ export async function POST(req: Request) {
             if (customerEmail && customerEmail !== 'No email provided') {
                 const artist = getArtistForProject(projectId);
                 const purchaseAmount = grossAmount.toFixed(2);
+                const campaignStatus: CampaignStatus = 'buyer';
+                const artistInterest = artist ?? projectData.artist_name
+                    ?.toLowerCase()
+                    .replace(/\s+/g, '_')
+                    .replace(/[^a-z0-9_]/g, '');
                 const syncPromises: Promise<unknown>[] = [
                     safeLoopsContact(customerEmail, {
-                        campaignStatus: 'buyer',
-                        artistInterest: artist ?? projectData.artist_name,
+                        campaignStatus,
+                        artistInterest,
                         tier: tierData.name,
                         purchaseAmount,
                         purchaseDate: new Date().toISOString(),
@@ -238,10 +244,10 @@ export async function POST(req: Request) {
                                     safeKitApplyTag(artist, subscriberId, 'purchased_any'),
                                     safeKitApplyTag(artist, subscriberId, 'do_not_promote'),
                                     safeKitRemoveTag(artist, subscriberId, 'waitlist'),
-                                    safeKitUpdateCustomField(artist, subscriberId, 'campaign_status', 'buyer'),
-                                    safeKitUpdateCustomField(artist, subscriberId, 'purchase_tier', tierData.name),
+                                    safeKitUpdateCustomField(artist, subscriberId, customerEmail, 'campaign_status', 'buyer'),
+                                    safeKitUpdateCustomField(artist, subscriberId, customerEmail, 'purchase_tier', tierData.name),
                                     ...(finalUserId
-                                        ? [safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', finalUserId)]
+                                        ? [safeKitUpdateCustomField(artist, subscriberId, customerEmail, 'inertia_user_id', finalUserId)]
                                         : []),
                                 ]);
                             }

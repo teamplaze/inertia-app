@@ -9,6 +9,8 @@ const supabaseAdmin = createClient(
 
 export type Artist = 'babatunde' | 'goldsteps'
 
+export type CampaignStatus = 'prospect' | 'cart_abandon' | 'waitlist' | 'buyer'
+
 // Maps a projects.id to the KIT account that owns that artist's audience.
 export const PROJECT_ARTIST_MAP: Record<number, Artist> = {
   5: 'babatunde',
@@ -116,9 +118,13 @@ async function safe(label: string, fn: () => Promise<void>): Promise<void> {
   }
 }
 
+type LoopsContactProperties = Record<string, string | number | boolean> & {
+  campaignStatus?: CampaignStatus
+}
+
 export function safeLoopsContact(
   email: string,
-  properties: Record<string, string | number | boolean>,
+  properties: LoopsContactProperties,
   userId?: string
 ): Promise<void> {
   return safe('loops.createOrUpdateContact', () =>
@@ -185,11 +191,12 @@ export async function safeKitRemoveTag(
 export async function safeKitUpdateCustomField(
   artist: Artist,
   subscriberId: number,
+  email: string,
   field: string,
   value: string | number | boolean
 ): Promise<void> {
   await safe(`kit.updateCustomField(${field})`, () =>
-    getKitClientForArtist(artist).updateCustomField(subscriberId, field, value)
+    getKitClientForArtist(artist).updateCustomField(subscriberId, email, field, value)
   )
 }
 

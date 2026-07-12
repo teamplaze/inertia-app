@@ -100,7 +100,7 @@ export function createKitClient(apiKey: string) {
       const body: Record<string, unknown> = { email_address: email }
       if (first_name != null) body.first_name = String(first_name)
       if (last_name != null) body.last_name = String(last_name)
-      if (Object.keys(customFields).length > 0) body.custom_fields = customFields
+      if (Object.keys(customFields).length > 0) body.fields = customFields
 
       try {
         const data = await withRetry(() => kitFetch('POST', '/subscribers', body))
@@ -125,14 +125,21 @@ export function createKitClient(apiKey: string) {
       )
     },
 
+    /**
+     * KIT v4 has no PATCH for subscribers — updates go through
+     * PUT /v4/subscribers/{id}, which requires email_address in the body
+     * and expects custom field values under `fields` (not `custom_fields`).
+     */
     async updateCustomField(
       subscriberId: number,
+      email: string,
       field: string,
       value: string | number | boolean
     ): Promise<void> {
       await withRetry(() =>
-        kitFetch('PATCH', `/subscribers/${subscriberId}`, {
-          custom_fields: { [field]: value },
+        kitFetch('PUT', `/subscribers/${subscriberId}`, {
+          email_address: email,
+          fields: { [field]: value },
         })
       )
     },

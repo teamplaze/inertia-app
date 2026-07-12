@@ -102,6 +102,9 @@ function SignUpForm() {
           email,
           password,
           inviteToken: inviteToken || null,
+          ...(projectId && { projectId: Number(projectId) }),
+          ...(tierId && { tierId: Number(tierId) }),
+          ...(action && { action }),
         }),
       });
 

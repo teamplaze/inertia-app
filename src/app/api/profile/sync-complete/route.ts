@@ -52,8 +52,8 @@ export async function POST() {
         if (subscriberId != null) {
           await Promise.all([
             safeKitApplyTag(artist, subscriberId, 'profile_completed'),
-            safeKitUpdateCustomField(artist, subscriberId, 'profile_status', 'complete'),
-            safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', userId),
+            safeKitUpdateCustomField(artist, subscriberId, email, 'profile_status', 'complete'),
+            safeKitUpdateCustomField(artist, subscriberId, email, 'inertia_user_id', userId),
           ]);
         }
       })()

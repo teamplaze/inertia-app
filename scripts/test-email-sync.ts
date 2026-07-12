@@ -269,6 +269,30 @@ async function main() {
   // Step 3: KIT upsertSubscriber
   // ---------------------------------------------------------------------
   const kit = createKitClient(process.env.KIT_API_KEY_BABATUNDE!)
+
+  // Reads a subscriber back from KIT and asserts a map of field -> expected
+  // value. classifyKitCall only proves an updateCustomField call didn't
+  // error — this is the only way to confirm the value actually persisted.
+  async function verifyKitFields(
+    label: string,
+    subscriberId: number,
+    expectedFields: Record<string, string | number | boolean>
+  ): Promise<void> {
+    try {
+      const subscriber = await kit.getSubscriber(subscriberId)
+      for (const [field, expected] of Object.entries(expectedFields)) {
+        const actual = subscriber.fields?.[field]
+        if (actual != null && String(actual) === String(expected)) {
+          pass(`[${label}] getSubscriber: ${field} matches "${expected}"`)
+        } else {
+          fail(`[${label}] getSubscriber: ${field} expected "${expected}", got "${actual}"`)
+        }
+      }
+    } catch (err) {
+      fail(`[${label}] getSubscriber threw: ${(err as Error).message}`)
+    }
+  }
+
   let subscriberId: number | null = null
   if (!selectedSteps.has(3)) {
     step(3, 'KIT upsertSubscriber (Babatunde account) — SKIPPED')
@@ -400,93 +424,110 @@ async function main() {
   if (!selectedSteps.has(7)) {
     step(7, 'Sign-up sync — SKIPPED')
   } else {
-    step(7, 'Sign-up sync (project 5 / Babatunde)')
-    const artist = getArtistForProject(5)
-    let signupSubscriberId: number | null = null
-    const { logs } = await captureLogs(async () => {
-      const syncPromises: Promise<unknown>[] = [
-        safeLoopsContact(TEST_EMAIL, { campaignStatus: 'prospect' }, userId),
-        safeLoopsEvent(TEST_EMAIL, 'accountCreated'),
-      ]
-      if (artist) {
-        syncPromises.push(
-          (async () => {
-            signupSubscriberId = await safeKitUpsert(
-              artist,
-              TEST_EMAIL,
-              { campaign_status: 'prospect', ...splitFullName(TEST_FULL_NAME) },
-              userId
-            )
-            if (signupSubscriberId != null) {
-              await Promise.all([
-                safeKitApplyTag(artist, signupSubscriberId, 'interest'),
-                safeKitUpdateCustomField(artist, signupSubscriberId, 'inertia_user_id', userId),
-              ])
-            }
-          })()
-        )
-      }
-      await Promise.all(syncPromises)
-    })
+    step(7, 'Sign-up sync (replicates src/app/api/auth/sign-up/route.ts action handling)')
 
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('loops_sync_status, kit_sync_status, kit_subscriber_id')
-      .eq('id', userId)
-      .maybeSingle()
-    if (error || !data) {
-      fail(`Could not read profiles row: ${error?.message ?? 'no row found'}`)
-    } else if (data.loops_sync_status === 'synced') {
-      pass('Loops contact created/updated (campaignStatus: prospect)')
-    } else {
-      fail(`Expected loops_sync_status="synced", got "${data.loops_sync_status}"`)
-    }
+    // Runs the same sync logic the sign-up route runs for a given
+    // (action, projectId) combo, then verifies both the write-call outcomes
+    // (via captured [emailSync] logs) and — for KIT — the actual persisted
+    // values via a real getSubscriber() read-back.
+    async function runSignupSyncScenario(
+      label: string,
+      signupAction: 'checkout' | 'waitlist' | undefined,
+      signupProjectId: number | undefined,
+      expectKit: boolean
+    ) {
+      info(`--- ${label} ---`)
+      const artist = signupProjectId != null ? getArtistForProject(signupProjectId) : null
+      const expectedCampaignStatus = signupAction === 'checkout' ? 'cart_abandon' : 'prospect'
+      let subscriberId: number | null = null
 
-    if (classifyLoopsCall(logs, 'loops.sendEvent') === 'PASS') {
-      pass('accountCreated event fired in Loops (no failure logged)')
-    } else {
-      fail('accountCreated event failed — see [emailSync] log above')
-    }
-
-    if (signupSubscriberId != null) {
-      pass(`KIT subscriber created in Babatunde account (id=${signupSubscriberId})`)
-    } else {
-      fail('KIT upsertSubscriber failed (or project 5 did not resolve to an artist)')
-    }
-
-    const interestStatus = classifyKitCall(logs, 'applyTag', 'interest')
-    if (interestStatus === 'SKIPPED') skip('inertia_interest tag application (placeholder not configured)')
-    else if (interestStatus === 'PASS') pass('inertia_interest tag applied (tag ID 20992410)')
-    else fail('inertia_interest tag application failed — see [emailSync] log above')
-
-    const signupUserIdFieldStatus = classifyKitCall(logs, 'updateCustomField', 'inertia_user_id')
-    if (signupUserIdFieldStatus === 'PASS') pass('inertia_user_id custom field written to KIT subscriber')
-    else fail('inertia_user_id custom field update failed — see [emailSync] log above')
-
-    // Read the subscriber back from KIT directly (not log inference) to
-    // confirm the values actually landed, not just that the write call succeeded.
-    if (signupSubscriberId != null) {
-      try {
-        const subscriber = await kit.getSubscriber(signupSubscriberId)
-        const expectedFirstName = TEST_FULL_NAME.split(' ')[0]
-        if (subscriber.first_name === expectedFirstName) {
-          pass(`getSubscriber: first_name matches "${expectedFirstName}"`)
-        } else {
-          fail(`getSubscriber: first_name expected "${expectedFirstName}", got "${subscriber.first_name}"`)
+      const { logs } = await captureLogs(async () => {
+        const syncPromises: Promise<unknown>[] = [
+          safeLoopsContact(
+            TEST_EMAIL,
+            { campaignStatus: expectedCampaignStatus, ...(artist && { artistInterest: artist }) },
+            userId
+          ),
+          safeLoopsEvent(TEST_EMAIL, 'accountCreated'),
+        ]
+        if (artist) {
+          syncPromises.push(
+            (async () => {
+              subscriberId = await safeKitUpsert(
+                artist,
+                TEST_EMAIL,
+                {
+                  campaign_status: expectedCampaignStatus,
+                  ...splitFullName(TEST_FULL_NAME),
+                },
+                userId
+              )
+              if (subscriberId != null) {
+                await Promise.all([
+                  safeKitApplyTag(artist, subscriberId, 'interest'),
+                  safeKitUpdateCustomField(artist, subscriberId, TEST_EMAIL, 'inertia_user_id', userId),
+                ])
+              }
+            })()
+          )
         }
+        await Promise.all(syncPromises)
+      })
 
-        const actualUserIdField = subscriber.fields?.inertia_user_id
-        if (actualUserIdField != null && String(actualUserIdField) === String(userId)) {
-          pass(`getSubscriber: inertia_user_id custom field matches "${userId}"`)
-        } else {
-          fail(`getSubscriber: inertia_user_id expected "${userId}", got "${actualUserIdField}"`)
-        }
-      } catch (err) {
-        fail(`getSubscriber threw: ${(err as Error).message}`)
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('loops_sync_status')
+        .eq('id', userId)
+        .maybeSingle()
+      if (error || !data) {
+        fail(`[${label}] Could not read profiles row: ${error?.message ?? 'no row found'}`)
+      } else if (data.loops_sync_status === 'synced') {
+        pass(`[${label}] Loops contact synced (campaignStatus: '${expectedCampaignStatus}'${artist ? `, artistInterest: '${artist}'` : ''})`)
+      } else {
+        fail(`[${label}] Expected loops_sync_status="synced", got "${data.loops_sync_status}"`)
       }
-    } else {
-      fail('getSubscriber skipped — no signupSubscriberId from upsertSubscriber')
+
+      if (classifyLoopsCall(logs, 'loops.sendEvent') === 'PASS') {
+        pass(`[${label}] accountCreated event fired in Loops (no failure logged)`)
+      } else {
+        fail(`[${label}] accountCreated event failed — see [emailSync] log above`)
+      }
+
+      if (!expectKit) {
+        if (subscriberId == null) {
+          pass(`[${label}] No KIT sync attempted (no project context)`)
+        } else {
+          fail(`[${label}] Expected no KIT sync, but a subscriber was created (id=${subscriberId})`)
+        }
+        return
+      }
+
+      if (subscriberId == null) {
+        fail(`[${label}] Expected KIT sync to fire but upsertSubscriber returned no id`)
+        return
+      }
+      pass(`[${label}] KIT subscriber upserted (id=${subscriberId})`)
+
+      const interestStatus = classifyKitCall(logs, 'applyTag', 'interest')
+      if (interestStatus === 'SKIPPED') skip(`[${label}] inertia_interest tag application (placeholder not configured)`)
+      else if (interestStatus === 'PASS') pass(`[${label}] inertia_interest tag applied`)
+      else fail(`[${label}] inertia_interest tag application failed — see [emailSync] log above`)
+
+      const userIdFieldStatus = classifyKitCall(logs, 'updateCustomField', 'inertia_user_id')
+      if (userIdFieldStatus === 'PASS') pass(`[${label}] inertia_user_id custom field written to KIT subscriber`)
+      else fail(`[${label}] inertia_user_id custom field update failed — see [emailSync] log above`)
+
+      // Read the subscriber back from KIT directly (not log inference) to
+      // confirm the custom field values actually persisted.
+      await verifyKitFields(label, subscriberId, {
+        campaign_status: expectedCampaignStatus,
+        inertia_user_id: userId,
+      })
     }
+
+    await runSignupSyncScenario('action=checkout, projectId=5', 'checkout', 5, true)
+    await runSignupSyncScenario('action=waitlist, projectId=5', 'waitlist', 5, true)
+    await runSignupSyncScenario('no action, no projectId', undefined, undefined, false)
   }
 
   // ---------------------------------------------------------------------
@@ -510,8 +551,8 @@ async function main() {
             if (waitlistSubscriberId != null) {
               await Promise.all([
                 safeKitApplyTag(artist, waitlistSubscriberId, 'waitlist'),
-                safeKitUpdateCustomField(artist, waitlistSubscriberId, 'campaign_status', 'waitlist'),
-                safeKitUpdateCustomField(artist, waitlistSubscriberId, 'inertia_user_id', userId),
+                safeKitUpdateCustomField(artist, waitlistSubscriberId, TEST_EMAIL, 'campaign_status', 'waitlist'),
+                safeKitUpdateCustomField(artist, waitlistSubscriberId, TEST_EMAIL, 'inertia_user_id', userId),
               ])
             }
           })()
@@ -551,6 +592,15 @@ async function main() {
     const waitlistUserIdFieldStatus = classifyKitCall(logs, 'updateCustomField', 'inertia_user_id')
     if (waitlistUserIdFieldStatus === 'PASS') pass('inertia_user_id custom field written to KIT subscriber (userId present)')
     else fail('inertia_user_id custom field update failed — see [emailSync] log above')
+
+    // Read the subscriber back from KIT directly (not log inference) to
+    // confirm the custom field values actually persisted.
+    if (waitlistSubscriberId != null) {
+      await verifyKitFields('waitlist sync', waitlistSubscriberId, {
+        campaign_status: 'waitlist',
+        inertia_user_id: userId,
+      })
+    }
   }
 
   // ---------------------------------------------------------------------
@@ -625,9 +675,9 @@ async function main() {
                   safeKitApplyTag(artist, purchaseSubscriberId, 'purchased_any'),
                   safeKitApplyTag(artist, purchaseSubscriberId, 'do_not_promote'),
                   safeKitRemoveTag(artist, purchaseSubscriberId, 'waitlist'),
-                  safeKitUpdateCustomField(artist, purchaseSubscriberId, 'campaign_status', 'buyer'),
-                  safeKitUpdateCustomField(artist, purchaseSubscriberId, 'purchase_tier', testTierName),
-                  safeKitUpdateCustomField(artist, purchaseSubscriberId, 'inertia_user_id', userId),
+                  safeKitUpdateCustomField(artist, purchaseSubscriberId, TEST_EMAIL, 'campaign_status', 'buyer'),
+                  safeKitUpdateCustomField(artist, purchaseSubscriberId, TEST_EMAIL, 'purchase_tier', testTierName),
+                  safeKitUpdateCustomField(artist, purchaseSubscriberId, TEST_EMAIL, 'inertia_user_id', userId),
                 ])
               }
             })()
@@ -671,6 +721,16 @@ async function main() {
     const purchaseUserIdFieldStatus = classifyKitCall(logs, 'updateCustomField', 'inertia_user_id')
     if (purchaseUserIdFieldStatus === 'PASS') pass('inertia_user_id custom field written to KIT subscriber after purchase')
     else fail('inertia_user_id custom field update failed — see [emailSync] log above')
+
+    // Read the subscriber back from KIT directly (not log inference) to
+    // confirm the custom field values actually persisted.
+    if (purchaseSubscriberId != null) {
+      await verifyKitFields('purchase sync', purchaseSubscriberId, {
+        campaign_status: 'buyer',
+        purchase_tier: testTierName,
+        inertia_user_id: userId,
+      })
+    }
 
     if (nonWave1Tier) {
       const waveTagStatus = classifyKitCall(logs, 'applyTag', expectedWaveTagKey)
@@ -721,7 +781,8 @@ async function main() {
             if (profileSubscriberId != null) {
               await Promise.all([
                 safeKitApplyTag(artist, profileSubscriberId, 'profile_completed'),
-                safeKitUpdateCustomField(artist, profileSubscriberId, 'profile_status', 'complete'),
+                safeKitUpdateCustomField(artist, profileSubscriberId, TEST_EMAIL, 'profile_status', 'complete'),
+                safeKitUpdateCustomField(artist, profileSubscriberId, TEST_EMAIL, 'inertia_user_id', userId),
               ])
             }
           })()
@@ -751,6 +812,19 @@ async function main() {
     const profileFieldStatus = classifyKitCall(logs, 'updateCustomField', 'profile_status')
     if (profileFieldStatus === 'PASS') pass("profile_status custom field updated to 'complete'")
     else fail('profile_status custom field update failed — see [emailSync] log above')
+
+    const profileUserIdFieldStatus = classifyKitCall(logs, 'updateCustomField', 'inertia_user_id')
+    if (profileUserIdFieldStatus === 'PASS') pass('inertia_user_id custom field written to KIT subscriber')
+    else fail('inertia_user_id custom field update failed — see [emailSync] log above')
+
+    // Read the subscriber back from KIT directly (not log inference) to
+    // confirm the custom field values actually persisted.
+    if (profileSubscriberId != null) {
+      await verifyKitFields('profile completion sync', profileSubscriberId, {
+        profile_status: 'complete',
+        inertia_user_id: userId,
+      })
+    }
   }
 
   console.log('\n=== Done ===')
