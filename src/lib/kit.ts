@@ -9,6 +9,16 @@ const supabaseAdmin = createClient(
 
 type KitFields = Record<string, string | number | boolean>
 
+export interface KitSubscriber {
+  id: number
+  first_name: string | null
+  last_name?: string | null
+  email_address: string
+  state: string
+  created_at: string
+  fields: Record<string, string | number | boolean | null>
+}
+
 class KitApiError extends Error {
   constructor(
     public readonly status: number,
@@ -63,7 +73,7 @@ export function createKitClient(apiKey: string) {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+        'X-Kit-Api-Key': apiKey,
       },
       ...(body != null && { body: JSON.stringify(body) }),
     })
@@ -105,7 +115,7 @@ export function createKitClient(apiKey: string) {
 
     async applyTag(subscriberId: number, tagId: number): Promise<void> {
       await withRetry(() =>
-        kitFetch('POST', `/tags/${tagId}/subscribers`, { subscriber_id: subscriberId })
+        kitFetch('POST', `/tags/${tagId}/subscribers/${subscriberId}`, {})
       )
     },
 
@@ -125,6 +135,16 @@ export function createKitClient(apiKey: string) {
           custom_fields: { [field]: value },
         })
       )
+    },
+
+    /**
+     * Fetch a subscriber's full record — first_name, last_name, email,
+     * and custom field values under `fields`. Read-only: no sync-status
+     * side effects.
+     */
+    async getSubscriber(subscriberId: number): Promise<KitSubscriber> {
+      const data = await withRetry(() => kitFetch('GET', `/subscribers/${subscriberId}`))
+      return data.subscriber
     },
   }
 }

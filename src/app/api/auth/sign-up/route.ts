@@ -1,8 +1,17 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js'; 
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import {
+  getArtistForProject,
+  splitFullName,
+  safeLoopsContact,
+  safeLoopsEvent,
+  safeKitUpsert,
+  safeKitApplyTag,
+  safeKitUpdateCustomField,
+} from '@/lib/emailSync';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -100,6 +109,34 @@ export async function POST(request: Request) {
       .select();
 
     if (updateError) console.error('DB Profile Error:', updateError);
+
+    // Email marketing sync (non-blocking). KIT only fires when the sign-up
+    // is tied to an artist project (invite flow) — a generic fan sign-up
+    // with no project context skips KIT and only syncs to Loops.
+    const artist = getArtistForProject(linkedProjectId);
+    const syncPromises: Promise<unknown>[] = [
+      safeLoopsContact(normalizedEmail, { campaignStatus: 'prospect' }, userId),
+      safeLoopsEvent(normalizedEmail, 'accountCreated'),
+    ];
+    if (artist) {
+      syncPromises.push(
+        (async () => {
+          const subscriberId = await safeKitUpsert(
+            artist,
+            normalizedEmail,
+            { campaign_status: 'prospect', ...splitFullName(name) },
+            userId
+          );
+          if (subscriberId != null) {
+            await Promise.all([
+              safeKitApplyTag(artist, subscriberId, 'interest'),
+              safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', userId),
+            ]);
+          }
+        })()
+      );
+    }
+    await Promise.all(syncPromises);
 
     // Mark invitation as used
     if (invitationId) {

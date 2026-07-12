@@ -96,6 +96,19 @@ export default function ProfileForm({ userId }: { userId: string }) {
     } else {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
+
+      const isComplete =
+        phone.trim().length > 0 &&
+        address.street.trim().length > 0 &&
+        address.city.trim().length > 0 &&
+        address.state.trim().length > 0 &&
+        address.zipCode.trim().length > 0 &&
+        address.country.trim().length > 0 &&
+        Object.values(socials).some((handle) => handle.trim().length > 0);
+
+      if (isComplete) {
+        fetch('/api/profile/sync-complete', { method: 'POST' }).catch(() => {});
+      }
     }
   };
 

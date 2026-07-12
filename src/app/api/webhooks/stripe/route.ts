@@ -3,6 +3,17 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { PostHog } from 'posthog-node';
+import {
+  getArtistForProject,
+  resolveWaveLabel,
+  safeLoopsContact,
+  safeLoopsEvent,
+  safeKitUpsert,
+  safeKitApplyTag,
+  safeKitApplyBuyerWaveTag,
+  safeKitRemoveTag,
+  safeKitUpdateCustomField,
+} from '@/lib/emailSync';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-07-30.basil', // Ensure consistent API version
@@ -188,6 +199,56 @@ export async function POST(req: Request) {
                         },
                     }),
                 });
+            }
+
+            // --- 6b. Email Marketing Sync (non-blocking) ---
+            if (customerEmail && customerEmail !== 'No email provided') {
+                const artist = getArtistForProject(projectId);
+                const purchaseAmount = grossAmount.toFixed(2);
+                const syncPromises: Promise<unknown>[] = [
+                    safeLoopsContact(customerEmail, {
+                        campaignStatus: 'buyer',
+                        artistInterest: artist ?? projectData.artist_name,
+                        tier: tierData.name,
+                        purchaseAmount,
+                        purchaseDate: new Date().toISOString(),
+                    }, finalUserId ?? undefined),
+                    safeLoopsEvent(customerEmail, 'backerJoined', {
+                        projectName: projectData.project_title,
+                        artistName: projectData.artist_name,
+                        tierName: tierData.name,
+                        amount: purchaseAmount,
+                        projectId: String(projectId),
+                    }),
+                ];
+                if (artist) {
+                    syncPromises.push(
+                        (async () => {
+                            const subscriberId = await safeKitUpsert(
+                                artist,
+                                customerEmail,
+                                undefined,
+                                finalUserId ?? undefined
+                            );
+                            if (subscriberId != null) {
+                                const waveLabel = await resolveWaveLabel(artist, tierId ?? null);
+                                await Promise.all([
+                                    safeKitApplyTag(artist, subscriberId, 'buyer'),
+                                    safeKitApplyBuyerWaveTag(artist, subscriberId, waveLabel),
+                                    safeKitApplyTag(artist, subscriberId, 'purchased_any'),
+                                    safeKitApplyTag(artist, subscriberId, 'do_not_promote'),
+                                    safeKitRemoveTag(artist, subscriberId, 'waitlist'),
+                                    safeKitUpdateCustomField(artist, subscriberId, 'campaign_status', 'buyer'),
+                                    safeKitUpdateCustomField(artist, subscriberId, 'purchase_tier', tierData.name),
+                                    ...(finalUserId
+                                        ? [safeKitUpdateCustomField(artist, subscriberId, 'inertia_user_id', finalUserId)]
+                                        : []),
+                                ]);
+                            }
+                        })()
+                    );
+                }
+                await Promise.all(syncPromises);
             }
 
             // --- 7. Send Admin/Member Notifications ---

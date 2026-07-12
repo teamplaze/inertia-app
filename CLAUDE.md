@@ -404,3 +404,42 @@ designer for completion.
 - text-[--color-text-*] classes without var() may
   generate empty rules — use text-[var(--color-text-*)]
   or hardcoded hex values
+
+### Email Service Provider (ESP) Strategy
+
+As Inertia scales to more artists, we will need to decide how to 
+handle artists who use different email platforms (Mailchimp, 
+Beehiiv, Brevo, etc.) vs. standardizing on KIT.
+
+Two paths to discuss:
+
+**Short term — Hybrid (recommended for now):**
+- Loops.so handles all transactional and post-purchase DRIP emails 
+  (Inertia-owned)
+- KIT is the one supported broadcast ESP for artist campaigns 
+  (Inertia-managed on behalf of artists)
+- New artist onboarding = add entry to ARTIST_KIT_CONFIG in 
+  src/lib/emailSync.ts + provide real KIT tag IDs
+- Artists on other ESPs: migrate their list to KIT via CSV import 
+  at onboarding rather than building new integrations
+
+**Long term — In-house CRM layer:**
+- Contact records, segmentation, and lifecycle state move fully 
+  into Supabase (data model already largely exists)
+- Sending still delegated to Loops (transactional) and a single 
+  broadcast ESP
+- Only viable once deliverability expertise exists on the team 
+  or budget exists to hire it
+- Avoids per-ESP client proliferation and gives Inertia a 
+  differentiated fan CRM purpose-built for music crowdfunding
+
+**What to avoid:**
+- Supporting multiple ESPs simultaneously — each new integration 
+  (Mailchimp, Beehiiv etc.) requires a new API client, new tag 
+  conventions, new suppression logic, and ongoing maintenance
+- Building full in-house email sending infrastructure prematurely 
+  — deliverability, bounce handling, and compliance are a 
+  significant operational burden
+
+**Decision needed when:** onboarding an artist who refuses to 
+use KIT or migrate their list.

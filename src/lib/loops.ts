@@ -39,9 +39,9 @@ async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
   throw lastError
 }
 
-async function loopsFetch(path: string, body: object): Promise<any> {
+async function loopsFetch(path: string, body: object, method: 'POST' | 'PUT' = 'POST'): Promise<any> {
   const res = await fetch(`${LOOPS_BASE}${path}`, {
-    method: 'POST',
+    method,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
@@ -68,9 +68,11 @@ async function writeSyncStatus(
 }
 
 /**
- * Create or update a Loops contact. Loops treats POST /contacts/create as an
- * upsert — existing contacts are updated in place. Mirrors the call in
- * /api/network/route.ts but adds retry and optional sync-status write-back.
+ * Create or update a Loops contact. POST /contacts/create errors with
+ * "Email is already in your audience." for existing contacts rather than
+ * upserting — on that specific error, fall through to PUT /contacts/update,
+ * which does upsert. Mirrors the call in /api/network/route.ts but adds
+ * retry and optional sync-status write-back.
  *
  * Pass userId (Supabase auth UID) to record loops_contact_id / loops_sync_status
  * on the matching profile row.
@@ -80,10 +82,18 @@ export async function createOrUpdateContact(
   properties?: LoopsProps,
   userId?: string
 ): Promise<void> {
+  const body = { email, ...(userId != null && { userId }), ...properties }
   try {
-    const data = await withRetry(() =>
-      loopsFetch('/contacts/create', { email, ...properties })
-    )
+    let data: any
+    try {
+      data = await withRetry(() => loopsFetch('/contacts/create', body))
+    } catch (err) {
+      if (err instanceof LoopsApiError && err.message.includes('already in your audience')) {
+        data = await withRetry(() => loopsFetch('/contacts/update', body, 'PUT'))
+      } else {
+        throw err
+      }
+    }
     if (userId) await writeSyncStatus(userId, 'synced', data?.id ?? undefined)
   } catch (err) {
     if (userId) await writeSyncStatus(userId, 'failed')
