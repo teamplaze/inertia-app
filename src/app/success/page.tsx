@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { CheckCircle } from 'lucide-react';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { PurchaseCompletedEvent } from './PurchaseCompletedEvent';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -56,19 +57,53 @@ export default async function SuccessPage({
   const backLabel = projectSlug ? 'Back to project' : 'Back to Homepage';
 
   return (
-    <main className="flex-1 flex flex-col items-center justify-center text-center py-20">
+    <main
+      className={cn(
+        "flex-1 flex flex-col items-center",
+        "justify-center text-center",
+        "px-[var(--spacing-5)] md:px-[96px]",
+        "pt-[120px] pb-[var(--spacing-12)]",
+        "gap-[var(--spacing-6)]",
+        "min-h-screen bg-black",
+      )}
+    >
       {eventProps && <PurchaseCompletedEvent props={eventProps} />}
-      <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-      <h1 className="text-4xl font-bold text-white mb-2">Contribution Successful!</h1>
-      <p className="text-lg text-gray-300 mb-8">
+
+      <span
+        className="material-symbols-rounded text-[120px] leading-none"
+        style={{ color: 'var(--color-bg-teal)' }}
+        aria-hidden="true"
+      >
+        check_circle
+      </span>
+
+      <h1
+        className={cn(
+          "font-heading font-medium",
+          "text-[32px] md:text-[40px]",
+          "leading-[1.2] text-white",
+        )}
+      >
+        Contribution Successful!
+      </h1>
+
+      <p
+        className={cn(
+          "font-body font-normal",
+          "text-[18px] leading-[1.5]",
+          "text-[--color-text-200]",
+          "max-w-[560px]",
+        )}
+      >
         {projectTitle
           ? `Thank you for supporting ${projectTitle}. Your contribution will help bring it to life.`
           : 'Thank you for supporting this project. Your contribution will help bring it to life.'}
       </p>
+
       <Link href={backHref}>
-        <button className="bg-brand-copper text-white px-6 py-2 rounded-md hover:bg-brand-copper/90">
+        <Button variant="primary" size="lg">
           {backLabel}
-        </button>
+        </Button>
       </Link>
     </main>
   );

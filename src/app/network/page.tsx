@@ -1,164 +1,410 @@
-// File: src/app/network/page.tsx
-"use client";
+'use client'
 
-import { useState, type FormEvent } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { BRAND } from "@/lib/colors";
+import { useState, type FormEvent } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { AuthCard } from '@/components/ui/auth-card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+
+const SPECIALTIES = [
+  'Graphic Design',
+  'Videography/Photography',
+  'Publicity',
+  'Marketing',
+  'Social Media/Branding',
+  'Studio Engineering/Producing',
+  'Media Influencer',
+  'Artist Management',
+  'Booking Agent',
+  'Legal/Lawyer',
+  'Financial Management',
+  'Content Management',
+]
+
+const CONTACT_METHODS = ['Email', 'Phone']
 
 export default function NetworkPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errors, setErrors] = useState<{
+    firstName?: string
+    lastName?: string
+    email?: string
+    specialty?: string
+    contactMethod?: string
+    general?: string
+  }>({})
 
-  // State for each form field
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [specialty, setSpecialty] = useState('');
-  const [contactMethod, setContactMethod] = useState('');
-  const [socials, setSocials] = useState('');
-  const [portfolio, setPortfolio] = useState('');
-  const [genre, setGenre] = useState('');
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [specialty, setSpecialty] = useState('')
+  const [contactMethod, setContactMethod] = useState('')
+  const [socials, setSocials] = useState('')
+  const [portfolio, setPortfolio] = useState('')
+  const [genre, setGenre] = useState('')
+
+  const validate = () => {
+    const newErrors: typeof errors = {}
+    if (!firstName.trim())
+      newErrors.firstName = 'First name is required'
+    if (!lastName.trim())
+      newErrors.lastName = 'Last name is required'
+    if (!email.trim())
+      newErrors.email = 'Email is required'
+    else if (!/\S+@\S+\.\S+/.test(email))
+      newErrors.email = 'Enter a valid email address'
+    if (!specialty)
+      newErrors.specialty = 'Please select a specialty'
+    if (!contactMethod)
+      newErrors.contactMethod = 'Please select a contact method'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage("");
-    setError("");
-
-    const response = await fetch('/api/network', {
+    e.preventDefault()
+    if (!validate()) return
+    setErrors({})
+    setSuccessMessage('')
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/network', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-            firstName, lastName, email, phone, companyName,
-            specialty, contactMethod, socials, portfolio, genre
+          firstName, lastName, email, phone,
+          companyName, specialty, contactMethod,
+          socials, portfolio, genre,
+        }),
+      })
+      if (response.ok) {
+        setSuccessMessage(
+          "Thank you for joining our network! We'll be in touch soon."
+        )
+        setFirstName(''); setLastName('')
+        setEmail(''); setPhone('')
+        setCompanyName(''); setSpecialty('')
+        setContactMethod(''); setSocials('')
+        setPortfolio(''); setGenre('')
+      } else {
+        const errorData = await response.json()
+        setErrors({
+          general: errorData.details || 'Submission failed. Please try again.',
         })
-    });
-
-    if (response.ok) {
-        setMessage("Thank you for joining our network!");
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPhone('');
-        setCompanyName('');
-        setSpecialty('');
-        setContactMethod('');
-        setSocials('');
-        setPortfolio('');
-        setGenre('');
-    } else {
-        const errorData = await response.json();
-        setError(`Submission failed: ${errorData.details || 'Please try again.'}`);
+      }
+    } finally {
+      setIsLoading(false)
     }
-    
-    setIsLoading(false);
-  };
+  }
 
   return (
-    <main className="flex-1 flex items-center justify-center py-12 md:py-24">
-      <Card className="mx-auto max-w-3xl w-full" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl text-white">Join Our Network</CardTitle>
-          <CardDescription className="text-white pt-2 px-4">
-            This form will ask a few simple questions that will allow you to be listed in network with the Inertia Project. By completing these questions, you will become visible to interested artists in your area of specialty.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="first-name" className="font-medium text-gray-200">First Name (required)</Label>
-                <Input id="first-name" required value={firstName} onChange={(e) => setFirstName(e.target.value)} variant="dark" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="last-name" className="font-medium text-gray-200">Last Name (required)</Label>
-                <Input id="last-name" required value={lastName} onChange={(e) => setLastName(e.target.value)} variant="dark" />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email" className="font-medium text-gray-200">Email (required)</Label>
-              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} variant="dark" />
+    <AuthCard className="max-w-[768px]">
+      {/* Heading */}
+      <div className="flex flex-col w-full gap-[var(--spacing-2)]">
+        <h1
+          className={cn(
+            'font-heading font-medium',
+            'text-[32px] leading-[1.2] text-white',
+          )}
+        >
+          Join Our Network
+        </h1>
+        <p
+          className={cn(
+            'font-body font-normal',
+            'text-[18px] leading-[1.5]',
+            'text-[--color-text-200]',
+          )}
+        >
+          Complete this form to be listed in our network and become visible to
+          artists looking for your specialty.
+        </p>
+      </div>
+
+      {/* Success state */}
+      {successMessage ? (
+        <div
+          className={cn(
+            'flex items-start gap-[var(--spacing-3)]',
+            'p-[var(--spacing-4)] rounded-[4px] w-full',
+          )}
+          style={{
+            background: 'rgba(62,149,142,0.15)',
+            border: '1px solid var(--color-bg-teal)',
+          }}
+        >
+          <span
+            className="material-symbols-rounded text-[24px] leading-none shrink-0"
+            style={{ color: 'var(--color-bg-teal)' }}
+            aria-hidden="true"
+          >
+            check_circle
+          </span>
+          <p className="font-body font-normal text-[18px] leading-[1.5] text-white">
+            {successMessage}
+          </p>
+        </div>
+      ) : (
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="flex flex-col w-full gap-[var(--spacing-5)]"
+        >
+          {/* First + Last name row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-4)]">
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="firstName"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                First Name <span className="text-[#ff8383]">*</span>
+              </label>
+              <Input
+                id="firstName"
+                type="text"
+                placeholder="First name"
+                value={firstName}
+                onChange={e => {
+                  setFirstName(e.target.value)
+                  setErrors(p => ({ ...p, firstName: undefined }))
+                }}
+                aria-invalid={!!errors.firstName}
+              />
+              {errors.firstName && (
+                <p className="font-body font-normal text-[14px] text-[#ff8383]">
+                  {errors.firstName}
+                </p>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                    <Label htmlFor="phone" className="font-medium text-gray-200">Phone</Label>
-                    <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} variant="dark" />
-                </div>
-                <div className="space-y-2">
-                    <Label htmlFor="company" className="font-medium text-gray-200">Company Name</Label>
-                    <Input id="company" value={companyName} onChange={(e) => setCompanyName(e.target.value)} variant="dark" />
-                </div>
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="lastName"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                Last Name <span className="text-[#ff8383]">*</span>
+              </label>
+              <Input
+                id="lastName"
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={e => {
+                  setLastName(e.target.value)
+                  setErrors(p => ({ ...p, lastName: undefined }))
+                }}
+                aria-invalid={!!errors.lastName}
+              />
+              {errors.lastName && (
+                <p className="font-body font-normal text-[14px] text-[#ff8383]">
+                  {errors.lastName}
+                </p>
+              )}
             </div>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="specialty" className="font-medium text-gray-200">What type of work do you specialize in? (required)</Label>
-              <Select required onValueChange={setSpecialty}>
-                <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-brand-copper [&>span]:text-white/70 data-[placeholder]:text-white/70">
-                  <SelectValue placeholder="Select an option" />
-                </SelectTrigger>
-                <SelectContent className="bg-brand-dark text-white border-gray-700">
-                <SelectItem value="graphic-design">Graphic Design</SelectItem>
-                  <SelectItem value="video-photo">Videography/Photography</SelectItem>
-                  <SelectItem value="publicity">Publicity</SelectItem>
-                  <SelectItem value="marketing">Marketing</SelectItem>
-                  <SelectItem value="social-branding">Social Media/Branding</SelectItem>
-                  <SelectItem value="engineering-producing">Studio Engineering/Producing</SelectItem>
-                  <SelectItem value="influencer">Media Influencer</SelectItem>
-                  <SelectItem value="management">Artist Management</SelectItem>
-                  <SelectItem value="booking">Booking Agent</SelectItem>
-                  <SelectItem value="legal">Legal/Lawyer</SelectItem>
-                  <SelectItem value="financial">Financial Management</SelectItem>
-                  <SelectItem value="content-management">Content Management</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          {/* Email */}
+          <div className="flex flex-col gap-[var(--spacing-2)]">
+            <label
+              htmlFor="email"
+              className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+            >
+              Email <span className="text-[#ff8383]">*</span>
+            </label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={e => {
+                setEmail(e.target.value)
+                setErrors(p => ({ ...p, email: undefined }))
+              }}
+              aria-invalid={!!errors.email}
+            />
+            {errors.email && (
+              <p className="font-body font-normal text-[14px] text-[#ff8383]">
+                {errors.email}
+              </p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="contact-method" className="font-medium text-gray-200">Preferred Contact Method (required)</Label>
-                <Select required onValueChange={setContactMethod}>
-                    <SelectTrigger className="justify-start text-white data-[state=open]:text-white transition-colors focus:ring-0 focus:border-brand-copper [&>span]:text-white/70 data-[placeholder]:text-white/70">
-                        <SelectValue placeholder="Select an option" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-brand-dark text-white border-gray-700">
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="phone">Phone</SelectItem>
-                    </SelectContent>
-                </Select>
+          {/* Phone + Company row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-4)]">
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="phone"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                Phone
+              </label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="Phone number"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+              />
             </div>
-            
-            <div className="space-y-2">
-                <Label htmlFor="socials" className="font-medium text-gray-200">Socials</Label>
-                <Textarea id="socials" placeholder="e.g., Instagram: @inertia_music" value={socials} onChange={(e) => setSocials(e.target.value)} className="text-white placeholder:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-brand-copper" />
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="companyName"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                Company Name
+              </label>
+              <Input
+                id="companyName"
+                type="text"
+                placeholder="Company or studio name"
+                value={companyName}
+                onChange={e => setCompanyName(e.target.value)}
+              />
             </div>
+          </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="portfolio" className="font-medium text-gray-200">Portfolio</Label>
-                <Input id="portfolio" placeholder="https://yourportfolio.com" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} variant="dark" />
-            </div>
+          {/* Specialty */}
+          <div className="flex flex-col gap-[var(--spacing-2)]">
+            <label className="font-heading font-medium text-[14px] leading-[1.2] text-white">
+              Specialty <span className="text-[#ff8383]">*</span>
+            </label>
+            <Select
+              value={specialty}
+              onValueChange={v => {
+                setSpecialty(v)
+                setErrors(p => ({ ...p, specialty: undefined }))
+              }}
+            >
+              <SelectTrigger aria-invalid={!!errors.specialty}>
+                <SelectValue placeholder="Select your specialty" />
+              </SelectTrigger>
+              <SelectContent>
+                {SPECIALTIES.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.specialty && (
+              <p className="font-body font-normal text-[14px] text-[#ff8383]">
+                {errors.specialty}
+              </p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="genre" className="font-medium text-gray-200">Preferred Genre</Label>
-                <Input id="genre" placeholder="e.g., Indie Rock, Folk, Electronic" value={genre} onChange={(e) => setGenre(e.target.value)} variant="dark" />
-            </div>
+          {/* Preferred Contact Method */}
+          <div className="flex flex-col gap-[var(--spacing-2)]">
+            <label className="font-heading font-medium text-[14px] leading-[1.2] text-white">
+              Preferred Contact Method <span className="text-[#ff8383]">*</span>
+            </label>
+            <Select
+              value={contactMethod}
+              onValueChange={v => {
+                setContactMethod(v)
+                setErrors(p => ({ ...p, contactMethod: undefined }))
+              }}
+            >
+              <SelectTrigger aria-invalid={!!errors.contactMethod}>
+                <SelectValue placeholder="Select contact method" />
+              </SelectTrigger>
+              <SelectContent>
+                {CONTACT_METHODS.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.contactMethod && (
+              <p className="font-body font-normal text-[14px] text-[#ff8383]">
+                {errors.contactMethod}
+              </p>
+            )}
+          </div>
 
-            <Button type="submit" className="w-full bg-brand-copper hover:bg-brand-copper/90" disabled={isLoading}>
-              {isLoading ? 'Submitting...' : 'Submit'}
-            </Button>
-          </form>
-          {message && <p className="mt-6 text-center text-sm text-green-300">{message}</p>}
-          {error && <p className="mt-6 text-center text-sm text-red-400">{error}</p>}
-        </CardContent>
-      </Card>
-    </main>
-  );
+          {/* Socials */}
+          <div className="flex flex-col gap-[var(--spacing-2)]">
+            <label
+              htmlFor="socials"
+              className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+            >
+              Socials
+            </label>
+            <Textarea
+              id="socials"
+              placeholder="Instagram, TikTok, LinkedIn URLs..."
+              value={socials}
+              onChange={e => setSocials(e.target.value)}
+            />
+          </div>
+
+          {/* Portfolio + Genre row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-4)]">
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="portfolio"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                Portfolio URL
+              </label>
+              <Input
+                id="portfolio"
+                type="text"
+                placeholder="https://yourportfolio.com"
+                value={portfolio}
+                onChange={e => setPortfolio(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-[var(--spacing-2)]">
+              <label
+                htmlFor="genre"
+                className="font-heading font-medium text-[14px] leading-[1.2] text-white"
+              >
+                Preferred Genre
+              </label>
+              <Input
+                id="genre"
+                type="text"
+                placeholder="e.g. Hip-hop, R&B, Rock"
+                value={genre}
+                onChange={e => setGenre(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* General error */}
+          {errors.general && (
+            <p className="font-body font-normal text-[14px] text-[#ff8383] text-center">
+              {errors.general}
+            </p>
+          )}
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Submitting...' : 'Join the network'}
+          </Button>
+        </form>
+      )}
+    </AuthCard>
+  )
 }

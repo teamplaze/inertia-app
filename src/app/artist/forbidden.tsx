@@ -24,7 +24,7 @@ export default function Forbidden() {
         </CardContent>
         <CardFooter className="flex justify-center gap-4">
           <Link href="/account">
-            <Button variant="secondary" className="bg-brand-teal text-white hover:bg-brand-teal/90">
+            <Button variant="border">
               Go to My Account
             </Button>
           </Link>

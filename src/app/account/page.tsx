@@ -45,7 +45,7 @@ export default async function MyProjectsPage() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-white mb-8">My Projects</h1>
+      <h1 className="font-heading font-medium text-[32px] text-white mb-[var(--spacing-8)]">My Projects</h1>
       {/* Pass the transformed data down to the client component for rendering */}
       <ContributionsTable contributions={contributions} />
     </div>

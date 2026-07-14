@@ -1,28 +1,44 @@
 // File: src/app/projects/[id]/project-client-ui.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Users, Star, Quote, Eye, MessageSquare, User, LayoutDashboard, Heart, ArrowRight, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import FAQSection from '@/components/project/FAQSection';
-import { TierCard } from "@/components/project/TierCard";
-import FundingMeter from "@/components/project/FundingMeter";
+import { WaveCard } from '@/components/project/WaveCard'
+import { DonateCard } from '@/components/project/DonateCard';
+import { TestimonialCard } from '@/components/ui/cards/testimonial-card'
+import { CarouselControls } from '@/components/ui/carousel-controls'
+import { MilestonesList } from '@/components/project/MilestonesList'
+import { PerksSection } from '@/components/project/PerksSection'
+import { ProgressBar } from '@/components/project/ProgressBar'
+import { ProjectHero } from '@/components/project/ProjectHero'
 import { BRAND } from "@/lib/colors";
+import { cn } from "@/lib/utils";
 import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
 
 // Set to true to restore the Previews section (audio/video previews)
 const PREVIEWS_ENABLED = false;
+
+// Deterministic PRNG seeded on a numeric value (mulberry32).
+// Produces the same sequence for a given seed, so server and client
+// compute the same shuffle order — eliminates the hydration mismatch
+// that occurs when Math.random() is used inside useMemo.
+function seededRandom(seed: number) {
+  let s = seed
+  return () => {
+    s = (s + 0x6D2B79F5) | 0
+    let t = Math.imul(s ^ (s >>> 15), 1 | s)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
 
 // Check if payments are enabled via environment variable
 const paymentsEnabled = (() => {
@@ -45,18 +61,30 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   const [tiers, setTiers] = useState<Tier[]>(projectData.tiers);
   const [project, setProject] = useState<Project>(projectData);
   
-  const [selectedTier, setSelectedTier] = useState<number | null>(null);
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [fanStoriesIndex, setFanStoriesIndex] = useState(0);
 
-  // New state for expandable fan stories
-  const [showAllStories, setShowAllStories] = useState(false);
+  const [artistNoteOpen, setArtistNoteOpen] = useState(false);
 
-    // --- NEW: Donation State ---
-  const [donationAmount, setDonationAmount] = useState<string>("");
-  const [coverFee, setCoverFee] = useState<boolean>(true); // Default to helping the artist
-  const [isDonating, setIsDonating] = useState<boolean>(false);
+  const displayedTestimonials = useMemo(() => {
+    if (!project.testimonials?.length) return []
+    const rand = seededRandom(project.id)
+    const shuffled = [...project.testimonials]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled.slice(0, 6)
+  }, [project.testimonials, project.id])
 
   const supabase = createClient();
+
+  useEffect(() => {
+    const accent = project.project_colors?.[0] ?? '#e18d46'
+    document.documentElement.style.setProperty('--color-project-accent', accent)
+    return () => {
+      document.documentElement.style.removeProperty('--color-project-accent')
+    }
+  }, [project.project_colors])
 
   useEffect(() => {
     // Listen for changes to the 'tiers' table for this project
@@ -82,84 +110,61 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
 
   const fundingPercentage = Math.round((project.current_funding / project.funding_goal) * 100);
-  const selectedTierData = tiers.find((tier) => tier.id === selectedTier);
 
-  // --- PATH A: Custom Donation Handler ---
-  const handleDonationCheckout = async () => {
-    const amount = parseFloat(donationAmount);
-    if (isNaN(amount) || amount <= 0) return;
-
-    setIsDonating(true);
+  const handleDonate = async (amount: number, coverFee: boolean) => {
     try {
-      const response = await fetch('/api/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          projectId: project.id, 
+        body: JSON.stringify({
+          projectId: project.id,
           donationAmount: amount,
-          coverFee 
+          coverFee,
         }),
-      });
-
-      if (!response.ok) throw new Error('Failed to create checkout session.');
-
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-      
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) console.error('Stripe redirect error:', error);
+      })
+      const { sessionId } = await res.json()
+      const stripe = await stripePromise
+      if (stripe && sessionId) {
+        await stripe.redirectToCheckout({ sessionId })
       }
-    } catch (error) {
-      console.error('Checkout failed:', error);
-    } finally {
-      setIsDonating(false);
+    } catch (err) {
+      console.error('Donation error:', err)
     }
   };
 
-  // --- PATH B: Standard Tier Handler ---
-  const handleTierSelect = (tierId: number) => {
-    setSelectedTier(tierId);
-    setShowCheckout(true);
-  };
-
-  const handleCheckout = async () => {
-    if (!selectedTierData) {
-      alert("Please select a tier first.");
-      return;
-    }
-
+  const handlePurchase = async (tierId: number) => {
+    if (!stripePromise) return
     try {
-      const response = await fetch('/api/checkout', {
+      const res = await fetch('/api/checkout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tierId: selectedTierData.id, projectId: project.id }),
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tierId,
+          projectId: project.id,
+        }),
+      })
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session.');
+      // Unauthenticated — redirect to sign-up with checkout params
+      // so the flow resumes automatically after account creation
+      if (res.status === 401) {
+        const params = new URLSearchParams({
+          action: 'checkout',
+          projectId: String(project.id),
+          tierId: String(tierId),
+        })
+        window.location.href = `/sign-up?${params.toString()}`
+        return
       }
 
-      const { sessionId } = await response.json();
-
-      const stripe = await stripePromise;
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          console.error('Stripe redirect error:', error);
-        }
+      const { sessionId } = await res.json()
+      const stripe = await stripePromise
+      if (stripe && sessionId) {
+        await stripe.redirectToCheckout({ sessionId })
       }
-    } catch (error) {
-      console.error('Checkout failed:', error);
+    } catch (err) {
+      console.error('Checkout error:', err)
     }
   };
-
-  // We use the presence of the donation_link as a flag to enable the donate card
-  const hasDonationEnabled = true;
-
-  const activeTier = tiers.find(t => t.status === 'active');
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -172,127 +177,214 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   };
 
 
-  // Determine displayed stories based on state
-  const displayedStories = showAllStories 
-    ? project.testimonials 
-    : project.testimonials.slice(0, 2);
+  const isActiveFundraising = project.status === 'Fundraising';
 
   return (
-    <main className="container mx-auto px-4 py-8 max-w-6xl">
-      {/* Project Header */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-start">
-        <div className="space-y-6">
-          <Image
-            src={project.project_image_url || "/placeholder.svg"}
-            alt={project.project_title}
-            width={600}
-            height={600}
-            className="w-full max-w-md mx-auto aspect-square object-cover rounded-xl shadow-2xl border border-gray-700"
-          />
-        </div>
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between items-start">
-              <Badge
-                variant={project.status === "Completed" ? "secondary" : "default"}
-                className="mb-4 bg-gray-600 text-white"
-              >
-                {project.status}
-              </Badge>
+    <>
+      <ProjectHero
+        artistName={project.artist_name}
+        projectTitle={project.project_title}
+        projectStatus={project.status as 'Fundraising' | 'Completed' | 'Coming Soon'}
+        artistImageUrl={project.project_image_url ?? ''}
+        currentFunding={project.current_funding}
+        fundingGoal={project.funding_goal}
+        fundingPercentage={fundingPercentage}
+        percentFunded={fundingPercentage}
+        backerCount={project.backer_count ?? 0}
+        showProjectResults={isProjectMember}
+        projectResultsHref={`/artist/dashboard?projectId=${project.id}`}
+        onSupportClick={() => scrollToSection('support-levels')}
+        style={{
+          '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
+        } as React.CSSProperties}
+      />
+      <main
+        className="container mx-auto px-4 py-8 max-w-6xl"
+        style={{
+          '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
+        } as React.CSSProperties}
+      >
+      {isActiveFundraising && (
+        <>
+      <section
+        id="about"
+        className={cn(
+          "w-full flex flex-col items-center",
+          "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+          "gap-[var(--spacing-6)]",
+          "md:px-[96px] md:py-[120px]",
+          "md:gap-[var(--spacing-8)]",
+        )}
+        style={{ background: '#000000' }}
+      >
+        {/* Content block — heading + bio */}
+        <div
+          className={cn(
+            "flex flex-col items-start",
+            "w-full md:w-[822px]",
+            "gap-[var(--spacing-3)] md:gap-[var(--spacing-4)]",
+          )}
+        >
+          <h2
+            className={cn(
+              "font-heading font-medium leading-[1.2]",
+              "tracking-normal",
+              "text-white w-full",
+              "text-[20px] md:text-[32px]",
+            )}
+          >
+            About
+          </h2>
 
-              {/* --- ARTIST DASHBOARD BUTTON (Conditional) --- */}
-              {isProjectMember && (
-                <Link href={`/artist/dashboard?projectId=${project.id}`}>
-                    <Button className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                        <LayoutDashboard className="w-4 h-4 mr-2" />
-                        Project Results
-                    </Button>
-                </Link>
+          {project.artist_bio && (
+            <p
+              className={cn(
+                "font-body font-normal",
+                "text-[20px] leading-[1.5]",
+                "tracking-normal",
+                "text-[var(--color-text-200)]",
+                "w-full",
               )}
-            </div>
-
-            <h1 className="text-4xl font-bold mb-2" style={{ color: BRAND.teal }}>
-              {project.project_title}
-            </h1>
-            <div className="flex items-start gap-3 mb-6">
-              <Image
-                src={project.artist_profile_image_url || "/placeholder.svg"}
-                alt={project.artist_name}
-                width={48}
-                height={48}
-                className="w-12 h-12 rounded-xl object-cover border-2 border-gray-600 shrink-0"
-              />
-              <div>
-                <p className="font-semibold text-white">{project.artist_name}</p>
-                <p className="text-sm text-gray-400">{project.artist_bio}</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold" style={{ color: BRAND.green }}>
-                ${project.current_funding.toLocaleString()}
-              </span>
-              <span className="text-gray-400">of ${project.funding_goal.toLocaleString()} goal</span>
-            </div>
-            <FundingMeter 
-              currentFunds={project.current_funding} 
-              totalGoal={project.funding_goal} 
-              milestones={project.project_milestones} 
-            />
-            <div className="flex justify-between text-sm text-gray-400">
-              <span>{fundingPercentage}% funded</span>
-              <span className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                {project.backer_count} backers
-              </span>
-            </div>
-
-            <Button
-              onClick={() => scrollToSection("support-levels")}
-              className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white text-lg font-bold py-6 animate-pulse"
             >
-              Buy Now <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-
-            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-700">
-              <Button onClick={() => scrollToSection("from-artist")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <User className="w-4 h-4 mr-2" /> From Artist
-              </Button>
-              {PREVIEWS_ENABLED && (
-                <Button onClick={() => scrollToSection("previews")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                  <Eye className="w-4 h-4 mr-2" /> Previews
-                </Button>
-              )}
-              <Button onClick={() => scrollToSection("fan-stories")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <MessageSquare className="w-4 h-4 mr-2" /> Fan Stories
-              </Button>
-              <Button onClick={() => scrollToSection("support-levels")} size="sm" className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                <Star className="w-4 h-4 mr-2" /> Perks
-              </Button>
-            </div>
-          </div>
+              {project.artist_bio}
+            </p>
+          )}
         </div>
-      </div>
 
-      {/* === FROM THE ARTIST SECTION === */}
-      <section id="from-artist" className="mb-12">
-        <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>From the Artist</h2>
-        <Card className="rounded-xl" style={gradientCardStyle}>
-          <CardContent className="p-4">
-            <div className="prose prose-lg max-w-none prose-invert">
-                {project.from_the_artist_message && project.from_the_artist_message.split("\n").map((paragraph: string, index: number) => (
-                    <p key={index} className="mb-4 text-gray-200 leading-relaxed">{paragraph}</p>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* "A note from {Artist}" accordion */}
+        {project.from_the_artist_message && (
+          <div
+            className={cn(
+              "w-full md:w-[822px]",
+              "flex flex-col items-start",
+              "rounded-[12px]",
+              "border border-[var(--color-border-soft)]",
+              "overflow-hidden",
+            )}
+            style={{ background: 'var(--color-bg-200, #0f1111)' }}
+          >
+            <button
+              onClick={() => setArtistNoteOpen(!artistNoteOpen)}
+              className={cn(
+                "flex items-center w-full",
+                "gap-[var(--spacing-3)] md:gap-[var(--spacing-4)]",
+                "p-[var(--spacing-4)] md:p-[var(--spacing-5)]",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[var(--color-border-focus)]",
+                "focus-visible:ring-inset",
+              )}
+              aria-expanded={artistNoteOpen}
+            >
+              <span
+                className={cn(
+                  "font-heading font-medium leading-[1.2]",
+                  "tracking-normal text-white",
+                  "flex-[1_0_0] min-w-px text-left",
+                  "text-[16px] md:text-[18px]",
+                )}
+              >
+                A note from {project.artist_name}
+              </span>
+              <span
+                className="material-symbols-rounded text-[24px] leading-none text-white shrink-0"
+                aria-hidden="true"
+              >
+                {artistNoteOpen ? 'close' : 'add'}
+              </span>
+            </button>
+
+            {artistNoteOpen && (
+              <div
+                className={cn(
+                  "w-full",
+                  "px-[var(--spacing-4)] pb-[var(--spacing-4)]",
+                  "md:px-[var(--spacing-5)] md:pb-[var(--spacing-5)]",
+                )}
+              >
+                <div
+                  className="w-full border-t mb-[var(--spacing-4)]"
+                  style={{ borderColor: 'var(--color-border-soft)' }}
+                />
+                <p
+                  className={cn(
+                    "font-body font-normal",
+                    "text-[18px]",
+                    "leading-[1.5] tracking-normal",
+                    "text-[var(--color-text-200)]",
+                  )}
+                >
+                  {project.from_the_artist_message}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </section>
+
+      {project.project_milestones && project.project_milestones.length > 0 && (
+        <section id="milestones" className="py-[var(--spacing-12)] md:py-[120px]">
+          <div className="flex flex-col gap-[var(--spacing-4)] mb-[var(--spacing-8)] md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className={cn(
+                "font-heading font-medium",
+                "text-[20px] md:text-[32px]",
+                "leading-[1.2] text-white"
+              )}>
+                Fundraising milestones
+              </h2>
+              <p className={cn(
+                "font-body font-normal mt-2",
+                "text-[18px]",
+                "leading-[1.5] text-[var(--color-text-300)]"
+              )}>
+                Unlock our budget milestones by contributing to the project!
+              </p>
+            </div>
+            <button
+              onClick={() => scrollToSection('support-levels')}
+              className={cn(
+                "flex items-center justify-center",
+                "bg-transparent text-white",
+                "font-heading font-medium",
+                "text-[14px]",
+                "leading-[1.2] tracking-normal",
+                "px-[var(--spacing-5)] py-[var(--spacing-3)]",
+                "rounded-none",
+                "border-2 border-white",
+                "w-full md:w-auto",
+                "transition-colors duration-150",
+                "hover:border-[var(--color-project-accent,var(--color-bg-teal))]",
+                "hover:text-[var(--color-project-accent,var(--color-bg-teal))]",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[var(--color-border-focus)]",
+              )}
+            >
+              Support {project.artist_name}
+            </button>
+          </div>
+
+          <ProgressBar
+            value={fundingPercentage}
+            amountRaised={`$${project.current_funding.toLocaleString()}`}
+            goal={`of $${project.funding_goal.toLocaleString()}`}
+            percentFunded={fundingPercentage}
+            backerCount={project.backer_count ?? 0}
+            showDetails={true}
+            className="mb-[var(--spacing-8)]"
+          />
+          <MilestonesList
+            milestones={project.project_milestones}
+            currentFunding={project.current_funding}
+          />
+        </section>
+      )}
 
       {/* === PREVIEWS SECTION === */}
       {PREVIEWS_ENABLED && (
         <section id="previews" className="mb-12">
-          <h2 className="text-3xl font-bold mb-6" style={{ color: BRAND.teal }}>Previews</h2>
+          <h2 className="text-3xl font-medium mb-6" style={{ color: BRAND.teal }}>Previews</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="rounded-xl" style={regularCardStyle}>
               <CardContent className="p-4 space-y-2">
@@ -342,185 +434,171 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
-      <section id="support-levels" className="mb-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-2" style={{ color: BRAND.teal }}>Choose Your Support Level</h2>
-          <p className="text-gray-200 mb-6 max-w-2xl mx-auto">Every tier helps bring this project to life — higher levels unlock deeper access, rarer moments, and more personal connection with the band.</p>
-        </div>
-        {/* Single active tier + donate card — always 2 columns on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch max-w-4xl mx-auto">
-          {activeTier && (
-            <TierCard
-              tier={activeTier}
-              project={project}
-              selectedTier={selectedTier}
-              user={user}
-              paymentsEnabled={paymentsEnabled}
-              showCheckout={showCheckout}
-              onSelectTier={handleTierSelect}
-              onCheckout={handleCheckout}
-              onCancelCheckout={() => { setSelectedTier(null); setShowCheckout(false); }}
-            />
-          )}
+      {(() => {
+        const waveCard = tiers.find(
+          t => t.status === 'active' || t.status === 'closed'
+        )
+        if (!waveCard) return null
 
-          {/* === DONATION CARD === */}
-          {hasDonationEnabled && (
-            <div className="flex flex-col gap-4">
-               <Card
-                  className="flex flex-col relative transition-all duration-200 rounded-xl h-full hover:shadow-md hover:shadow-gray-700/50"
-                  style={regularCardStyle}
-                >
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <CardTitle className="text-xl font-bold" style={{ color: BRAND.copper }}>Donate</CardTitle>
-                        <p className="text-xs text-white/90 font-medium italic">Support the project directly without the perks</p>
-                      </div>
-                    </div>
-                    <div className="text-3xl font-bold text-white mt-2">Any Amount</div>
-                  </CardHeader>
-                  <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                    <ul className="space-y-2">
-                       <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                         <span className="text-sm text-white">Help us reach our goal faster</span>
-                       </li>
-                       <li className="flex items-start gap-2">
-                         <Heart className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: BRAND.copper }} />
-                         <span className="text-sm text-white">Every bit counts</span>
-                       </li>
-                    </ul>
-                    <div className="pt-4 border-t border-white/20">
-                       {paymentsEnabled ? (
-                         <div className="space-y-4">
-                           <div className="space-y-3">
-                             <div className="relative">
-                               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white font-bold">$</span>
-                               <Input
-                                 type="number"
-                                 min="1"
-                                 step="1"
-                                 placeholder="50"
-                                 value={donationAmount}
-                                 onChange={(e) => setDonationAmount(e.target.value)}
-                                 className="pl-8 bg-black/20 border-brand-copper/50 text-white placeholder:text-gray-300 focus-visible:ring-brand-copper"
-                               />
-                             </div>
-                             <div className="flex items-start space-x-2">
-                               <Checkbox 
-                                 id="cover-fee" 
-                                 checked={coverFee} 
-                                 onCheckedChange={(checked) => setCoverFee(checked as boolean)}
-                                 className="mt-0.5 border-gray-300 data-[state=checked]:bg-brand-copper data-[state=checked]:border-brand-copper"
-                               />
-                               <label
-                                 htmlFor="cover-fee"
-                                 className="text-xs text-gray-200 leading-tight peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                               >
-                                 Cover processing fee so the artist gets 100% of your donation
-                               </label>
-                             </div>
-                           </div>
-                           
-                           <Button 
-                             onClick={handleDonationCheckout} 
-                             disabled={isDonating || !donationAmount || parseFloat(donationAmount) <= 0}
-                             className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white font-bold transition-all"
-                           >
-                             {isDonating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                             {isDonating ? "Processing..." : "Donate Now"}
-                           </Button>
-                         </div>
-                       ) : (
-                         <div className="w-full bg-brand-copper text-white text-center cursor-not-allowed opacity-60 hover:bg-brand-copper rounded-md px-4 py-2 font-medium text-sm">
-                           Coming Soon
-                         </div>
-                       )}
-                    </div>
-                  </CardContent>
-               </Card>
+        return (
+          <section
+            id="support-levels"
+            className="flex flex-col items-center px-[var(--spacing-5)] py-[var(--spacing-12)] md:px-[96px] md:py-[120px] gap-[var(--spacing-10)]"
+            style={{ background: '#000000' }}
+          >
+            {/* Section header */}
+            <div className="flex flex-col items-center gap-[var(--spacing-3)] text-center">
+              <h4
+                className="font-heading font-medium leading-[1.2] text-white"
+                style={{ fontSize: 'var(--font-size-h4)' }}
+              >
+                Support {project.artist_name}
+              </h4>
+              <p className="font-body font-normal text-[20px] leading-[1.5] text-[var(--wave-text-muted)]">
+                100% of your contributions go to the artist&apos;s project.
+              </p>
             </div>
-          )}
 
-        </div>
-      </section>
+            {/* Cards */}
+            <div
+              className={cn(
+                'grid grid-cols-1 md:grid-cols-2',
+                'gap-[var(--spacing-6)]',
+                'items-stretch',
+                'w-full max-w-[1034px]',
+              )}
+            >
+              <WaveCard
+                tier={waveCard}
+                project={project}
+                user={user}
+                paymentsEnabled={paymentsEnabled}
+                onPurchase={handlePurchase}
+              />
+              <DonateCard project={project} onDonate={handleDonate} />
+            </div>
+          </section>
+        )
+      })()}
 
-      {/* DESKTOP CHECKOUT BOX: Visible only on DESKTOP (>= md) */}
-      {paymentsEnabled && showCheckout && selectedTierData && (
-        <section className="mb-12 hidden md:block"> {/* Only show on desktop */}
-          <Card className="rounded-xl" style={gradientCardStyle}>
-            <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-2">Ready to support {project.artist_name}?</h3>
-                  <p className="text-gray-200">You've selected the <strong className="text-white">{selectedTierData.name}</strong> tier for <strong style={{ color: BRAND.copper }}>${selectedTierData.price}</strong></p>
-                </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="border-gray-400 text-gray-200 bg-transparent hover:bg-black/30 hover:text-gray-200" onClick={() => { setSelectedTier(null); setShowCheckout(false); }}>Change Selection</Button>
-                  <Button onClick={handleCheckout} className="bg-brand-copper hover:bg-brand-copper/90 text-white">Continue to Checkout</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {tiers && tiers.length > 0 && (
+        <section id="perks">
+          <PerksSection
+            tiers={tiers}
+            artistName={project.artist_name}
+            onSupportClick={() => scrollToSection('support-levels')}
+            hasRoyalties={project.has_royalties}
+          />
         </section>
       )}
 
-      {project.testimonials && project.testimonials.length > 0 && (
-        <section id="fan-stories" className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: BRAND.teal }}>Fan Stories</h2>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {displayedStories.map((testimonial) => (
-                <Card key={testimonial.id} className="relative rounded-xl" style={regularCardStyle}>
-                  <CardContent className="p-4">
-                    <Quote className="absolute -top-2 -left-2 w-8 h-8 opacity-20" style={{ color: BRAND.copper }} />
-                    <div className="flex items-start gap-4 mb-4">
-                      {testimonial.profile_image_url && (
-                        <Image
-                          src={testimonial.profile_image_url}
-                          alt={testimonial.name}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-400"
-                        />
-                      )}
-                      <div className="flex-1">
-                          <h4 className="font-semibold text-white">{testimonial.name}</h4>
-                          <p className="text-sm text-gray-300">{testimonial.location}</p>
-                      </div>
+      {displayedTestimonials.length > 0 && (
+        <section
+          id="fan-stories"
+          className={cn(
+            "w-full flex flex-col items-center justify-center",
+            "px-[var(--spacing-5)] py-[var(--spacing-12)]",
+            "md:px-[96px] md:py-[120px]",
+            "gap-[var(--spacing-10)] md:gap-[var(--spacing-12)]",
+            "overflow-hidden md:overflow-visible",
+          )}
+          style={{ background: '#000000' }}
+        >
+          {/* Section heading */}
+          <h2
+            className={cn(
+              "font-heading font-medium leading-[1.2]",
+              "tracking-normal text-white text-center",
+              "w-full max-w-[822px]",
+              "text-[20px] md:text-[32px]",
+            )}
+          >
+            Join {project.artist_name}&apos;s fans
+          </h2>
+
+          {/* Carousel + controls */}
+          <div className="flex flex-col gap-[var(--spacing-8)] w-full">
+            {/* Cards track */}
+            <div className="w-full">
+
+              {/* MOBILE — single card, full width, percentage-based slide */}
+              <div className="block md:hidden w-full overflow-hidden">
+                <div
+                  className="flex transition-transform duration-300"
+                  style={{ transform: `translateX(-${fanStoriesIndex * 100}%)` }}
+                >
+                  {displayedTestimonials.map((testimonial) => (
+                    <div key={testimonial.id} style={{ minWidth: '100%' }}>
+                      <TestimonialCard
+                        quote={testimonial.story}
+                        name={testimonial.name}
+                        location={testimonial.location ?? ''}
+                        className="w-full"
+                      />
                     </div>
-                    <p className="text-white leading-relaxed">{testimonial.story}</p>
-                  </CardContent>
-                </Card>
-              ))}
+                  ))}
+                </div>
+              </div>
+
+              {/* DESKTOP */}
+              <div className="hidden md:block w-full">
+                {displayedTestimonials.length >= 4 ? (
+                  <div className="overflow-hidden">
+                    <div
+                      className="flex transition-transform duration-300"
+                      style={{
+                        gap: '32px',
+                        transform: `translateX(calc(-${fanStoriesIndex * 394}px - ${fanStoriesIndex * 32}px))`,
+                      }}
+                    >
+                      {displayedTestimonials.map((testimonial) => (
+                        <div key={testimonial.id} className="shrink-0">
+                          <TestimonialCard
+                            quote={testimonial.story}
+                            name={testimonial.name}
+                            location={testimonial.location ?? ''}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-row items-stretch justify-center w-full" style={{ gap: '32px' }}>
+                    {displayedTestimonials.map((testimonial) => (
+                      <div key={testimonial.id} className="shrink-0">
+                        <TestimonialCard
+                          quote={testimonial.story}
+                          name={testimonial.name}
+                          location={testimonial.location ?? ''}
+                          className="h-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
             </div>
 
-            {project.testimonials.length > 2 && (
-              <div className="flex justify-center pt-2">
-                <Button
-                  onClick={() => setShowAllStories(!showAllStories)}
-                  className="bg-brand-copper hover:bg-brand-copper/90 text-white"
-                >
-                  {showAllStories ? (
-                    <>
-                      Show Less <ChevronUp className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      Show More Stories <ChevronDown className="w-4 h-4" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
+            {/* Carousel controls */}
+            <div className={cn(displayedTestimonials.length < 4 ? "md:hidden" : "")}>
+              <CarouselControls
+                count={displayedTestimonials.length}
+                activeIndex={fanStoriesIndex}
+                onDotClick={(i) => setFanStoriesIndex(i)}
+                onPrev={() => setFanStoriesIndex(Math.max(0, fanStoriesIndex - 1))}
+                onNext={() => setFanStoriesIndex(Math.min(displayedTestimonials.length - 1, fanStoriesIndex + 1))}
+              />
+            </div>
           </div>
         </section>
       )}
 
       <FAQSection />
-
-      
+        </>
+      )}
 
     </main>
+    </>
   );
 }

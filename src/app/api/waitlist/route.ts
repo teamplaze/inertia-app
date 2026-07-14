@@ -1,6 +1,15 @@
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import {
+  type CampaignStatus,
+  getArtistForProject,
+  safeLoopsContact,
+  safeLoopsEvent,
+  safeKitUpsert,
+  safeKitApplyTag,
+  safeKitUpdateCustomField,
+} from '@/lib/emailSync';
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -51,6 +60,34 @@ export async function POST(request: Request) {
     console.error('Waitlist insert error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // Email marketing sync (non-blocking). KIT only fires for projects mapped
+  // to a known artist account.
+  const artist = getArtistForProject(projectId);
+  const campaignStatus: CampaignStatus = 'waitlist';
+  const syncPromises: Promise<unknown>[] = [
+    safeLoopsContact(
+      email,
+      { campaignStatus },
+      userId ?? undefined
+    ),
+    safeLoopsEvent(email, 'waitlistJoined'),
+  ];
+  if (artist) {
+    syncPromises.push(
+      (async () => {
+        const subscriberId = await safeKitUpsert(artist, email, undefined, userId ?? undefined);
+        if (subscriberId != null) {
+          await Promise.all([
+            safeKitApplyTag(artist, subscriberId, 'waitlist'),
+            safeKitUpdateCustomField(artist, subscriberId, email, 'campaign_status', campaignStatus),
+            ...(userId ? [safeKitUpdateCustomField(artist, subscriberId, email, 'inertia_user_id', userId)] : []),
+          ]);
+        }
+      })()
+    );
+  }
+  await Promise.all(syncPromises);
 
   return NextResponse.json({ status: 'joined' });
 }

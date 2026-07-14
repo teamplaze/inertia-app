@@ -1,22 +1,42 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  [
+    "inline-flex items-center gap-[4px]",
+    "px-[var(--spacing-2)] py-[2px]",
+    "rounded-[var(--badge-radius)]",
+    "bg-transparent",
+    "font-body font-semibold",
+    "text-[18px]",
+    "leading-[1.5] tracking-normal",
+    "border",
+  ].join(" "),
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        default: [
+          "border-[var(--badge-border-default)]",
+          "text-[var(--badge-text-default)]",
+        ].join(" "),
+
+        highlight: [
+          "border-[var(--badge-border-highlight)]",
+          "text-[var(--badge-text-highlight)]",
+          "[&_.badge-icon]:text-[var(--badge-icon-highlight)]",
+        ].join(" "),
+
+        secondary: [
+          "border-[var(--badge-border-default)]",
+          "text-[var(--badge-text-default)]",
+        ].join(" "),
+
+        destructive: [
+          "border-red-500",
+          "text-red-400",
+        ].join(" "),
       },
     },
     defaultVariants: {
@@ -25,21 +45,37 @@ const badgeVariants = cva(
   }
 )
 
+interface BadgeProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {
+  icon?: string
+  showIcon?: boolean
+}
+
 function Badge({
   className,
   variant,
-  asChild = false,
+  icon,
+  showIcon = true,
+  children,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : "span"
-
+}: BadgeProps) {
   return (
-    <Comp
+    <div
       data-slot="badge"
       className={cn(badgeVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {icon && showIcon && (
+        <span
+          className="material-symbols-rounded badge-icon text-[18px] leading-[1.2]"
+          aria-hidden="true"
+        >
+          {icon}
+        </span>
+      )}
+      {children}
+    </div>
   )
 }
 

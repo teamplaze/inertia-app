@@ -1,8 +1,18 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js'; 
+import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import {
+  type CampaignStatus,
+  getArtistForProject,
+  splitFullName,
+  safeLoopsContact,
+  safeLoopsEvent,
+  safeKitUpsert,
+  safeKitApplyTag,
+  safeKitUpdateCustomField,
+} from '@/lib/emailSync';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -13,7 +23,7 @@ const supabaseAdmin = createClient(
 
 export async function POST(request: Request) {
   const formData = await request.json();
-  const { email, password, name, inviteToken } = formData;
+  const { email, password, name, inviteToken, projectId, tierId, action } = formData;
   
   const normalizedEmail = email.toLowerCase().trim();
   const cookieStore = await cookies();
@@ -100,6 +110,50 @@ export async function POST(request: Request) {
       .select();
 
     if (updateError) console.error('DB Profile Error:', updateError);
+
+    // Email marketing sync (non-blocking). KIT syncs when the sign-up is
+    // tied to an artist project — either via invite (linkedProjectId) or
+    // via the projectId passed through from a CTA-driven sign-up (Claim
+    // your spot / waitlist) when there's no invite.
+    const artist = getArtistForProject(linkedProjectId ?? projectId);
+    // action=checkout means the user bounced from checkout into sign-up —
+    // treat them as a cart-abandon, not a bare prospect. The waitlist path
+    // is handled separately by the waitlist sync when that API call fires,
+    // so it (and no-action) still starts as 'prospect' here.
+    const campaignStatus: CampaignStatus = action === 'checkout' ? 'cart_abandon' : 'prospect';
+    const { first_name: firstName } = splitFullName(name);
+    const syncPromises: Promise<unknown>[] = [
+      safeLoopsContact(
+        normalizedEmail,
+        {
+          campaignStatus,
+          createdAt: new Date().toISOString(),
+          ...(firstName && { firstName }),
+          ...(artist && { artistInterest: artist }),
+        },
+        userId
+      ),
+      safeLoopsEvent(normalizedEmail, 'accountCreated'),
+    ];
+    if (artist) {
+      syncPromises.push(
+        (async () => {
+          const subscriberId = await safeKitUpsert(
+            artist,
+            normalizedEmail,
+            { campaign_status: campaignStatus, ...splitFullName(name) },
+            userId
+          );
+          if (subscriberId != null) {
+            await Promise.all([
+              safeKitApplyTag(artist, subscriberId, 'interest'),
+              safeKitUpdateCustomField(artist, subscriberId, normalizedEmail, 'inertia_user_id', userId),
+            ]);
+          }
+        })()
+      );
+    }
+    await Promise.all(syncPromises);
 
     // Mark invitation as used
     if (invitationId) {

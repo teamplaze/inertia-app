@@ -4,10 +4,8 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, ArrowUpDown } from 'lucide-react';
-import { BRAND } from "@/lib/colors";
+import { ArrowUpDown } from 'lucide-react';
 
-// Define the shape of the data we expect for each contribution
 type Contribution = {
   id: number;
   amount_paid: number;
@@ -23,66 +21,74 @@ type Contribution = {
   };
 };
 
-// Define which columns are sortable
 type SortableKey = 'project' | 'amount' | 'date';
 
 export default function ContributionsTable({ contributions }: { contributions: Contribution[] }) {
-  // State to manage the current sort configuration
-  const [sortConfig, setSortConfig] = useState<{ key: SortableKey; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
+  const [sortConfig, setSortConfig] = useState<{ key: SortableKey; direction: 'asc' | 'desc' }>({
+    key: 'date',
+    direction: 'desc',
+  });
 
-  // useMemo will re-sort the contributions only when the data or sort config changes
   const sortedContributions = useMemo(() => {
-    if (!Array.isArray(contributions)) {
-      return [];
-    }
-    
-    let sortableItems = [...contributions];
-    if (sortConfig.key) {
-      sortableItems.sort((a, b) => {
-        let aValue: any;
-        let bValue: any;
+    if (!Array.isArray(contributions)) return [];
 
-        switch (sortConfig.key) {
-          case 'project':
-            aValue = a.projects.project_title;
-            bValue = b.projects.project_title;
-            break;
-          case 'amount':
-            aValue = a.amount_paid;
-            bValue = b.amount_paid;
-            break;
-          case 'date':
-            aValue = new Date(a.created_at).getTime();
-            bValue = new Date(b.created_at).getTime();
-            break;
-        }
-        
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-    return sortableItems;
+    return [...contributions].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortConfig.key) {
+        case 'project':
+          aValue = a.projects.project_title;
+          bValue = b.projects.project_title;
+          break;
+        case 'amount':
+          aValue = a.amount_paid;
+          bValue = b.amount_paid;
+          break;
+        case 'date':
+          aValue = new Date(a.created_at).getTime();
+          bValue = new Date(b.created_at).getTime();
+          break;
+      }
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
   }, [contributions, sortConfig]);
 
-  // Function to handle click on a sortable header
   const requestSort = (key: SortableKey) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+    }));
   };
-  
-  // MP-8: Empty State (No Contributions)
+
   if (!contributions || contributions.length === 0) {
     return (
-      <div className="text-center p-12 rounded-lg" style={{ backgroundColor: BRAND.dark, border: `2px solid ${BRAND.copper}` }}>
-        <h2 className="text-xl font-semibold text-white mb-2">No Contributions Yet</h2>
-        <p className="text-gray-400 mb-6">You haven't supported any projects yet. Find one to back!</p>
+      <div
+        className="flex flex-col items-center text-center gap-[var(--spacing-6)] p-[var(--spacing-12)] rounded-[12px]"
+        style={{ background: '#0f1111', border: '1px solid #3f4948' }}
+      >
+        <span
+          className="material-symbols-rounded text-[48px] leading-none"
+          style={{ color: 'var(--color-bg-teal)' }}
+          aria-hidden="true"
+        >
+          music_note
+        </span>
+        <div className="flex flex-col gap-[var(--spacing-3)]">
+          <h2 className="font-heading font-medium text-[24px] text-white">
+            You haven't backed any projects yet
+          </h2>
+          <p className="font-body text-[18px] text-[var(--color-text-200)] max-w-[480px]">
+            Support the artists you believe in and help bring their music to life.
+            Your contributions unlock perks, royalty shares, and a direct line to the artists you love.
+          </p>
+        </div>
         <Link href="/#featured-projects">
-          <Button className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-            Explore Featured Projects
+          <Button variant="primary" size="lg">
+            Discover projects
           </Button>
         </Link>
       </div>
@@ -90,77 +96,68 @@ export default function ContributionsTable({ contributions }: { contributions: C
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-[var(--spacing-5)]">
       {/* Sort Controls */}
-      <div className="mb-4 flex flex-wrap gap-3 items-center">
-        <span className="text-white text-sm font-medium">Sort by:</span>
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            onClick={() => requestSort('date')}
-            className={`${
-              sortConfig.key === 'date'
-                ? 'bg-brand-copper text-white'
-                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
-            } transition-colors`}
-          >
-            Date {sortConfig.key === 'date' && <ArrowUpDown className="w-3 h-3 ml-1" />}
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => requestSort('amount')}
-            className={`${
-              sortConfig.key === 'amount'
-                ? 'bg-brand-copper text-white'
-                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
-            } transition-colors`}
-          >
-            Amount {sortConfig.key === 'amount' && <ArrowUpDown className="w-3 h-3 ml-1" />}
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => requestSort('project')}
-            className={`${
-              sortConfig.key === 'project'
-                ? 'bg-brand-copper text-white'
-                : 'bg-brand-dark text-gray-300 hover:bg-brand-teal'
-            } transition-colors`}
-          >
-            Project {sortConfig.key === 'project' && <ArrowUpDown className="w-3 h-3 ml-1" />}
-          </Button>
+      <div className="flex flex-wrap gap-[var(--spacing-3)] items-center">
+        <span className="font-body text-[14px] text-[var(--color-text-200)]">Sort by:</span>
+        <div className="flex gap-[var(--spacing-2)]">
+          {(['date', 'amount', 'project'] as SortableKey[]).map((key) => (
+            <Button
+              key={key}
+              size="sm"
+              variant={sortConfig.key === key ? 'primary' : 'border'}
+              onClick={() => requestSort(key)}
+            >
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+              {sortConfig.key === key && <ArrowUpDown className="w-3 h-3 ml-1" />}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {/* Card Layout for All Screen Sizes */}
-      <div className="space-y-4">
+      {/* Contribution Cards */}
+      <div className="flex flex-col gap-[var(--spacing-4)]">
         {sortedContributions.map((contribution) => (
-          <div key={contribution.id} className="p-4 md:p-6 rounded-lg hover:shadow-lg transition-shadow" style={{ backgroundColor: BRAND.teal, border: `2px solid ${BRAND.copper}` }}>
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex-1 min-w-0 pr-3">
-                <span className="text-lg md:text-xl font-bold text-white block">
+          <div
+            key={contribution.id}
+            className="p-[var(--spacing-5)] md:p-[var(--spacing-6)] rounded-[12px]"
+            style={{ background: '#0f1111', border: '1px solid #3f4948' }}
+          >
+            <div className="flex justify-between items-start mb-[var(--spacing-4)]">
+              <div className="flex-1 min-w-0 pr-[var(--spacing-3)]">
+                <span className="font-heading font-medium text-[20px] text-white block">
                   {contribution.projects?.project_title || 'Unknown Project'}
                 </span>
-                <p className="text-sm md:text-base text-white mt-1">{contribution.projects.artist_name}</p>
+                <p className="font-body text-[16px] text-[var(--color-text-200)] mt-[var(--spacing-1)]">
+                  {contribution.projects.artist_name}
+                </p>
               </div>
-              <Badge 
-                variant={contribution.projects.status === "Completed" ? "secondary" : "default"}
-                className="bg-gray-600 text-white flex-shrink-0"
-              >
+              <Badge variant={contribution.projects.status === 'Completed' ? 'secondary' : 'default'}>
                 {contribution.projects.status}
               </Badge>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm md:text-base">
-              <div className="flex justify-between md:flex-col md:justify-start">
-                <span className="text-white font-medium">Amount:</span>
-                <span className="font-semibold text-green-400">${contribution.amount_paid.toFixed(2)}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--spacing-3)]">
+              <div className="flex justify-between md:flex-col md:justify-start gap-[var(--spacing-1)]">
+                <span className="font-body text-[14px] text-[var(--color-text-200)]">Amount</span>
+                <span className="font-body font-medium text-[16px] text-white">
+                  ${contribution.amount_paid.toFixed(2)}
+                </span>
               </div>
-              <div className="flex justify-between md:flex-col md:justify-start">
-                <span className="text-white font-medium">Date:</span>
-                <span className="text-white">{new Date(contribution.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              <div className="flex justify-between md:flex-col md:justify-start gap-[var(--spacing-1)]">
+                <span className="font-body text-[14px] text-[var(--color-text-200)]">Date</span>
+                <span className="font-body text-[16px] text-white">
+                  {new Date(contribution.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
               </div>
-              <div className="flex justify-between md:flex-col md:justify-start">
-                <span className="text-white font-medium">Tier:</span>
-                <span className="text-white">{contribution.tiers?.name || 'Donation'}</span>
+              <div className="flex justify-between md:flex-col md:justify-start gap-[var(--spacing-1)]">
+                <span className="font-body text-[14px] text-[var(--color-text-200)]">Tier</span>
+                <span className="font-body text-[16px] text-white">
+                  {contribution.tiers?.name || 'Donation'}
+                </span>
               </div>
             </div>
           </div>

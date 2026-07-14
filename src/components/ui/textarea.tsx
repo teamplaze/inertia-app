@@ -7,7 +7,28 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        // Layout & geometry
+        "flex w-full min-w-0 rounded-none min-h-[180px] resize-none",
+        // Spacing
+        "p-[var(--spacing-3)]",
+        // Typography
+        "font-body font-normal text-[18px] leading-[1.5] tracking-normal",
+        // Default surface
+        "bg-[var(--input-bg-default)] border border-[var(--input-border-default)]",
+        // Default text / placeholder
+        "text-[var(--input-text-placeholder)] placeholder:text-[var(--input-text-placeholder)]",
+        // Active state
+        "focus:bg-[var(--input-bg-active)] focus:border-[var(--input-border-active)] focus:text-[var(--input-text-primary)]",
+        // Keyboard focus ring
+        "focus-visible:border-2 focus-visible:border-[var(--input-border-focus)] focus-visible:outline-none focus-visible:ring-0",
+        // Error state via aria-invalid
+        "aria-invalid:bg-[var(--input-bg-error)]",
+        "aria-invalid:border-[var(--input-border-error)]",
+        "aria-invalid:text-[#ff8383]",
+        "aria-invalid:placeholder:text-[#ff8383]",
+        // Misc
+        "transition-[color,border-color,background-color] duration-150",
+        "disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       {...props}

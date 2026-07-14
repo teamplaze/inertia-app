@@ -1,34 +1,22 @@
-// Usage:
-// <CountdownTimer endDate={tier.sale_end_at} onExpire={() => refetchTier()} />
-
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Clock } from "lucide-react";
-import { BRAND } from "@/lib/colors";
 
 function formatRemaining(totalSeconds: number): string {
   const totalHours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  const mm = String(minutes).padStart(2, "0");
-  const ss = String(seconds).padStart(2, "0");
-
-  if (totalHours >= 24) {
-    const days = Math.floor(totalHours / 24);
-    const hh = String(totalHours % 24).padStart(2, "0");
-    return `${days}d ${hh}:${mm}:${ss}`;
-  }
-
-  return `${String(totalHours).padStart(2, "0")}:${mm}:${ss}`;
+  return `${String(totalHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
 type Props = {
   endDate: string | Date;
+  label?: string;
   onExpire?: () => void;
 };
 
-export function CountdownTimer({ endDate, onExpire }: Props) {
+export function CountdownTimer({ endDate, label = "Closes in", onExpire }: Props) {
   const end = useMemo(
     () => (typeof endDate === "string" ? new Date(endDate) : endDate),
     [endDate]
@@ -72,20 +60,33 @@ export function CountdownTimer({ endDate, onExpire }: Props) {
 
   return (
     <div
-      className="flex items-center justify-between rounded-md px-3 py-2.5 text-sm"
+      className={[
+        "flex flex-col items-center gap-[var(--spacing-1)]",
+        "md:flex-row md:items-center md:justify-between",
+        "rounded-[4px] px-[var(--spacing-3)] py-[var(--spacing-2)]",
+      ].join(" ")}
       style={{
-        backgroundColor: "rgba(0, 0, 0, 0.35)",
-        border: "1px solid rgba(255, 255, 255, 0.15)",
+        background: 'color-mix(in srgb, var(--color-project-accent, var(--color-bg-teal)) 15%, transparent)',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
       }}
     >
-      <div className="flex items-center gap-2">
-        <Clock className="w-4 h-4 flex-shrink-0" style={{ color: BRAND.copper }} />
-        <span className="text-white/70">
-          Closes in{" "}
-          <span className="font-bold text-white">{formatRemaining(remaining)}</span>
+      {/* Mobile: centered Row 1 / Desktop: left side — icon + label + value, no mid-phrase wrap */}
+      <div className="flex items-center gap-[var(--spacing-2)] flex-nowrap">
+        <Clock
+          className="w-4 h-4 shrink-0"
+          style={{ color: 'var(--color-project-accent, var(--color-bg-teal))' }}
+        />
+        <span className="font-body font-normal text-[18px] text-white whitespace-nowrap">
+          {label}
+        </span>
+        <span className="font-body font-semibold text-[18px] text-white whitespace-nowrap">
+          {formatRemaining(remaining)}
         </span>
       </div>
-      <span className="font-bold text-white text-xs">Don&apos;t miss out</span>
+      {/* Mobile: centered Row 2 / Desktop: right side */}
+      <span className="font-body font-semibold text-[18px] text-white whitespace-nowrap">
+        Don&apos;t miss out
+      </span>
     </div>
   );
 }

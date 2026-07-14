@@ -1,203 +1,242 @@
-"use client"; 
+"use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, BookOpen, PieChart, Send } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import type { Project } from "@/types";
-import { BRAND } from "@/lib/colors";
-import { regularCardStyle, gradientCardStyle } from "@/lib/cardStyles";
+import { BG } from "@/lib/colors";
+import { cn } from "@/lib/utils";
+import { CarouselControls } from "@/components/ui/carousel-controls";
+import { ArtistCard } from "@/components/ui/cards/artist-card";
 
-export default function Component() {
+const HERO_IMAGE = '/images/hero-recording-studio.png';
+const STUDIO_IMAGE = '/images/front-row-seat-studio.png';
+
+export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterMessage, setNewsletterMessage] = useState("");
+  const [projectsIndex, setProjectsIndex] = useState(0);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch('/api/projects/featured');
-        if (!response.ok) {
-          throw new Error("API not available");
-        }
+        if (!response.ok) throw new Error("API not available");
         const data: Project[] = await response.json();
         setProjects(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        // Set to empty array on error, ensuring no stale/mock data is shown
+      } catch {
         setProjects([]);
       }
     };
     fetchProjects();
-  }, []); 
-
-  const handleNewsletterSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setNewsletterMessage("Subscribing...");
-    try {
-      const response = await fetch('/api/newsletter/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: newsletterEmail }),
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || 'Something went wrong');
-      }
-      setNewsletterMessage("Thank you for subscribing!");
-      setNewsletterEmail("");
-    } catch (error: any) {
-      setNewsletterMessage((error as Error).message);
-    }
-  };
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
-  };
-
+  }, []);
 
   return (
-    <main className="flex-1">
-      {/* Hero section */}
-      <section className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: BRAND.teal }}>
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid max-w-[1300px] mx-auto gap-4 px-4 sm:px-6 md:px-10 md:grid-cols-2 md:gap-16">
-            <div className="flex flex-col items-start space-y-4">
-              <h1 className="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem] text-white">
-                Invest in the Future of Independent Music
-              </h1>
-              <p className="mx-auto max-w-[700px] text-white/80 md:text-xl">
-                Support artists directly, earn exclusive perks, and become part of the creative journey.
-              </p>
-              <div className="space-x-4">
-                <Button onClick={() => scrollToSection('featured-projects')} className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                  Explore Projects
-                </Button>
-                <Button onClick={() => scrollToSection('how-it-works')} className="bg-brand-copper hover:bg-brand-copper/90 text-white">
-                  How It Works
-                </Button>
-              </div>
-            </div>
-          </div>
+    <main>
+      {/* Hero */}
+      <section
+        className="relative w-full flex flex-col items-center justify-center overflow-hidden"
+        style={{ minHeight: '700px' }}
+      >
+        <img
+          src={HERO_IMAGE}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: BG.imageBackground }} />
+        <div className="relative z-10 flex flex-col items-center gap-[32px] max-w-[1034px] mx-auto px-[var(--spacing-5)] md:px-0 text-center pt-[80px] pb-[48px] md:pt-[120px] md:pb-[120px]">
+          <h1 className="font-heading font-medium leading-[1.2] text-[48px] md:text-[80px] text-white">
+            Fuel the music. Join the inner circle.
+          </h1>
+          <p className="font-body font-normal leading-[1.5] text-[18px] md:text-[20px] text-white">
+            Back independent artists to fund their next release. Claim exclusive VIP perks, build direct relationships with the band, and earn a bonus share of their streaming royalties as the project grows.
+          </p>
         </div>
       </section>
 
-      {/* Featured Projects section */}
-      <section id="featured-projects" className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
-            Featured Projects
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project) => {
-              const fundedPercent = project.funding_goal > 0 
-                ? Math.round((project.current_funding / project.funding_goal) * 100) 
-                : 0;
-              return (
-                <Card key={project.id} className="overflow-hidden rounded-xl" style={regularCardStyle}>
-                  <Image
-                    src={project.project_image_url || '/placeholder.svg?height=200&width=350'}
-                    width={350}
-                    height={200}
-                    alt={project.project_title}
-                    className="aspect-video object-contain w-full h-48"
-                  />
-                  <CardContent className="p-4">
-                    <CardTitle className="text-lg font-semibold tracking-tight text-white">
-                      🎤 {project.artist_name}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-white/80">🎶 {project.project_title}</CardDescription>
-                    <div className="mt-2 text-sm font-medium text-brand-copper">💰 {fundedPercent}% Funded</div>
-                    <div className="w-full bg-black/30 rounded-full h-2 mb-2">
-                      <div className="bg-brand-copper h-2 rounded-full" style={{ width: `${fundedPercent}%` }}></div>
-                    </div>
-                    <div className="text-xs text-white/70 mb-2">🕒 {project.status}</div>
-                    <div className="text-xs text-white/70 mb-3 truncate">⭐ {project.artist_bio}</div>
-                    
-                    {/* UPDATED LINK: Uses slug if available */}
-                    <Link href={`/${project.slug || `projects/${project.id}`}`}>
-                      <Button size="sm" className="w-full bg-brand-copper hover:bg-brand-copper/90 text-white">
-                        View Project <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+      {/* Featured Projects */}
+      <section
+        id="featured-projects"
+        className="w-full px-[var(--spacing-5)] md:px-[96px] py-[var(--spacing-12)] md:py-[120px] flex flex-col gap-[64px] items-center"
+        style={{ background: BG.tealSpotlightTop }}
+      >
+        <h2 className="font-heading font-medium leading-[1.2] text-[32px] md:text-[48px] text-white text-center">
+          Live campaigns. Limited seats.
+        </h2>
+        {projects.length > 0 && (
+          <div className="flex flex-col gap-[var(--spacing-8)] w-full">
+
+            {/* MOBILE — single card, full width, percentage-based slide */}
+            <div className="block md:hidden w-full overflow-hidden">
+              <div
+                className="flex transition-transform duration-300"
+                style={{ transform: `translateX(-${projectsIndex * 100}%)` }}
+              >
+                {projects.map((project) => (
+                  <div key={project.id} style={{ minWidth: '100%' }}>
+                    <Link href={`/${project.slug}`}>
+                      <ArtistCard
+                        artistName={project.artist_name}
+                        imageSrc={project.project_image_url ?? ''}
+                        imageAlt={project.artist_name}
+                        tag={project.status?.toUpperCase() ?? ''}
+                        className="w-full min-h-[395px]"
+                      />
                     </Link>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works section */}
-      <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32" style={{ backgroundColor: BRAND.teal }}>
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
-            How It Works
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center rounded-xl" style={gradientCardStyle}>
-              <CardContent className="p-6">
-                <BookOpen className="mx-auto h-12 w-12 text-brand-copper mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Browse Projects</h3>
-                <p className="text-white/80">Discover active music campaigns.</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center rounded-xl" style={gradientCardStyle}>
-              <CardContent className="p-6">
-                <PieChart className="mx-auto h-12 w-12 text-brand-copper mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Reserve Your Seat</h3>
-                <p className="text-white/80">Choose your contribution tier.</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center rounded-xl" style={gradientCardStyle}>
-              <CardContent className="p-6">
-                <Send className="mx-auto h-12 w-12 text-brand-copper mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Enjoy the Journey</h3>
-                <p className="text-white/80">Track progress, unlock perks, earn returns.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Inertia section */}
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-4xl md:text-5xl text-white mb-12">
-            Why Inertia?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">🚫 No Labels, No Debt</h3>
-                <p className="text-white/70">Artists stay independent.</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">🎁 Experiential Perks</h3>
-                <p className="text-white/70">Real-life fan rewards.</p>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">🤝 Be Part of the Story</h3>
-                <p className="text-white/70">More than listening. You’re involved.</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-white mb-2">🔒 Transparent, Secure Platform</h3>
-                <p className="text-white/70">Built with trust and transparency in mind.</p>
-              </div>
+
+            {/* DESKTOP — 3 states based on count */}
+            <div className="hidden md:block w-full">
+              {projects.length >= 4 ? (
+                /* Carousel — 4+ projects */
+                <div className="overflow-hidden">
+                  <div
+                    className="flex transition-transform duration-300"
+                    style={{
+                      gap: '32px',
+                      transform: `translateX(calc(-${projectsIndex * 400}px - ${projectsIndex * 32}px))`,
+                    }}
+                  >
+                    {projects.map((project) => (
+                      <div key={project.id} className="shrink-0">
+                        <Link href={`/${project.slug}`}>
+                          <ArtistCard
+                            artistName={project.artist_name}
+                            imageSrc={project.project_image_url ?? ''}
+                            imageAlt={project.artist_name}
+                            tag={project.status?.toUpperCase() ?? ''}
+                            className="w-[400px] min-h-[395px]"
+                          />
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                /* Static grid — 1–3 projects */
+                <div
+                  className="flex flex-row items-stretch"
+                  style={{ gap: '32px' }}
+                >
+                  {projects.map((project) => (
+                    <Link key={project.id} href={`/${project.slug}`} className="flex-1 min-w-0">
+                      <ArtistCard
+                        artistName={project.artist_name}
+                        imageSrc={project.project_image_url ?? ''}
+                        imageAlt={project.artist_name}
+                        tag={project.status?.toUpperCase() ?? ''}
+                        className="w-full min-h-[395px]"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Carousel controls — mobile always, desktop only when 4+ projects */}
+            <div className={cn(projects.length < 4 ? "md:hidden" : "")}>
+              <CarouselControls
+                count={projects.length}
+                activeIndex={projectsIndex}
+                onDotClick={(i) => setProjectsIndex(i)}
+                onPrev={() => setProjectsIndex(Math.max(0, projectsIndex - 1))}
+                onNext={() => setProjectsIndex(Math.min(projects.length - 1, projectsIndex + 1))}
+              />
+            </div>
+
+          </div>
+        )}
+      </section>
+
+      {/* Text + Image */}
+      <section className="w-full bg-black px-[var(--spacing-5)] md:px-[96px] py-[var(--spacing-12)] md:py-[120px]">
+        <div className="flex flex-col md:flex-row gap-[48px] items-center w-full">
+          <div className="flex flex-1 flex-col gap-[32px] min-w-0">
+            <h2 className="font-heading font-medium leading-[1.2] text-[32px] md:text-[48px] text-white">
+              Give your fans a front row seat
+            </h2>
+            <div className="flex flex-col">
+              {[
+                { icon: 'rocket', title: 'Launch', desc: 'Fans join the inner circle' },
+                { icon: 'music_note', title: 'Create', desc: 'Fans join the creative process' },
+                { icon: 'star', title: 'Release', desc: 'Long term bonds are formed & royalties accrue' },
+              ].map(({ icon, title, desc }) => (
+                <div key={title} className="flex gap-[20px] items-center py-[20px]">
+                  <div className="flex items-center justify-center rounded-full p-[12px] shrink-0 bg-brand-teal">
+                    <span className="material-symbols-rounded text-[24px] text-black leading-none">{icon}</span>
+                  </div>
+                  <div className="flex flex-col gap-[8px]">
+                    <p className="font-heading font-medium leading-[1.2] text-[18px] text-white">{title}</p>
+                    <p className="font-body font-normal leading-[1.5] text-[18px] text-white/90">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 h-[400px] md:h-[600px] relative rounded-xl overflow-hidden w-full min-w-0">
+            <img
+              src={STUDIO_IMAGE}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 w-full h-full object-cover object-bottom"
+            />
+            <div className="absolute inset-0" style={{ background: BG.imageBackground }} />
+          </div>
+        </div>
+      </section>
+
+      {/* Fandom hits different with Inertia */}
+      <section className="w-full bg-black px-[var(--spacing-5)] md:px-[203px] py-[var(--spacing-12)] md:py-[120px] flex flex-col gap-[48px] items-center overflow-hidden">
+        <h2 className="font-heading font-medium leading-[1.2] text-[32px] md:text-[48px] text-white text-center max-w-[822px]">
+          Fandom hits different with Inertia
+        </h2>
+        <div className="flex flex-col md:flex-row gap-[32px] items-start w-full max-w-[1034px]">
+          <div
+            className="flex-1 flex flex-col gap-[32px] rounded-xl px-[20px] py-[32px]"
+            style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border-accent)' }}
+          >
+            <h3 className="font-heading font-medium leading-[1.2] text-[32px] text-white">
+              The Inertia fan experience
+            </h3>
+            <div className="flex flex-col gap-[16px]">
+              <p className="font-body font-semibold leading-[1.5] text-[18px]" style={{ color: 'var(--card-text-secondary)' }}>
+                WHAT YOU GET
+              </p>
+              {[
+                'You build exclusive communities directly with your favorite artists.',
+                'You fund the album, and the artist retains their intellectual property.',
+                "You earn streaming royalties and a share in the project's financial success.",
+              ].map((item) => (
+                <div key={item} className="flex gap-[8px] items-start">
+                  <span className="material-symbols-rounded text-[24px] leading-[1.2] shrink-0 text-brand-teal">star</span>
+                  <p className="font-body font-normal leading-[1.5] text-[20px] text-white">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div
+            className="flex-1 flex flex-col gap-[32px] rounded-xl px-[20px] py-[32px] self-stretch"
+            style={{ backgroundColor: 'var(--card-bg)', border: '1px solid var(--card-border-default)' }}
+          >
+            <h3 className="font-heading font-medium leading-[1.2] text-[32px] text-white">
+              The traditional fan experience
+            </h3>
+            <div className="flex flex-col gap-[16px]">
+              <p className="font-body font-semibold leading-[1.5] text-[18px]" style={{ color: 'var(--card-text-secondary)' }}>
+                WHAT YOU GET
+              </p>
+              {[
+                'You buy the album, but the record label keeps the majority of the profits.',
+                'You hope for a backstage pass or a brief meet-and-greet.',
+                'Your support ends at the merch table.',
+              ].map((item) => (
+                <div key={item} className="flex gap-[8px] items-start">
+                  <span className="material-symbols-rounded text-[24px] leading-[1.2] shrink-0 text-white/50">check</span>
+                  <p className="font-body font-normal leading-[1.5] text-[20px]" style={{ color: 'var(--card-text-secondary)' }}>{item}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

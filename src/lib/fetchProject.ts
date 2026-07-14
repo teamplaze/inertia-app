@@ -3,7 +3,7 @@ import type { Project } from '@/types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 const PROJECT_SELECT = `
-  *,
+  *, has_royalties,
   tiers (*, perks:tier_perks(id, tier_id, label, category, is_exclusive, sort_order)),
   testimonials (*),
   budget_categories (
@@ -14,6 +14,7 @@ const PROJECT_SELECT = `
     id,
     title,
     sort_order,
+    description,
     budget_line_items!milestone_id (
       id,
       name,
@@ -47,6 +48,7 @@ function transformProject(projectData: Record<string, any>): Project {
     donation_link: projectData.donation_link ?? null,
     spotify_artist_id: projectData.spotify_artist_id,
     project_colors: projectData.project_colors ?? null,
+    has_royalties: projectData.has_royalties ?? true,
   };
 }
 

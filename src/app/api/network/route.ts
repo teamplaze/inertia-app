@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js'; // <-- CHANGED this import
 import { NextResponse } from 'next/server';
-import type { BudgetCategory } from '@/types';
 
 export async function POST(request: Request) {
   const formData = await request.json();

@@ -26,6 +26,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.513.0",
+    "material-symbols": "^0.45.2",
     "next": "^16.1.1",
     "posthog-js": "^1.342.1",
     "posthog-node": "^5.21.2",

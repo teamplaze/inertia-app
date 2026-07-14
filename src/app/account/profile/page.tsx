@@ -13,8 +13,8 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">User Profile</h1>
-        <p className="text-gray-400">Manage your shipping address and social handles.</p>
+        <h1 className="font-heading font-medium text-[32px] text-white mb-[var(--spacing-2)]">User Profile</h1>
+        <p className="font-body text-[18px] text-[var(--color-text-200)]">Manage your shipping address and social handles.</p>
       </div>
       
       <ProfileForm userId={user.id} />
