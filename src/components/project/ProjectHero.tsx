@@ -12,8 +12,8 @@ const textPanelGradient =
 
 interface ProjectHeroProps {
   artistName: string
-  projectTitle?: string
-  description: string
+  projectTitle: string
+  projectStatus: 'Fundraising' | 'Completed' | 'Coming Soon'
   artistImageUrl: string
   currentFunding: number
   fundingGoal: number
@@ -30,7 +30,7 @@ interface ProjectHeroProps {
 export function ProjectHero({
   artistName,
   projectTitle,
-  description,
+  projectStatus,
   artistImageUrl,
   currentFunding,
   fundingGoal,
@@ -42,6 +42,8 @@ export function ProjectHero({
   className,
   style,
 }: ProjectHeroProps) {
+  const showFundingUI = projectStatus === 'Fundraising'
+
   return (
     <section
       className={cn(
@@ -69,17 +71,15 @@ export function ProjectHero({
       >
         {/* Intro block */}
         <div className="flex flex-col gap-[var(--spacing-2)] w-full">
-          {projectTitle && (
-            <span
-              className={cn(
-                "font-body font-normal leading-[1.2]",
-                "text-[16px] md:text-[18px]",
-                "text-[var(--hero-text-tag)]",
-              )}
-            >
-              {projectTitle}
-            </span>
-          )}
+          <span
+            className={cn(
+              "font-body font-normal leading-[1.2]",
+              "text-[16px] md:text-[18px]",
+              "text-[var(--hero-text-tag)]",
+            )}
+          >
+            {projectStatus}
+          </span>
 
           <h1
             className={cn(
@@ -98,43 +98,47 @@ export function ProjectHero({
               "text-[var(--hero-text-desc)]",
             )}
           >
-            {description}
+            {projectTitle}
           </p>
         </div>
 
         {/* Progress bar */}
-        <ProgressBar
-          value={fundingPercentage}
-          amountRaised={`$${currentFunding.toLocaleString()}`}
-          goal={`of $${fundingGoal.toLocaleString()}`}
-          percentFunded={fundingPercentage}
-          backerCount={backerCount}
-          showDetails={true}
-          className="w-full"
-        />
+        {showFundingUI && (
+          <ProgressBar
+            value={fundingPercentage}
+            amountRaised={`$${currentFunding.toLocaleString()}`}
+            goal={`of $${fundingGoal.toLocaleString()}`}
+            percentFunded={fundingPercentage}
+            backerCount={backerCount}
+            showDetails={true}
+            className="w-full"
+          />
+        )}
 
         {/* CTA buttons */}
         <div className="flex flex-col items-center gap-[var(--spacing-8)] w-full">
-          <button
-            onClick={onSupportClick}
-            className={cn(
-              "w-full", "flex items-center justify-center",
-              "bg-white text-black",
-              "font-heading font-medium",
-              "text-[18px]",
-              "leading-[1.2]",
-              "px-[var(--spacing-5)] py-[var(--spacing-4)]",
-              "rounded-none",
-              "transition-colors duration-150",
-              "hover:bg-[var(--color-project-accent,var(--color-bg-teal))]",
-              "hover:text-white",
-              "focus-visible:outline-none",
-              "focus-visible:ring-2",
-              "focus-visible:ring-[var(--color-border-focus)]",
-            )}
-          >
-            Support {artistName}
-          </button>
+          {showFundingUI && (
+            <button
+              onClick={onSupportClick}
+              className={cn(
+                "w-full", "flex items-center justify-center",
+                "bg-white text-black",
+                "font-heading font-medium",
+                "text-[18px]",
+                "leading-[1.2]",
+                "px-[var(--spacing-5)] py-[var(--spacing-4)]",
+                "rounded-none",
+                "transition-colors duration-150",
+                "hover:bg-[var(--color-project-accent,var(--color-bg-teal))]",
+                "hover:text-white",
+                "focus-visible:outline-none",
+                "focus-visible:ring-2",
+                "focus-visible:ring-[var(--color-border-focus)]",
+              )}
+            >
+              Support {artistName}
+            </button>
+          )}
 
           {showProjectResults && projectResultsHref && (
             <Link

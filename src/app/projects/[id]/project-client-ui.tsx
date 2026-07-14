@@ -177,12 +177,14 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
   };
 
 
+  const isActiveFundraising = project.status === 'Fundraising';
+
   return (
     <>
       <ProjectHero
         artistName={project.artist_name}
-        projectTitle={project.status}
-        description={project.project_title}
+        projectTitle={project.project_title}
+        projectStatus={project.status as 'Fundraising' | 'Completed' | 'Coming Soon'}
         artistImageUrl={project.project_image_url ?? ''}
         currentFunding={project.current_funding}
         fundingGoal={project.funding_goal}
@@ -202,6 +204,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           '--color-project-accent': project.project_colors?.[0] ?? '#e18d46',
         } as React.CSSProperties}
       >
+      {isActiveFundraising && (
+        <>
       <section
         id="about"
         className={cn(
@@ -591,8 +595,8 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       )}
 
       <FAQSection />
-
-      
+        </>
+      )}
 
     </main>
     </>
