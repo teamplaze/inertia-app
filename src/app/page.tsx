@@ -155,7 +155,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row gap-[48px] items-center w-full">
           <div className="flex flex-1 flex-col gap-[32px] min-w-0">
             <h2 className="font-heading font-medium leading-[1.2] text-[32px] md:text-[48px] text-white">
-              Give your fans a front row seat
+              Sit front row with your favorite artist
             </h2>
             <div className="flex flex-col">
               {[

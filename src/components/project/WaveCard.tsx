@@ -31,8 +31,6 @@ export function WaveCard({
   const isActive = tier.status === 'active' && !saleEnded && saleStarted
   const isClosed = tier.status === 'closed' || (tier.status === 'active' && saleEnded)
 
-  const waveNumber = tier.name.match(/\d+/)?.[0] ?? '1'
-
   const exclusivePerks = tier.perks.filter(p => p.is_exclusive)
   const standardPerks = tier.perks.filter(p => !p.is_exclusive)
 
@@ -105,10 +103,11 @@ export function WaveCard({
               'font-body font-semibold',
               'text-[18px]',
               'leading-[1.2]',
+              'uppercase',
               isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
             )}
           >
-            WAVE {waveNumber} &bull; {isActive ? 'Live' : 'Closed'}
+            {tier.name} &bull; {isActive ? 'Live' : 'Closed'}
           </span>
         </div>
 
@@ -139,7 +138,7 @@ export function WaveCard({
       {isActive && tier.sale_end_at && (
         <CountdownTimer
           endDate={tier.sale_end_at}
-          label={`Wave ${waveNumber} closes in`}
+          label={`${tier.name} closes in`}
         />
       )}
 
@@ -159,7 +158,7 @@ export function WaveCard({
             timer
           </span>
           <span className="font-body font-normal text-[18px] text-white">
-            Wave {waveNumber} has closed
+            {tier.name} has closed
           </span>
         </div>
       )}
