@@ -5,11 +5,11 @@ export default function FAQSection() {
   const faqs = [
     {
       question: "What am I actually buying?",
-      answer: "You are backing a specific tier to support an artist's project. Think of it like buying a ticket into the creative process: your contribution helps fund the artist's next step and comes with perks like exclusive access, merch, community moments, and artist experiences."
+      answer: "You are supporting an artist's ability to STAY INDIE.  The artist is creating a community to help fund the next step in their independent music career. Think of it like buying a ticket into the creative process: your contribution helps fund the artist's project and comes with perks like exclusive access, merch, community moments, and artist experiences."
     },
     {
       question: "When will I get my perks & rewards?",
-      answer: "Perk delivery timelines vary by project. Digital perks, physical rewards, and community experiences may be delivered at different stages depending on the artist's campaign timeline. Project communities launch after each round of fundraising is completed. Get in early to lock in the exclusive benefits from the early rounds."
+      answer: "Perk delivery timelines vary by project. Digital perks, physical rewards, and community experiences may be delivered at different stages depending on the artist's campaign timeline. Online communities launch just days after each round of fundraising is completed and exclusive digital perks will begin almost right away. Physical items will be mailed at a later date once they are secured.  They will be shipped to all community members first and foremost and you will be the first to get your hands on them.  Each wave of fundraising has slightly different perks, so get in early to lock in the exclusive benefits from the early rounds."
     },
     {
       question: "Is my payment secure?",
@@ -17,7 +17,7 @@ export default function FAQSection() {
     },
     {
       question: "What happens if the project doesn't reach its funding goal?",
-      answer: "The artist receives the funds raised and uses them to deliver as much of the project as possible. Your contribution still directly supports the artist and helps move the project forward."
+      answer: "As long as the money raised is enough to produce a version of the final project, the artist receives the funds raised and uses them to deliver as much of the project as possible. Each project has a minimum price point, anything that falls short of that will be refunded, anything more than that and the project moves forward. Your contribution still directly supports the artist and helps move the project forward."
     },
     {
       question: "How do I access the Artist Community?",
@@ -27,6 +27,7 @@ export default function FAQSection() {
 
   return (
     <section
+      id="faq"
       className={cn(
         "w-full flex flex-col items-center",
         "px-[var(--spacing-5)] py-[var(--spacing-12)]",

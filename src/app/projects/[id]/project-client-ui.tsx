@@ -486,7 +486,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           <PerksSection
             tiers={tiers}
             artistName={project.artist_name}
-            onSupportClick={() => scrollToSection('support-levels')}
             hasRoyalties={project.has_royalties}
           />
         </section>

@@ -231,7 +231,7 @@ export function WaveCard({
 
         {exclusivePerks.length > 0 && (
           <span className="font-body font-normal text-[18px] text-[var(--wave-text-muted)]">
-            *exclusive
+            *exclusive to {tier.name} only
           </span>
         )}
       </div>

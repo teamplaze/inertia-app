@@ -65,7 +65,6 @@ interface PerksSectionProps {
     }>
   }>
   artistName: string
-  onSupportClick?: () => void
   className?: string
   hasRoyalties?: boolean
 }
@@ -73,7 +72,6 @@ interface PerksSectionProps {
 export function PerksSection({
   tiers,
   artistName: _artistName,
-  onSupportClick,
   className,
   hasRoyalties = true,
 }: PerksSectionProps) {
@@ -135,7 +133,8 @@ export function PerksSection({
         </div>
 
         <div className="flex items-center gap-[var(--spacing-4)] shrink-0">
-          <button
+          <a
+            href="#faq"
             className={cn(
               "flex items-center justify-center",
               "bg-transparent text-white",
@@ -154,9 +153,9 @@ export function PerksSection({
             )}
           >
             Read our FAQs
-          </button>
-          <Button variant="link" size="sm" onClick={onSupportClick}>
-            Contact us
+          </a>
+          <Button variant="link" size="sm" asChild>
+            <a href="mailto:team@theinertiaproject.com">Contact us</a>
           </Button>
         </div>
       </div>

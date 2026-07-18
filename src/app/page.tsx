@@ -9,7 +9,7 @@ import { CarouselControls } from "@/components/ui/carousel-controls";
 import { ArtistCard } from "@/components/ui/cards/artist-card";
 
 const HERO_IMAGE = '/images/hero-recording-studio.png';
-const STUDIO_IMAGE = '/images/front-row-seat-studio.png';
+const STUDIO_IMAGE = '/images/fan-concert.png';
 
 export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([]);
