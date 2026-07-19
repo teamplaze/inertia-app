@@ -13,8 +13,8 @@ export type CampaignStatus = 'prospect' | 'cart_abandon' | 'waitlist' | 'buyer'
 
 // Maps a projects.id to the KIT account that owns that artist's audience.
 export const PROJECT_ARTIST_MAP: Record<number, Artist> = {
-  5: 'babatunde',
-  2: 'goldsteps',
+  2: 'babatunde',
+  4: 'goldsteps',
 }
 
 export function getArtistForProject(

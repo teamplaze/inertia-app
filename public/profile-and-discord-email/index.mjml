@@ -1,0 +1,382 @@
+<mjml>
+  <mj-head>
+    <mj-title>Make it Official: Complete Your Profile & Join the Discord</mj-title>
+
+    <mj-font name="Albert Sans" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap" />
+
+    <mj-attributes>
+      <mj-all font-family="'Albert Sans', Arial, sans-serif" />
+      <mj-text
+        font-family="'Albert Sans', Arial, sans-serif"
+        font-size="16px"
+        line-height="1.6"
+        color="#ededed"
+      />
+      <mj-section background-color="#000000" padding="0" />
+    </mj-attributes>
+
+    <mj-style inline="inline">
+      .footer-link {
+        color: #3e958e !important;
+        text-decoration: none;
+      }
+      .teal {
+        color: #3e958e;
+      }
+    </mj-style>
+
+    <!-- Dark mode logo swap — Gmail ignores this; teal logo is safe fallback -->
+    <mj-style>
+      .logo-light { display: block !important; }
+      .logo-dark  { display: none  !important; max-height: 0 !important; overflow: hidden; }
+
+      @media (prefers-color-scheme: dark) {
+        .logo-light { display: none  !important; max-height: 0 !important; overflow: hidden; }
+        .logo-dark  { display: block !important; }
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body background-color="#000000">
+
+    <!-- ─────────────────────────────────────────────
+         PRE-HEADER
+    ───────────────────────────────────────────── -->
+    <mj-section padding="0">
+      <mj-column>
+        <mj-text font-size="1px" color="#000000" padding="0" line-height="1">
+          We don't want you to miss out on anything 👀&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         HEADER
+    ───────────────────────────────────────────── -->
+    <mj-section
+      background-color="#000000"
+      padding="32px 40px 24px"
+      border-bottom="1px solid #3f4948"
+    >
+      <mj-column vertical-align="middle">
+        <mj-image
+          css-class="logo-light"
+          src="https://oxnvcrwrhswpgqfmrhzo.supabase.co/storage/v1/object/public/inertia-logo/Inertia-teal.png"
+          alt="Inertia"
+          width="140px"
+          align="left"
+          href="https://theinertiaproject.com/"
+          padding="0"
+        />
+        <mj-image
+          css-class="logo-dark"
+          src="https://oxnvcrwrhswpgqfmrhzo.supabase.co/storage/v1/object/public/inertia-logo/inertia-white.png"
+          alt="Inertia"
+          width="140px"
+          align="left"
+          href="https://theinertiaproject.com/"
+          padding="0"
+        />
+      </mj-column>
+      <mj-column vertical-align="middle">
+        <mj-text
+          align="right"
+          font-size="11px"
+          font-weight="500"
+          color="#888f8e"
+          padding="0"
+          letter-spacing="0.12em"
+        >
+          <span style="text-transform: uppercase; letter-spacing: 0.12em;">Backer Update</span>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         HERO
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#000000" padding="48px 40px 32px">
+      <mj-column>
+
+        <mj-text
+          font-size="11px"
+          font-weight="600"
+          color="#3e958e"
+          padding="0 0 12px 0"
+          letter-spacing="0.15em"
+        >
+          <span style="text-transform: uppercase; letter-spacing: 0.15em;">✦ &nbsp;Two Quick Things</span>
+        </mj-text>
+
+        <mj-text
+          font-size="40px"
+          font-weight="600"
+          line-height="1.15"
+          color="#ffffff"
+          padding="0 0 20px 0"
+          letter-spacing="-0.01em"
+        >
+          Make it<br />
+          <span style="color: #3e958e;">Official.</span>
+        </mj-text>
+
+        <mj-text
+          font-size="16px"
+          font-weight="300"
+          color="#c3c7c7"
+          line-height="1.6"
+          padding="0"
+        >
+          Hey {EVENT_PROPERTY:firstName} — quick housekeeping. We need a couple things from you so we can actually get your perks into your hands (and not just your inbox).
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         STEP 1 — COMPLETE PROFILE
+         Teal top border signals a new card/action block
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#3e958e" padding="0">
+      <mj-column>
+        <mj-text font-size="3px" line-height="1" color="#3e958e" padding="0">​</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#0f1111" padding="32px 40px 8px">
+      <mj-column>
+        <mj-text
+          font-size="11px"
+          font-weight="600"
+          color="#888f8e"
+          padding="0 0 16px 0"
+          letter-spacing="0.12em"
+        >
+          <span style="text-transform: uppercase; letter-spacing: 0.12em;">Step 1 of 2</span>
+        </mj-text>
+        <mj-text
+          font-size="22px"
+          font-weight="600"
+          color="#ffffff"
+          padding="0 0 12px 0"
+          line-height="1.2"
+        >
+          Complete Your Profile
+        </mj-text>
+        <mj-text
+          font-size="14px"
+          font-weight="300"
+          color="#c3c7c7"
+          line-height="1.65"
+          padding="0 0 24px 0"
+        >
+          Some of your {EVENT_PROPERTY:tierName} perks are physical — think handwritten postcards, exclusive vinyl, signed tour laminates, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#0f1111" padding="0 40px 32px">
+      <mj-column>
+        <mj-button
+          href="https://theinertiaproject.com/account/profile"
+          background-color="#ffffff"
+          color="#000000"
+          font-size="15px"
+          font-weight="600"
+          font-family="'Albert Sans', Arial, sans-serif"
+          letter-spacing="0.02em"
+          border-radius="0"
+          inner-padding="14px 28px"
+          padding="0"
+          align="left"
+        >
+          Complete My Profile →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- Bottom border Step 1 -->
+    <mj-section background-color="#3f4948" padding="0">
+      <mj-column>
+        <mj-text font-size="1px" line-height="1" color="#3f4948" padding="0">​</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         STEP 2 — JOIN DISCORD
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#000000" padding="40px 40px 0">
+      <mj-column>
+        <mj-text
+          font-size="11px"
+          font-weight="600"
+          color="#888f8e"
+          padding="0 0 16px 0"
+          letter-spacing="0.12em"
+        >
+          <span style="text-transform: uppercase; letter-spacing: 0.12em;">Step 2 of 2</span>
+        </mj-text>
+        <mj-text
+          font-size="22px"
+          font-weight="600"
+          color="#ffffff"
+          padding="0 0 12px 0"
+          line-height="1.2"
+        >
+          Join the Discord
+        </mj-text>
+        <mj-text
+          font-size="14px"
+          font-weight="300"
+          color="#c3c7c7"
+          line-height="1.65"
+          padding="0 0 24px 0"
+        >
+          This is where everything happens — join {EVENT_PROPERTY:artistName} on Discord, where they'll be dropping updates, behind-the-scenes content, and probably some chaos along the way.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Turn on notifications callout -->
+    <mj-section background-color="#000000" padding="0 40px 24px">
+      <mj-column
+        border-left="2px solid #3e958e"
+        padding-left="20px"
+      >
+        <mj-text
+          font-size="14px"
+          font-weight="500"
+          color="#ffffff"
+          padding="0 0 8px 0"
+          line-height="1.4"
+        >
+          Turn on notifications once you're in
+        </mj-text>
+        <mj-text
+          font-size="14px"
+          font-weight="300"
+          color="#c3c7c7"
+          line-height="1.65"
+          padding="0 0 12px 0"
+        >
+          Announcements and live chats with {EVENT_PROPERTY:artistName} tend to happen with zero warning — you don't want to be the person who finds out a day later.
+        </mj-text>
+        <mj-text
+          font-size="13px"
+          font-weight="400"
+          color="#888f8e"
+          line-height="1.65"
+          padding="0"
+        >
+          Click the server name → right-click (or tap-and-hold on mobile) → Notification Settings → All Messages
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Discord CTA -->
+    <mj-section background-color="#000000" padding="0 40px 8px">
+      <mj-column>
+        <mj-button
+          href="{EVENT_PROPERTY:discordInviteUrl}"
+          background-color="#ffffff"
+          color="#000000"
+          font-size="15px"
+          font-weight="600"
+          font-family="'Albert Sans', Arial, sans-serif"
+          letter-spacing="0.02em"
+          border-radius="0"
+          inner-padding="14px 28px"
+          padding="0"
+          align="left"
+        >
+          Join the Discord →
+        </mj-button>
+      </mj-column>
+    </mj-section>
+
+    <!-- Discord help link -->
+    <mj-section background-color="#000000" padding="0 40px 48px">
+      <mj-column>
+        <mj-text font-size="13px" color="#888f8e" padding="0" line-height="1.5">
+          New to Discord? <a href="https://support.discord.com/hc/en-us/articles/360033931551" style="color: #3e958e; text-decoration: none;">Here's how to get started →</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         SIGN-OFF
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#000000" padding="0 40px 48px" border-top="1px solid #3f4948">
+      <mj-column>
+        <mj-text
+          font-size="14px"
+          font-weight="300"
+          color="#c3c7c7"
+          line-height="1.6"
+          padding="24px 0 0 0"
+        >
+          See you in there.<br />
+          <span style="color: #ffffff; font-weight: 500;">— The Inertia Team</span>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         QUESTIONS
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#000000" padding="0 40px 48px">
+      <mj-column>
+        <mj-text font-size="13px" color="#888f8e" padding="0" line-height="1.5">
+          Questions? <a href="mailto:team@theinertiaproject.com" style="color: #3e958e; text-decoration: none;">team@theinertiaproject.com</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- ─────────────────────────────────────────────
+         FOOTER
+    ───────────────────────────────────────────── -->
+    <mj-section background-color="#000000" border-top="1px solid #3f4948" padding="32px 40px 40px">
+      <mj-column>
+
+        <mj-image
+          css-class="logo-light"
+          src="https://oxnvcrwrhswpgqfmrhzo.supabase.co/storage/v1/object/public/inertia-logo/Inertia-teal.png"
+          alt="Inertia"
+          width="100px"
+          align="left"
+          href="https://theinertiaproject.com/"
+          padding="0 0 24px"
+        />
+        <mj-image
+          css-class="logo-dark"
+          src="https://oxnvcrwrhswpgqfmrhzo.supabase.co/storage/v1/object/public/inertia-logo/inertia-white.png"
+          alt="Inertia"
+          width="100px"
+          align="left"
+          href="https://theinertiaproject.com/"
+          padding="0 0 24px"
+        />
+
+        <mj-text font-size="12px" color="#888f8e" line-height="1.6" padding="0 0 16px">
+          You're receiving this because you backed a project on The Inertia Project platform.
+        </mj-text>
+
+        <mj-text font-size="12px" color="#888f8e" padding="0 0 8px">
+          © 2026 The Inertia Project. All rights reserved.
+        </mj-text>
+
+        <mj-text font-size="12px" padding="0">
+          <a href="https://theinertiaproject.com/" style="color: #3e958e; text-decoration: none;">Visit Inertia</a>
+          &nbsp;&nbsp;·&nbsp;&nbsp;
+          <a href="https://theinertiaproject.com/account" style="color: #3e958e; text-decoration: none;">My Account</a>
+          &nbsp;&nbsp;·&nbsp;&nbsp;
+          <a href="https://theinertiaproject.com/contact" style="color: #3e958e; text-decoration: none;">Contact Us</a>
+          &nbsp;&nbsp;·&nbsp;&nbsp;
+          <a href="{unsubscribe_link}" style="color: #888f8e; text-decoration: none;">Unsubscribe</a>
+        </mj-text>
+
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

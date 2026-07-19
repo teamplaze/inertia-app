@@ -81,7 +81,7 @@ export async function POST(req: Request) {
             // --- 1. Fetch Project Data ---
             const { data: projectData, error: projectError } = await supabaseAdmin
                 .from('projects')
-                .select('project_title, artist_name, video_thumbnail_url, video_url')
+                .select('project_title, artist_name, video_thumbnail_url, video_url, discord_invite_url')
                 .eq('id', projectId)
                 .single();
             
@@ -234,6 +234,7 @@ export async function POST(req: Request) {
                         tierName: tierData.name,
                         amount: purchaseAmount,
                         projectId: String(projectId),
+                        discordInviteUrl: projectData.discord_invite_url,
                     }),
                 ];
                 if (artist) {
