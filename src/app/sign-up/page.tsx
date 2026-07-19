@@ -37,7 +37,6 @@ function SignUpForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [hasScrolledTerms, setHasScrolledTerms] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -78,13 +77,6 @@ function SignUpForm() {
     if (inviteToken) params.set('invite', inviteToken);
     const queryString = params.toString();
     return queryString ? `/login?${queryString}` : '/login';
-  };
-
-  const handleTermsScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    if (scrollHeight - scrollTop <= clientHeight + 1) {
-      setHasScrolledTerms(true);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -333,7 +325,6 @@ function SignUpForm() {
                 setAgreedToTerms(!!checked);
                 setErrors(prev => ({ ...prev, terms: undefined }));
               }}
-              disabled={!hasScrolledTerms}
               className="mt-[2px]"
             />
             <label
@@ -422,11 +413,10 @@ function SignUpForm() {
               Terms &amp; Conditions
             </DialogTitle>
             <DialogDescription className="font-body font-normal text-[14px] leading-[1.5] text-[--color-text-200]">
-              Please scroll to the bottom to agree.
+              Please read the terms below.
             </DialogDescription>
           </DialogHeader>
           <div
-            onScroll={handleTermsScroll}
             className={cn(
               "overflow-y-auto flex-1",
               "px-[var(--spacing-8)] py-[var(--spacing-6)]",
@@ -611,9 +601,6 @@ function SignUpForm() {
               <strong>29. Miscellaneous.</strong> These Terms, together with any documents or links to other terms referred to herein, constitute the whole Agreement between You and us supersede and extinguish any prior understandings, agreements or terms between You and us. The rights and remedies provided in these Terms are cumulative and are not exclusive of any rights and remedies provided by law or otherwise. No breach by either You or Inertia of any provision of these Terms shall be waived or discharged except with the express written consent of the other. No failure or delay by either You or Inertia in exercising any right, power or privilege under these Terms shall operate as a waiver of that right, power or privilege and no single or partial exercise by either You or Inertia of any right, power or privilege shall preclude any further exercise of that right, power or privilege or the exercise of any other right, power or privilege. These Terms shall be binding on and endure for the benefit of each party&apos;s successors in title. The views and opinions expressed on this Webstore do not necessarily reflect those of Inertia, its Affiliates, and Partners.
             </p>
             <br/>
-            <p>
-              <strong>This is the final paragraph.</strong> By scrolling to this point, you enable the checkbox to agree to these terms.
-            </p>
           </div>
           <DialogFooter
             className="px-[var(--spacing-8)] pb-[var(--spacing-8)] pt-[var(--spacing-4)] border-t"
