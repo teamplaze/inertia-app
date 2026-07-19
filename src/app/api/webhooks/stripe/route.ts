@@ -177,7 +177,10 @@ export async function POST(req: Request) {
                 const videoThumb = projectData.video_thumbnail_url || "https://www.theinertiaproject.com/placeholder-video-thumb.jpg";
                 const videoLink = projectData.video_url || "https://www.theinertiaproject.com/";
 
-                await fetch('https://app.loops.so/api/v1/transactional', {
+                console.log('📧 Sending to:', customerEmail);
+                console.log('🔑 Transactional ID:', process.env.LOOPS_TRANSACTIONAL_ID_CONFIRMATION);
+
+                const loopsRes = await fetch('https://app.loops.so/api/v1/transactional', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -200,6 +203,12 @@ export async function POST(req: Request) {
                         },
                     }),
                 });
+                const loopsData = await loopsRes.json();
+                if (!loopsRes.ok) {
+                    console.error('❌ Loops send failed:', JSON.stringify(loopsData));
+                } else {
+                    console.log('✅ Loops send success:', JSON.stringify(loopsData));
+                }
             }
 
             // --- 6b. Email Marketing Sync (non-blocking) ---
