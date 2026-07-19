@@ -274,9 +274,9 @@
 
     <!-- Video thumbnail — links out to hosted video -->
     <mj-image
-      src="{DATA_VARIABLE:thankYouVideoThumbnailUrl}"
+      src="{DATA_VARIABLE:videoThumbnailUrl}"
       alt="Thank you video from {DATA_VARIABLE:artistName}"
-      href="{DATA_VARIABLE:thankYouVideoUrl}"
+      href="{DATA_VARIABLE:videoUrl}"
       width="100%"
       align="center"
       padding="0 0 12px 0"
@@ -291,7 +291,7 @@
       padding="0"
       line-height="1.5"
     >
-      <a href="{DATA_VARIABLE:thankYouVideoUrl}" style="color: #3e958e; text-decoration: none;">Click above to watch the video ↗</a>
+      <a href="{DATA_VARIABLE:videoUrl}" style="color: #3e958e; text-decoration: none;">Click above to watch the video ↗</a>
     </mj-text>
 
   </mj-column>

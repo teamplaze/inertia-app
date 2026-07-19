@@ -353,6 +353,7 @@ function SignUpForm() {
               >
                 Terms & Conditions
               </button>
+              {' '}(Must Read)
             </label>
           </div>
           {errors.terms && (
