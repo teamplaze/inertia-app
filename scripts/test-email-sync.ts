@@ -672,7 +672,6 @@ async function main() {
                 await Promise.all([
                   safeKitApplyTag(artist, purchaseSubscriberId, 'buyer'),
                   safeKitApplyBuyerWaveTag(artist, purchaseSubscriberId, waveLabel),
-                  safeKitApplyTag(artist, purchaseSubscriberId, 'purchased_any'),
                   safeKitApplyTag(artist, purchaseSubscriberId, 'do_not_promote'),
                   safeKitRemoveTag(artist, purchaseSubscriberId, 'waitlist'),
                   safeKitUpdateCustomField(artist, purchaseSubscriberId, TEST_EMAIL, 'campaign_status', 'buyer'),

@@ -251,7 +251,6 @@ export async function POST(req: Request) {
                                 await Promise.all([
                                     safeKitApplyTag(artist, subscriberId, 'buyer'),
                                     safeKitApplyBuyerWaveTag(artist, subscriberId, waveLabel),
-                                    safeKitApplyTag(artist, subscriberId, 'purchased_any'),
                                     safeKitApplyTag(artist, subscriberId, 'do_not_promote'),
                                     safeKitRemoveTag(artist, subscriberId, 'waitlist'),
                                     safeKitUpdateCustomField(artist, subscriberId, customerEmail, 'campaign_status', 'buyer'),

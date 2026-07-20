@@ -60,7 +60,6 @@ type TagKey =
   | 'buyer_wave_3'
   | 'nonbuyer_wave_1'
   | 'nonbuyer_wave_2'
-  | 'purchased_any'
   | 'do_not_promote'
   | 'profile_completed'
   | 'discord_joined'
@@ -83,7 +82,6 @@ const ARTIST_KIT_CONFIG: Record<Artist, { apiKeyEnv: string; tags: Record<TagKey
       buyer_wave_3: 20992418,
       nonbuyer_wave_1: 20992421,
       nonbuyer_wave_2: 20992422,
-      purchased_any: 20992429,
       do_not_promote: 20992432,
       profile_completed: 20992430,
       discord_joined: 20992431,
@@ -100,7 +98,6 @@ const ARTIST_KIT_CONFIG: Record<Artist, { apiKeyEnv: string; tags: Record<TagKey
       buyer_wave_3: 21129556,
       nonbuyer_wave_1: 21129557,
       nonbuyer_wave_2: 21129558,
-      purchased_any: 21129596,
       do_not_promote: 21129599,
       profile_completed: 21129597,
       discord_joined: 21129598,
