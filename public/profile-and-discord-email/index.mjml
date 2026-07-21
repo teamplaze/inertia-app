@@ -127,7 +127,7 @@
           line-height="1.6"
           padding="0"
         >
-          Hey {EVENT_PROPERTY:firstName} — quick housekeeping. We need a couple things from you so we can actually get your perks into your hands (and not just your inbox).
+          Hey {firstName} — quick housekeeping. We need a couple things from you so we can actually get your perks into your hands (and not just your inbox).
         </mj-text>
 
       </mj-column>
@@ -135,8 +135,9 @@
 
     <!-- ─────────────────────────────────────────────
          STEP 1 — COMPLETE PROFILE
-         Teal top border signals a new card/action block
     ───────────────────────────────────────────── -->
+
+    <!-- Teal top border -->
     <mj-section background-color="#3e958e" padding="0">
       <mj-column>
         <mj-text font-size="3px" line-height="1" color="#3e958e" padding="0">​</mj-text>
@@ -170,7 +171,7 @@
           line-height="1.65"
           padding="0 0 24px 0"
         >
-          Some of your {EVENT_PROPERTY:tierName} perks are physical — think handwritten postcards, exclusive vinyl, signed tour laminates, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
+          Some of your {tierName} perks are physical — think handwritten postcards, exclusive vinyl, signed tour laminates, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
         </mj-text>
       </mj-column>
     </mj-section>
@@ -232,7 +233,7 @@
           line-height="1.65"
           padding="0 0 24px 0"
         >
-          This is where everything happens — join {EVENT_PROPERTY:artistName} on Discord, where they'll be dropping updates, behind-the-scenes content, and probably some chaos along the way.
+          This is where everything happens — join Babatunde on Discord, where they'll be dropping updates, behind-the-scenes content, and probably some chaos along the way.
         </mj-text>
       </mj-column>
     </mj-section>
@@ -259,7 +260,7 @@
           line-height="1.65"
           padding="0 0 12px 0"
         >
-          Announcements and live chats with {EVENT_PROPERTY:artistName} tend to happen with zero warning — you don't want to be the person who finds out a day later.
+          Announcements and live chats with Babatunde tend to happen with zero warning — you don't want to be the person who finds out a day later.
         </mj-text>
         <mj-text
           font-size="13px"
@@ -277,7 +278,7 @@
     <mj-section background-color="#000000" padding="0 40px 8px">
       <mj-column>
         <mj-button
-          href="{EVENT_PROPERTY:discordInviteUrl}"
+          href="DISCORD_INVITE_URL_HERE"
           background-color="#ffffff"
           color="#000000"
           font-size="15px"
@@ -306,7 +307,7 @@
     <!-- ─────────────────────────────────────────────
          SIGN-OFF
     ───────────────────────────────────────────── -->
-    <mj-section background-color="#000000" padding="0 40px 48px" border-top="1px solid #3f4948">
+    <mj-section background-color="#000000" border-top="1px solid #3f4948" padding="0 40px 48px">
       <mj-column>
         <mj-text
           font-size="14px"
