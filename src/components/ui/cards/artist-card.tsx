@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface ArtistCardProps {
@@ -28,11 +29,15 @@ export function ArtistCard({
         className
       )}
     >
-      <img
-        src={imageSrc}
-        alt={imageAlt}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      {imageSrc && (
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          sizes="(max-width: 768px) 300px, 400px"
+          className="object-cover"
+        />
+      )}
 
       <div
         className="absolute inset-0"

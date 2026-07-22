@@ -4,7 +4,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
 import type { Project, Tier } from "@/types";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { loadStripe } from '@stripe/stripe-js';

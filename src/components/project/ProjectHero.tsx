@@ -2,6 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ProgressBar } from "@/components/project/ProgressBar"
 
@@ -176,11 +177,16 @@ export function ProjectHero({
           "order-2 md:order-first",
         )}
       >
-        <img
-          src={artistImageUrl || "/placeholder.svg"}
-          alt={artistName}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        {artistImageUrl && (
+          <Image
+            src={artistImageUrl}
+            alt={artistName}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+            priority
+          />
+        )}
       </div>
     </section>
   )
