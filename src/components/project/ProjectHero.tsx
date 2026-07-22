@@ -106,7 +106,7 @@ export function ProjectHero({
         {showFundingUI && (
           <ProgressBar
             value={fundingPercentage}
-            amountRaised={`$${currentFunding.toLocaleString()}`}
+            amountRaised={`$${currentFunding.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             goal={`of $${fundingGoal.toLocaleString()}`}
             percentFunded={fundingPercentage}
             backerCount={backerCount}

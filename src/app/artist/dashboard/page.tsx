@@ -183,7 +183,7 @@ export default async function ArtistDashboardPage(props: {
                                 <div className="h-full bg-brand-copper" style={{ width: `${fundingProgress}%` }}></div>
                             </div>
                             <div className="flex justify-between text-xs mt-1 text-gray-400">
-                                <span>${totalRaised.toLocaleString()}</span>
+                                <span>${totalRaised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 <span>Goal: ${activeProject.funding_goal.toLocaleString()}</span>
                             </div>
                         </div>
@@ -202,7 +202,7 @@ export default async function ArtistDashboardPage(props: {
                             <p className="text-gray-400 text-sm uppercase tracking-wider mb-1">Total Funds Raised</p>
                             <div className="text-5xl font-bold text-white flex items-center justify-center lg:justify-start gap-2">
                                 <span className="text-brand-copper text-3xl">$</span>
-                                {totalRaised.toLocaleString()}
+                                {totalRaised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
                         </div>
                         

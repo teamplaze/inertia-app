@@ -367,7 +367,7 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
 
           <ProgressBar
             value={fundingPercentage}
-            amountRaised={`$${project.current_funding.toLocaleString()}`}
+            amountRaised={`$${project.current_funding.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             goal={`of $${project.funding_goal.toLocaleString()}`}
             percentFunded={fundingPercentage}
             backerCount={project.backer_count ?? 0}
