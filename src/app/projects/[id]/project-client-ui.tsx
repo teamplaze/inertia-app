@@ -434,9 +434,12 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       )}
 
       {(() => {
-        const waveCard = tiers.find(
-          t => t.status === 'active' || t.status === 'closed'
-        )
+        // Prefer an active tier; only fall back to a closed one if none is active.
+        // Among closed tiers, show the one that closed most recently (by sale_end_at).
+        const waveCard = tiers.find(t => t.status === 'active')
+          || [...tiers]
+            .filter(t => t.status === 'closed')
+            .sort((a, b) => new Date(b.sale_end_at ?? 0).getTime() - new Date(a.sale_end_at ?? 0).getTime())[0]
         if (!waveCard) return null
 
         return (
