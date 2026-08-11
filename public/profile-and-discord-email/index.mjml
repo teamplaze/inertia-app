@@ -1,6 +1,6 @@
 <mjml>
   <mj-head>
-    <mj-title>Make it Official: Complete Your Profile & Join the Discord</mj-title>
+    <mj-title>DISCORD CORRECTION: Make it Official: Complete Your Profile & Join the Discord</mj-title>
 
     <mj-font name="Albert Sans" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap" />
 
@@ -132,7 +132,7 @@
 
       </mj-column>
     </mj-section>
-
+	
     <!-- ─────────────────────────────────────────────
          STEP 1 — COMPLETE PROFILE
     ───────────────────────────────────────────── -->
@@ -171,7 +171,7 @@
           line-height="1.65"
           padding="0 0 24px 0"
         >
-          Some of your <strong style="color: #ffffff;">Wave 1</strong> perks are physical — think handwritten postcards, personalized tour badges and signed tour posters, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
+          Some of your <strong style="color: #ffffff;">Act 2</strong> perks are physical — think Exclusive Vinyl, Custom Tea Tins and Signed Tour Posters, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
         </mj-text>
       </mj-column>
     </mj-section>
@@ -269,7 +269,7 @@
           line-height="1.65"
           padding="0 0 24px 0"
         >
-          This is where everything happens — join Gold Steps on Discord, where they'll be dropping updates, behind-the-scenes content, and probably some chaos along the way. Discord is available via mobile app and web.
+          This is where everything happens — join Babatunde on Discord, where he'll be dropping updates, behind-the-scenes content, and probably some chaos along the way. Discord is available via mobile app and web.
         </mj-text>
       </mj-column>
     </mj-section>
@@ -296,7 +296,7 @@
           line-height="1.65"
           padding="0 0 12px 0"
         >
-          Announcements and live chats with the band tend to happen with zero warning — you don't want to be the person who finds out a day later.
+          Announcements and live chats with the Tunde tend to happen with zero warning — you don't want to be the person who finds out a day later.
         </mj-text>
         <mj-text
           font-size="13px"
@@ -314,7 +314,7 @@
     <mj-section background-color="#000000" padding="0 40px 8px">
       <mj-column>
         <mj-button
-          href="https://discord.gg/fVWdqHNwd"
+          href="https://discord.gg/GhBSqWkPA"
           background-color="#ffffff"
           color="#000000"
           font-size="15px"

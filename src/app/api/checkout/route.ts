@@ -192,6 +192,7 @@ export async function POST(request: Request) {
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}${returnPath}`,
       metadata: sessionMetadata,
+      allow_promotion_codes: true,
     };
 
     // Attach email if the user is logged in (bypassed for guests)
