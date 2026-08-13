@@ -434,13 +434,22 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       )}
 
       {(() => {
-        // Prefer an active tier; only fall back to a closed one if none is active.
-        // Among closed tiers, show the one that closed most recently (by sale_end_at).
-        const waveCard = tiers.find(t => t.status === 'active')
-          || [...tiers]
-            .filter(t => t.status === 'closed')
-            .sort((a, b) => new Date(b.sale_end_at ?? 0).getTime() - new Date(a.sale_end_at ?? 0).getTime())[0]
-        if (!waveCard) return null
+        // Collect all displayable tiers: every active tier, sorted low to high.
+        // Fallback: if no active tiers, show the most recently closed one (by sale_end_at).
+        const activeTiers = tiers
+          .filter(t => t.status === 'active')
+          .sort((a, b) => a.price - b.price)
+
+        const closedFallback = activeTiers.length === 0
+          ? [...tiers]
+              .filter(t => t.status === 'closed')
+              .sort((a, b) => new Date(b.sale_end_at ?? 0).getTime() - new Date(a.sale_end_at ?? 0).getTime())[0]
+          : null
+
+        const displayTiers = activeTiers.length > 0 ? activeTiers : closedFallback ? [closedFallback] : []
+        if (displayTiers.length === 0) return null
+
+        const isMulti = displayTiers.length >= 2
 
         return (
           <section
@@ -462,23 +471,44 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
             </div>
 
             {/* Cards */}
-            <div
-              className={cn(
-                'grid grid-cols-1 md:grid-cols-2',
-                'gap-[var(--spacing-6)]',
-                'items-stretch',
-                'w-full max-w-[1034px]',
-              )}
-            >
-              <WaveCard
-                tier={waveCard}
-                project={project}
-                user={user}
-                paymentsEnabled={paymentsEnabled}
-                onPurchase={handlePurchase}
-              />
-              <DonateCard project={project} onDonate={handleDonate} />
-            </div>
+            {isMulti ? (
+              <div className="flex flex-col gap-[var(--spacing-6)] w-full max-w-[1034px]">
+                <div
+                  className="grid grid-cols-1 md:grid-cols-[repeat(var(--wave-count),minmax(0,1fr))] gap-[var(--spacing-6)] items-stretch"
+                  style={{ '--wave-count': displayTiers.length } as React.CSSProperties}
+                >
+                  {displayTiers.map(t => (
+                    <WaveCard
+                      key={t.id}
+                      tier={t}
+                      project={project}
+                      user={user}
+                      paymentsEnabled={paymentsEnabled}
+                      onPurchase={handlePurchase}
+                    />
+                  ))}
+                </div>
+                <DonateCard project={project} onDonate={handleDonate} variant="compact" />
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  'grid grid-cols-1 md:grid-cols-2',
+                  'gap-[var(--spacing-6)]',
+                  'items-stretch',
+                  'w-full max-w-[1034px]',
+                )}
+              >
+                <WaveCard
+                  tier={displayTiers[0]}
+                  project={project}
+                  user={user}
+                  paymentsEnabled={paymentsEnabled}
+                  onPurchase={handlePurchase}
+                />
+                <DonateCard project={project} onDonate={handleDonate} />
+              </div>
+            )}
           </section>
         )
       })()}

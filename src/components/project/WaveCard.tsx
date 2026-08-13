@@ -57,7 +57,7 @@ export function WaveCard({
   return (
     <div
       className={cn(
-        'flex flex-col justify-between',
+        'flex flex-col',
         'rounded-[12px] overflow-hidden',
         'border',
         'px-[var(--spacing-5)] py-[var(--spacing-8)]',
@@ -70,101 +70,106 @@ export function WaveCard({
           : 'var(--wave-border-closed)',
       }}
     >
-      {/* Section 1 — Badge + Price */}
-      <div className="flex flex-col gap-[var(--spacing-4)]">
-        {/* Badge */}
-        <div
-          className={cn(
-            'inline-flex items-center gap-[var(--spacing-2)]',
-            'px-[var(--spacing-2)] py-[2px]',
-            'rounded-[4px]',
-            'border',
-            'w-fit',
-          )}
-          style={{
-            borderColor: isActive
-              ? 'var(--color-project-accent, var(--color-bg-teal))'
-              : 'var(--wave-border-closed)',
-          }}
-        >
-          <span
-            className="material-symbols-rounded text-[18px] leading-none"
-            style={{
-              color: isActive
-                ? 'var(--color-project-accent, var(--color-bg-teal))'
-                : 'var(--wave-text-muted)',
-            }}
-            aria-hidden="true"
-          >
-            bolt
-          </span>
-          <span
+      {/* Top content group — fixed min-height on desktop so WHAT YOU GET
+          starts at the same Y position across side-by-side cards regardless
+          of description/timer length */}
+      <div className="flex flex-col gap-[var(--spacing-10)] md:min-h-[100px]">
+        {/* Section 1 — Badge + Price */}
+        <div className="flex flex-col gap-[var(--spacing-4)]">
+          {/* Badge */}
+          <div
             className={cn(
-              'font-body font-semibold',
-              'text-[18px]',
-              'leading-[1.2]',
-              'uppercase',
-              isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
+              'inline-flex items-center gap-[var(--spacing-2)]',
+              'px-[var(--spacing-2)] py-[2px]',
+              'rounded-[4px]',
+              'border',
+              'w-fit',
             )}
+            style={{
+              borderColor: isActive
+                ? 'var(--color-project-accent, var(--color-bg-teal))'
+                : 'var(--wave-border-closed)',
+            }}
           >
-            {tier.name} &bull; {isActive ? 'Live' : 'Closed'}
-          </span>
+            <span
+              className="material-symbols-rounded text-[18px] leading-none"
+              style={{
+                color: isActive
+                  ? 'var(--color-project-accent, var(--color-bg-teal))'
+                  : 'var(--wave-text-muted)',
+              }}
+              aria-hidden="true"
+            >
+              bolt
+            </span>
+            <span
+              className={cn(
+                'font-body font-semibold',
+                'text-[18px]',
+                'leading-[1.2]',
+                'uppercase',
+                isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
+              )}
+            >
+              {tier.name} &bull; {isActive ? 'Live' : 'Closed'}
+            </span>
+          </div>
+
+          {/* Price block */}
+          <div className="flex flex-col gap-[4px]">
+            <span
+              className={cn(
+                'font-heading font-medium',
+                'text-[32px] leading-[1.2]',
+                isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
+              )}
+            >
+              ${tier.price}
+            </span>
+            <span
+              className={cn(
+                'font-body font-normal',
+                'text-[20px] leading-[1.5]',
+                'text-[var(--wave-text-muted)]',
+              )}
+            >
+              {tier.description}
+            </span>
+          </div>
         </div>
 
-        {/* Price block */}
-        <div className="flex flex-col gap-[4px]">
-          <span
+        {/* Section 2 — Alert bar */}
+        {isActive && tier.sale_end_at && (
+          <CountdownTimer
+            endDate={tier.sale_end_at}
+            label={`${tier.name} closes in`}
+          />
+        )}
+
+        {isClosed && (
+          <div
             className={cn(
-              'font-heading font-medium',
-              'text-[32px] leading-[1.2]',
-              isActive ? 'text-white' : 'text-[var(--wave-text-muted)]',
+              'flex items-center gap-[2px]',
+              'px-[var(--spacing-3)] py-[var(--spacing-2)]',
+              'rounded-[4px]',
             )}
+            style={{ background: '#262c2b' }}
           >
-            ${tier.price}
-          </span>
-          <span
-            className={cn(
-              'font-body font-normal',
-              'text-[20px] leading-[1.5]',
-              'text-[var(--wave-text-muted)]',
-            )}
-          >
-            {tier.description}
-          </span>
-        </div>
+            <span
+              className="material-symbols-rounded text-[18px] leading-none text-[var(--wave-text-muted)]"
+              aria-hidden="true"
+            >
+              timer
+            </span>
+            <span className="font-body font-normal text-[18px] text-white">
+              {tier.name} has closed
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Section 2 — Alert bar */}
-      {isActive && tier.sale_end_at && (
-        <CountdownTimer
-          endDate={tier.sale_end_at}
-          label={`${tier.name} closes in`}
-        />
-      )}
-
-      {isClosed && (
-        <div
-          className={cn(
-            'flex items-center gap-[2px]',
-            'px-[var(--spacing-3)] py-[var(--spacing-2)]',
-            'rounded-[4px]',
-          )}
-          style={{ background: '#262c2b' }}
-        >
-          <span
-            className="material-symbols-rounded text-[18px] leading-none text-[var(--wave-text-muted)]"
-            aria-hidden="true"
-          >
-            timer
-          </span>
-          <span className="font-body font-normal text-[18px] text-white">
-            {tier.name} has closed
-          </span>
-        </div>
-      )}
-
       {/* Section 3 — Perks list */}
-      <div className="flex flex-col gap-[var(--spacing-4)]">
+      <div className="flex flex-col gap-[var(--spacing-4)] flex-grow">
         <span
           className={cn(
             'font-body font-semibold',
