@@ -433,6 +433,16 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
         </section>
       )}
 
+      {tiers && tiers.length > 0 && (
+        <section id="perks">
+          <PerksSection
+            tiers={tiers}
+            artistName={project.artist_name}
+            hasRoyalties={project.has_royalties}
+          />
+        </section>
+      )}
+
       {(() => {
         // Collect all displayable tiers: every active tier, sorted low to high.
         // Fallback: if no active tiers, show the most recently closed one (by sale_end_at).
@@ -512,16 +522,6 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
           </section>
         )
       })()}
-
-      {tiers && tiers.length > 0 && (
-        <section id="perks">
-          <PerksSection
-            tiers={tiers}
-            artistName={project.artist_name}
-            hasRoyalties={project.has_royalties}
-          />
-        </section>
-      )}
 
       {displayedTestimonials.length > 0 && (
         <section
