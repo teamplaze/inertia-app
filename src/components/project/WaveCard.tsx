@@ -31,8 +31,9 @@ export function WaveCard({
   const isActive = tier.status === 'active' && !saleEnded && saleStarted
   const isClosed = tier.status === 'closed' || (tier.status === 'active' && saleEnded)
 
-  const exclusivePerks = tier.perks.filter(p => p.is_exclusive)
-  const standardPerks = tier.perks.filter(p => !p.is_exclusive)
+  const sortedPerks = [...tier.perks].sort((a, b) => a.sort_order - b.sort_order)
+  const exclusivePerks = sortedPerks.filter(p => p.is_exclusive)
+  const standardPerks = sortedPerks.filter(p => !p.is_exclusive)
 
   const handleJoinWaitlist = async () => {
     if (!user) return
