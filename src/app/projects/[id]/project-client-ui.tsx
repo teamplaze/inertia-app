@@ -444,11 +444,11 @@ export default function ProjectUI({ projectData, isProjectMember }: ProjectUIPro
       )}
 
       {(() => {
-        // Collect all displayable tiers: every active tier, sorted low to high.
+        // Collect all displayable tiers: every active tier, sorted high to low.
         // Fallback: if no active tiers, show the most recently closed one (by sale_end_at).
         const activeTiers = tiers
           .filter(t => t.status === 'active')
-          .sort((a, b) => a.price - b.price)
+          .sort((a, b) => b.price - a.price)
 
         const closedFallback = activeTiers.length === 0
           ? [...tiers]
