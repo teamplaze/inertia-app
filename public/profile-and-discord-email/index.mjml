@@ -171,7 +171,7 @@
           line-height="1.65"
           padding="0 0 24px 0"
         >
-          Some of your <strong style="color: #ffffff;">Act 3</strong> perks are physical — think Exclusive Vinyl, Signed Tour Posters, and potential giveaway item, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
+          Some of your <strong style="color: #ffffff;">Act 4</strong> perks are physical — think Exclusive Vinyl, Signed Tour Posters, that kind of thing. We can't mail those anywhere without your info. Takes two minutes.
         </mj-text>
       </mj-column>
     </mj-section>
@@ -314,7 +314,7 @@
     <mj-section background-color="#000000" padding="0 40px 8px">
       <mj-column>
         <mj-button
-          href="https://discord.gg/GhBSqWkPA"
+          href="https://discord.gg/yHU9EXwvZ"
           background-color="#ffffff"
           color="#000000"
           font-size="15px"
