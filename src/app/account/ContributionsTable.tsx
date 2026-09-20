@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
+import type { ProjectStatus } from '@/types';
 
 type Contribution = {
   id: number;
@@ -14,7 +15,7 @@ type Contribution = {
     id: number;
     project_title: string;
     artist_name: string;
-    status: string;
+    status: ProjectStatus;
   };
   tiers: {
     name: string;

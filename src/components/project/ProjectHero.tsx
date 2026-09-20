@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ProgressBar } from "@/components/project/ProgressBar"
+import type { ProjectStatus } from "@/types"
 
 const textPanelGradient =
   "radial-gradient(146.13% 116.83% at 50% -16.83%, " +
@@ -14,7 +15,7 @@ const textPanelGradient =
 interface ProjectHeroProps {
   artistName: string
   projectTitle: string
-  projectStatus: 'Fundraising' | 'Completed' | 'Coming Soon'
+  projectStatus: ProjectStatus
   artistImageUrl: string
   currentFunding: number
   fundingGoal: number

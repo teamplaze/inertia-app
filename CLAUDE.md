@@ -92,7 +92,7 @@ get a UI, but that is not needed yet — do not build one.
 - Tier scheduling uses sale_start_at / sale_end_at with `America/Chicago` timezone casting.
   `tiers.status` must be flipped manually — there is no auto-scheduler (see Open Issues).
 - `has_royalties` (projects, default true) is data, not code. Never hardcode project IDs or artist names for it.
-  Currently false only for Gold Steps (slug: gold-steps-tour).
+  Currently false for Twist It (slug: twist-it-video) and Gold Steps (slug: gold-steps-tour).
 
 ## Email and lifecycle sync
 

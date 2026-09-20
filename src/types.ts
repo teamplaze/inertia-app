@@ -87,6 +87,8 @@ export type Testimonial = {
   verified: boolean;
 };
 
+export type ProjectStatus = 'Fundraising' | 'Coming Soon' | 'Completed';
+
 export type Project = {
   id: number;
   created_at: string;
@@ -95,7 +97,7 @@ export type Project = {
   project_image_url: string;
   funding_goal: number;
   current_funding: number;
-  status: string;
+  status: ProjectStatus;
   artist_profile_image_url: string;
   artist_bio: string;
   audio_preview_url: string;
