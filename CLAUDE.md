@@ -12,8 +12,15 @@ Focus: remove the biggest pain points that come up while a project is live. Admi
 get a UI, but that is not needed yet — do not build one.
 
 1. **Smoother data entry for new waves.** Perks (`tier_perks`) and budget numbers are loaded into the DB
-   by hand today. Goal: an agent or project where Ian supplies raw input and the required import
-   files/SQL are generated automatically, which he can review and tweak before applying.
+   by hand today. Goal: Ian supplies raw input and the required SQL is generated automatically, which he
+   can review and tweak before applying. No CSV import step — the generator writes SQL directly.
+   - **Wave/perks side: solved.** See "Wave rollout procedure" below for the current script pattern,
+     and "Planned: /new-wave slash command" for the automation of it. This fully replaces the old
+     CSV export → Notepad++ edit → manual UUID regen process.
+   - **Budget/milestone side: still open.** `project_milestones` and `budget_line_items` are still
+     hand-entered. This is a separate command/skill from `/new-wave`, not an extension of it — not yet
+     designed, and blocked on the budget_categories audit (see goal 4) settling what the current schema
+     actually needs.
 2. **Email list management and sync.** When a new wave launches, a separate tag and segment should be
    created in KIT automatically. Also simplify the tagging system as a whole, then write an artist-facing
    guide covering what each tag means and how to send communications with them.
@@ -28,12 +35,13 @@ get a UI, but that is not needed yet — do not build one.
    are not real `projects.status` values.
 
 ### Suggested build order
-1. Audit the tables in scope for goal 1 (`tier_perks`, budget tables) before building any importers.
+1. ~~Audit `tier_perks`/`tiers` and build the wave rollout generator~~ — done; see "Wave rollout procedure".
 2. Goal 2 as a chain: simplify the KIT tag scheme → automate per-wave tag + segment → write the artist guide.
-3. Goal 1 import generator, once step 1 has settled the schema.
-4. Goal 3 (templates, DRIP) is Loops-side and can run in parallel with any step. First check whether the
+3. Finish the goal 4 audit on budget tables (`budget_categories`, `budget_line_items`), `increment_tier_stats`,
+   and the two migration directories — this settles the schema the budget/milestone entry command needs.
+4. Build the separate budget/milestone entry command/skill, once step 3 has settled the schema.
+5. Goal 3 (templates, DRIP) is Loops-side and can run in parallel with any step. First check whether the
    Loops built-in visual editor already covers drag-and-drop before adding tooling or integrations.
-5. Finish the rest of the goal 4 audit.
 
 ## Workflow rules
 - For non-trivial changes, start with a read-only assessment: report findings, make no edits.
@@ -76,8 +84,9 @@ get a UI, but that is not needed yet — do not build one.
   current_funding, status, artist_profile_image_url, artist_bio, audio_preview_url, backer_count,
   artist_message_video_url, from_the_artist_message, slug, donation_link, spotify_artist_id,
   video_thumbnail_url, video_url, project_colors (array; first entry = accent), has_royalties, discord_invite_url
-- `projects.status` is a free string: no DB check constraint or enum, typed as `string` in src/types.ts.
-  App code expects `Fundraising`, `Coming Soon`, `Completed` — match these exactly (see Open Issues: DB rows may hold `Complete`).
+- `projects.status` is limited by the DB CHECK constraint `projects_status_check` to `Fundraising`, `Coming Soon`,
+  `Completed` (migration record: supabase/migrations/20260920_normalize_project_status.sql, applied manually) and typed
+  as `ProjectStatus` in src/types.ts. Use `ProjectStatus` instead of ad hoc string unions or casts.
 - `profiles`: name column is `full_name` (not `display_name`)
 - `tiers`: `name` holds the wave name (e.g. "Wave 1"); also `status` (constrained to `upcoming` / `active` / `closed`), `sale_start_at`, `sale_end_at`
 - `tier_perks`: label, is_exclusive, sort_order, category (replaced the old flat `perks text[]` column)
@@ -93,6 +102,76 @@ get a UI, but that is not needed yet — do not build one.
   `tiers.status` must be flipped manually — there is no auto-scheduler (see Open Issues).
 - `has_royalties` (projects, default true) is data, not code. Never hardcode project IDs or artist names for it.
   Currently false for Twist It (slug: twist-it-video) and Gold Steps (slug: gold-steps-tour).
+- `tiers.stripe_price_id`: confirmed unused — checkout and the webhook build everything inline via `price_data`
+  and map a session back to a tier through `session.metadata.tierId`, never through a Stripe price. Stop creating
+  a Stripe product/price and populating this column for new waves. Column itself is left in place for now
+  (not dropped) in case something outside the repo still references old values.
+
+## Wave rollout procedure
+
+Replaces the old process (export tier_perks CSV → edit in Notepad++ → manually retarget tier_id →
+manually regenerate UUIDs → paste back in). That process worked but had a real failure mode: reusing a
+row's existing `id` while changing its `tier_id` is a primary-key collision risk if the UUID isn't
+regenerated by hand every time.
+
+### Current process: one script, dev then prod
+Close the old tier, create the new one, and insert its perks in a single transaction. The `WITH` clause
+lets the perks insert reference the new tier's auto-generated id directly — no CSV, no manual UUID step:
+
+```sql
+BEGIN;
+
+-- 1. Close the current wave
+UPDATE tiers
+SET status = 'closed',
+    sale_end_at = now()
+WHERE id = <old_tier_id>;
+
+-- 2. Create the new wave, and insert its perks in the same statement
+WITH new_tier AS (
+  INSERT INTO tiers (project_id, name, price, status, sale_start_at, sale_end_at, total_slots)
+  VALUES (<project_id>, '<wave name>', <price>, 'active', '<start, with explicit UTC offset>', '<end, with explicit UTC offset>', <slots or NULL>)
+  RETURNING id
+)
+INSERT INTO tier_perks (id, tier_id, label, is_exclusive, sort_order, created_at, category)
+SELECT gen_random_uuid(), new_tier.id, v.label, v.is_exclusive, v.sort_order, now(), v.category
+FROM new_tier, (VALUES
+  ('<perk label>', <true|false>, 1, '<category>'),
+  ('<perk label>', <true|false>, 2, '<category>')
+) AS v(label, is_exclusive, sort_order, category);
+
+COMMIT;
+```
+
+- Run this in dev first, confirm the page renders as expected, then run the equivalent against prod with
+  prod's own `project_id` and the correct tier to close. Dev and prod can have different `project_id` and
+  tier `id` numbering for the same artist — confirm both before running.
+- `status = 'active'` from the start is safe even when the wave shouldn't be visible yet:
+  `WaveCard` independently gates on `sale_start_at` and keeps the card showing closed/countdown until
+  that time, confirmed in dev. There is no need to stage as `upcoming` and flip it manually.
+- Always give `sale_start_at` / `sale_end_at` an explicit UTC offset (e.g. `-04` for ET during EDT) rather
+  than a bare timestamp, so the stored value doesn't depend on the session's timezone setting.
+- A multi-item perk (e.g. a merch bundle with several contents) has no sub-bullet support in `WaveCard` —
+  fold the contents into one label. A long folded label wraps naturally in the card and reads
+  acceptably as-is; no `white-space` CSS change has been needed in practice.
+- `category` is free text today and not constrained to the six values `PerksSection` recognizes
+  (`Inertia Perks`, `Physical`, `Events & Livestreams`, `Community`, `Exclusive Content`, `Recognition`).
+  Existing waves also use `Digital` and `General`. A perk with a category outside the six still renders
+  correctly in `WaveCard`, it just won't appear in the separate platform-level `PerksSection` explainer.
+- Do not populate `stripe_price_id` — confirmed unused (see Data layer rules above).
+- `TierCard.tsx` is confirmed dead code (no imports/usage anywhere) — ignore it when reasoning about
+  how perks render; only `WaveCard` matters.
+
+### Planned: /new-wave slash command
+Not yet built. Spec: takes project, old tier id to close, new wave name/price/dates/slots, and a raw
+perks list in plain text; generates the filled-in dev script above (not prod — prod stays a manual
+re-run after dev is checked); folds obvious multi-item bundles into single labels; warns (does not
+block) when a perk's category falls outside the six `PerksSection` recognizes, so an override is still
+possible.
+
+### Known gap
+No auto-scheduler flips `tiers.status` when `sale_end_at` passes, and a page already open when a wave
+closes won't update until reloaded (see Open Issues).
 
 ## Email and lifecycle sync
 
@@ -308,9 +387,6 @@ These were made without a designer spec and are deliberate choices — do not re
   SQL to manually close: UPDATE tiers SET status='closed' WHERE sale_end_at < NOW() AND status='active'
 - Focus ring color :root vs .dark mismatch (dark #bfdcd9, light #9ecac6 — confirm light value if light mode ships)
 - Navigation mobile: further review may be needed
-- `projects.status` mismatch: the DB export showed `Complete` for Twist It and Gold Steps, but code compares against
-  `Completed` (ContributionsTable, featured route sort map, ProjectHero, project-client-ui). Verify with
-  `SELECT DISTINCT status FROM projects;` and align the DB or the code.
 - `purchase_completed` can be double-counted: it fires from both the Stripe webhook and the /success page with no shared
   dedup key, and refreshing /success fires the client event again.
 - /artist/dashboard: sticky header is overlapped by the fixed nav (no clearance applied).
