@@ -49,7 +49,6 @@ export function WaveCard({
       })
       setHasJoined(true)
     } catch {
-      // silent fail — matches existing TierCard behavior
     } finally {
       setIsJoining(false)
     }
