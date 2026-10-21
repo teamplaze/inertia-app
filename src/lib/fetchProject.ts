@@ -127,3 +127,69 @@ export async function fetchProjectById(
     return null;
   }
 }
+
+export type WaitlistContext = {
+  id: number;
+  slug: string | null;
+  project_title: string;
+  artist_name: string;
+  project_image_url: string | null;
+  project_colors: string[] | null;
+};
+
+export async function fetchWaitlistContext(
+  projectId: number
+): Promise<WaitlistContext | null> {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('projects')
+      .select('id, slug, project_title, artist_name, project_image_url, project_colors')
+      .eq('id', projectId)
+      .maybeSingle();
+
+    if (error || !data) {
+      if (error) console.error('❌ fetchWaitlistContext error:', error);
+      return null;
+    }
+
+    return {
+      id: data.id,
+      slug: data.slug ?? null,
+      project_title: data.project_title,
+      artist_name: data.artist_name,
+      project_image_url: data.project_image_url ?? null,
+      project_colors: data.project_colors ?? null,
+    };
+  } catch (err) {
+    console.error('💥 fetchWaitlistContext unexpected error:', err);
+    return null;
+  }
+}
+
+export async function tierBelongsToProject(
+  tierId: number,
+  projectId: number
+): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('tiers')
+      .select('id')
+      .eq('id', tierId)
+      .eq('project_id', projectId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('❌ tierBelongsToProject error:', error);
+      return false;
+    }
+
+    return !!data;
+  } catch (err) {
+    console.error('💥 tierBelongsToProject unexpected error:', err);
+    return false;
+  }
+}

@@ -13,6 +13,7 @@ import {
   safeKitApplyTag,
   safeKitUpdateCustomField,
 } from '@/lib/emailSync';
+import { joinWaitlist, type JoinWaitlistStatus } from '@/lib/joinWaitlist';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -184,6 +185,24 @@ export async function POST(request: Request) {
     console.error('❌ Post-signup error:', err);
   }
 
+  // 4b. Waitlist join (server-side, so it can't be lost between requests).
+  // Outside the try above so a Stripe/profile failure doesn't skip it; a
+  // waitlist failure never fails the sign-up.
+  let waitlistStatus: JoinWaitlistStatus | undefined;
+  if (action === 'waitlist' && projectId) {
+    try {
+      ({ status: waitlistStatus } = await joinWaitlist({
+        email: normalizedEmail,
+        projectId: Number(projectId),
+        tierId: tierId ? Number(tierId) : null,
+        userId,
+      }));
+    } catch (err) {
+      console.error('❌ Waitlist join during sign-up failed:', err);
+      waitlistStatus = 'error';
+    }
+  }
+
   // 5. Sign In
   await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
 
@@ -191,7 +210,8 @@ export async function POST(request: Request) {
     { 
       message: 'Sign up successful!', 
       user: signUpData.user,
-      redirectTo: userType === 'artist' ? '/artist/dashboard' : '/'
+      redirectTo: userType === 'artist' ? '/artist/dashboard' : '/',
+      waitlistStatus,
     },
     { status: 200 }
   );
