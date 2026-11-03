@@ -228,15 +228,22 @@ export async function POST(req: Request) {
                         purchaseAmount,
                         purchaseDate: new Date().toISOString(),
                     }, finalUserId ?? undefined),
-                    safeLoopsEvent(customerEmail, 'backerJoined', {
-                        projectName: projectData.project_title,
-                        artistName: projectData.artist_name,
-                        tierName: tierData.name,
-                        amount: purchaseAmount,
-                        projectId: String(projectId),
-                        discordInviteUrl: projectData.discord_invite_url,
-                    }),
                 ];
+                // backerJoined starts the backer DRIP, so it's for tier purchases only
+                if (tierId) {
+                    syncPromises.push(
+                        safeLoopsEvent(customerEmail, 'backerJoined', {
+                            projectName: projectData.project_title,
+                            artistName: projectData.artist_name,
+                            tierName: tierData.name,
+                            amount: purchaseAmount,
+                            projectId: String(projectId),
+                            discordInviteUrl: projectData.discord_invite_url,
+                        })
+                    );
+                } else {
+                    console.log('[loops] backerJoined skipped: donation');
+                }
                 if (artist) {
                     syncPromises.push(
                         (async () => {
